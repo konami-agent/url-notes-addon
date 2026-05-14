@@ -77,3 +77,14 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Local commit: `fix: avoid mutating chrome lastError` created at current local `HEAD`. Push failed with `fatal: could not read Username for 'https://github.com': No such device or address`, so the local branch is ahead of `origin/main`.
 - Blockers: missing `gh` and missing GitHub token prevent authoritative issue comments/labels/closures; missing Git HTTPS credentials prevent push. The board cannot be advanced to unblock #5 even though #3/#4 are locally satisfied.
 - Next recommended issue: once GitHub mutation/push works, push local commits, close #3/#4 with evidence and mark #5 (`T4 Popup UI implementation`) `status:ready`; then implement popup UI using strict TDD.
+
+## 2026-05-15T05:24:29+09:00 — scheduled tick made import validation atomic
+
+- Start-of-tick review: confirmed project root and preflight `scripts/validate_project_state.py`; reviewed `PROJECT.md`, recent `PROGRESS.md`, recent commits, the public GitHub issue board, and current code. Concrete finding: `importNotes()` could partially save earlier valid notes before failing on a later malformed URL, which would make #6's invalid-import UX harder to satisfy and is a #3 core-library correctness gap. Could not create/update a GitHub issue for the finding because `gh` is unavailable and no `GH_TOKEN`/`GITHUB_TOKEN` is present.
+- Issues touched: #3 (`T2 Core URL note library with TDD`) locally. #4 remains locally satisfied from prior ticks. No authoritative issue comments/labels/closures were possible.
+- TDD evidence: added `test/urlNotes.test.js` coverage that invalid imports reject without saving earlier entries; observed RED via `/home/mm/.hermes/node/bin/node --test test/urlNotes.test.js` (failure on malformed URL during import); implemented minimal prevalidation in `src/urlNotes.js`; observed GREEN.
+- Files changed: `src/urlNotes.js`, `test/urlNotes.test.js`, `PROGRESS.md`.
+- Verification: `/home/mm/.hermes/node/bin/node --test test/urlNotes.test.js` passed; `PATH="/home/mm/.hermes/node/bin:..." /home/mm/.hermes/node/bin/npm test` passed (10 tests); `npm run lint` passed; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: public GitHub board still shows #3 and #4 open with `status:ready`, #5–#10 open with `status:pending`, #1–#2 closed. #5 remains blocked authoritatively because #3/#4 are not closed on GitHub.
+- Blockers: no `gh`, no GitHub mutation token, and no Git HTTPS credentials; issue board and remote branch still cannot be updated from this scheduled environment.
+- Next recommended issue: once credentials/tooling are restored, push local commits, close #3/#4 with accumulated evidence, mark #5 (`T4 Popup UI implementation`) `status:ready`, then implement popup UI with strict TDD.

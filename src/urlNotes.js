@@ -50,13 +50,20 @@ export function createUrlNoteStore(storageArea) {
         throw new Error('Unsupported URL notes export format');
       }
 
-      let importedCount = 0;
-      for (const [rawUrl, noteText] of Object.entries(payload.notes)) {
-        if (String(noteText ?? '').trim() === '') continue;
-        await this.saveNote(rawUrl, String(noteText));
-        importedCount += 1;
+      const notesToImport = [];
+      try {
+        for (const [rawUrl, noteText] of Object.entries(payload.notes)) {
+          if (String(noteText ?? '').trim() === '') continue;
+          notesToImport.push([normalizeUrlForNoteKey(rawUrl), String(noteText)]);
+        }
+      } catch {
+        throw new Error('Unsupported URL notes export format');
       }
-      return importedCount;
+
+      for (const [normalizedUrl, noteText] of notesToImport) {
+        await this.saveNote(normalizedUrl, noteText);
+      }
+      return notesToImport.length;
     },
   };
 }

@@ -88,3 +88,23 @@ test('URL note store exports and imports schema-versioned notes', async () => {
   assert.equal(await target.loadNote('https://example.com/c#ignored'), 'charlie');
   assert.equal(await target.loadNote('https://example.com/blank'), '');
 });
+
+test('URL note store rejects invalid imports without changing existing notes', async () => {
+  const storage = new MemoryStorageArea();
+  const store = createUrlNoteStore(storage);
+  await store.saveNote('https://example.com/existing', 'keep me');
+
+  await assert.rejects(
+    () => store.importNotes({
+      schemaVersion: 1,
+      notes: {
+        'https://example.com/new': 'should not be saved',
+        'not a url': 'invalid',
+      },
+    }),
+    /Unsupported URL notes export format/,
+  );
+
+  assert.equal(await store.loadNote('https://example.com/existing'), 'keep me');
+  assert.equal(await store.loadNote('https://example.com/new'), '');
+});
