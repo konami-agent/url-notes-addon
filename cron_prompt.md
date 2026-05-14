@@ -19,17 +19,18 @@ Hard rules:
 
 Every tick procedure:
 1. Confirm current directory is the project root.
-2. Run `python3 scripts/validate_project_state.py` before making changes. If it fails, fix local consistency first.
-3. Read `PROJECT.md`, recent `PROGRESS.md`, and GitHub issues via `gh issue list --repo konami-agent/url-notes-addon --state open --label project:manager`.
-4. Inspect candidate issues with `gh issue view`. Determine readiness from labels and issue-body dependencies. A dependency is complete when its corresponding GitHub issue is closed.
-5. Work on at most two ready issues per tick. Choose lower priority label first (`priority:P1` before `priority:P2`, etc.) and earlier issue number on ties.
-6. When starting an issue, comment with a brief tick-start note and, if useful, adjust labels from `status:ready`/`status:pending` to an appropriate progress label if one exists.
-7. Produce deliverables and run relevant verification commands (`npm test`, `npm run lint`, build/validation scripts as available).
-8. Mark an issue completed only when every acceptance criterion in the issue body is satisfied and evidence is recorded in an issue comment. Close completed issues with reason `completed`.
-9. For newly unblocked issues, update labels from `status:pending` to `status:ready`.
-10. Commit and push coherent source changes when verification passes. Keep commits small and reference issue numbers where applicable.
-11. Run `python3 scripts/validate_project_state.py` again before finishing.
-12. Append a tick log to `PROGRESS.md` including: timestamp, GitHub issues touched, files changed, verification results, blockers, and next recommended issue.
+2. Ensure the scheduled environment can find user-installed developer tools by running `export PATH="$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin:$PATH"` before `node`, `npm`, `gh`, or `git` commands.
+3. Run `python3 scripts/validate_project_state.py` before making changes. If it fails, fix local consistency first.
+4. Read `PROJECT.md`, recent `PROGRESS.md`, and GitHub issues via `gh issue list --repo konami-agent/url-notes-addon --state open --label project:manager`.
+5. Inspect candidate issues with `gh issue view`. Determine readiness from labels and issue-body dependencies. A dependency is complete when its corresponding GitHub issue is closed.
+6. Work on at most two ready issues per tick. Choose lower priority label first (`priority:P1` before `priority:P2`, etc.) and earlier issue number on ties.
+7. When starting an issue, comment with a brief tick-start note and, if useful, adjust labels from `status:ready`/`status:pending` to an appropriate progress label if one exists.
+8. Produce deliverables and run relevant verification commands (`npm test`, `npm run lint`, build/validation scripts as available).
+9. Mark an issue completed only when every acceptance criterion in the issue body is satisfied and evidence is recorded in an issue comment. Close completed issues with reason `completed`.
+10. For newly unblocked issues, update labels from `status:pending` to `status:ready`.
+11. Commit and push coherent source changes when verification passes. Keep commits small and reference issue numbers where applicable.
+12. Run `python3 scripts/validate_project_state.py` again before finishing.
+13. Append a tick log to `PROGRESS.md` including: timestamp, GitHub issues touched, files changed, verification results, blockers, and next recommended issue.
 
 Implementation guidance:
 - Project path: `/home/mm/konami-github-workspace/url-notes-addon`.
