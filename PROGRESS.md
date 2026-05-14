@@ -45,3 +45,11 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Verification: `python3 scripts/validate_project_state.py` passed. `npm test` and `npm run lint` still cannot run in this environment because `npm` is missing (`exit 127`).
 - Blockers: Node.js/npm are required before safely starting #3 under strict TDD, because RED/GREEN verification for `node:test` cannot be performed here.
 - Next recommended issue: #3 (`T2 Core URL note library with TDD`) once Node.js/npm are available in the scheduled execution environment.
+
+## 2026-05-14T21:07:23+09:00 — scheduled tick blocked by missing GitHub/Node tooling
+
+- Issues touched: read authoritative GitHub board through the public REST API because `gh` is not installed. Candidate ready issues are #3 (`T2 Core URL note library with TDD`, `priority:P1`) and #4 (`T3 Cross-browser API wrapper`, `priority:P2`). No issue comments/labels/closures could be updated because neither `gh` nor usable GitHub push/mutation credentials are available in this cron environment.
+- Files changed: `PROGRESS.md` only. No source behavior changes were made because strict TDD requires executable `node:test` verification, and `node`/`npm` are unavailable.
+- Verification: pre-change `python3 scripts/validate_project_state.py` passed. `node`/`npm` discovery failed (commands not found), so `npm test`/`npm run lint` could not be run. `git push origin main` failed with `fatal: could not read Username for 'https://github.com': No such device or address`; local branch remains ahead of `origin/main`.
+- Blockers: install/provide Node.js+npm for RED/GREEN verification; provide `gh` or GitHub credentials for authoritative issue mutation and git push.
+- Next recommended issue: #3 (`T2 Core URL note library with TDD`) once Node.js/npm and GitHub mutation credentials are available.
