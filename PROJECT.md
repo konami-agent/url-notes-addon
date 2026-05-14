@@ -18,13 +18,17 @@ A Firefox and Microsoft Edge WebExtension that stores notes per normalized URL.
 ## Operating model
 
 This project is advanced by a Hermes cron project-manager job every 4 hours.
-The job must use the file-backed project board in this directory:
+Project management is now GitHub-first:
 
-- `PROJECT.md`: stable product and operating rules
-- `TASKS.json`: authoritative task state
-- `PROGRESS.md`: append-only tick log
+- GitHub repo: `konami-agent/url-notes-addon`
+- GitHub Issues: authoritative task board
+- Issue labels: authoritative status/priority markers
+- `TASKS.json`: local mirror of the initial issue migration only; do not treat it as authoritative after migration
+- `PROGRESS.md`: append-only local tick log and handoff evidence
 - `cron_prompt.md`: self-contained scheduled manager prompt
-- `scripts/validate_project_state.py`: local board/repo validation
+- `scripts/validate_project_state.py`: local repo/board sanity validation
+
+The cron manager should use `gh issue list/view/edit/comment/close` to choose and update work.
 
 ## Safety and boundaries
 
@@ -48,12 +52,13 @@ The cron manager must not:
 Each cron tick must:
 
 1. Run `python3 scripts/validate_project_state.py` before doing work.
-2. Read `TASKS.json` and choose ready tasks based on dependencies.
-3. Work on at most two ready tasks per tick unless a task is tiny and directly required for verification.
-4. Run relevant tests/checks after changes.
-5. Run `python3 scripts/validate_project_state.py` again before finishing.
-6. Append a concise tick log to `PROGRESS.md` with timestamp, tasks touched, verification, blockers, and next recommendation.
-7. Update `TASKS.json` evidence for every status transition.
+2. Read GitHub Issues for `konami-agent/url-notes-addon`; treat open issues with `project:manager` as the authoritative task board.
+3. Choose ready tasks from GitHub issue labels and dependencies written in the issue body.
+4. Work on at most two ready issues per tick unless a task is tiny and directly required for verification.
+5. Run relevant tests/checks after changes.
+6. Update GitHub issue comments/labels/closure as the authoritative status record.
+7. Run `python3 scripts/validate_project_state.py` again before finishing.
+8. Append a concise tick log to `PROGRESS.md` with timestamp, issues touched, verification, blockers, and next recommendation.
 
 ## Definition of done for v0.1
 
