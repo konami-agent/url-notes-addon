@@ -19,3 +19,21 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Kept #2 (`T1`) open and labeled `status:ready`; #3–#10 are open with `status:pending`.
 - Updated `PROJECT.md` and `cron_prompt.md`: GitHub Issues are now the authoritative board; `TASKS.json` is only a local migration mirror.
 - Next scheduled tick should start from GitHub issue #2.
+
+## 2026-05-14T21:02:16+09:00 — manual first-round GitHub Issues workflow check
+
+- Triggered cron job `30ee4280c0d1`, but Hermes scheduler did not record `last_run_at` within the observation window, so I manually executed the same first-round workflow to verify the GitHub-first process.
+- Worked GitHub issue #2 (`T1`) from `status:ready` to completed.
+- Created extension scaffold files: `package.json`, `manifest.json`, `popup/`, `src/`, `test/`, `scripts/`, `icons/`, `README.md`, `LICENSE`.
+- Verification passed: `npm test`, `npm run lint`, and `python3 scripts/validate_project_state.py`.
+- Closed #2 and marked #3/#4 as `status:ready` because their dependency #2 is complete.
+- Next recommended issue: #3 (`T2 Core URL note library with TDD`) or #4 (`T3 Cross-browser API wrapper`), with #3 preferred by priority/order.
+
+## 2026-05-14T21:02:44+09:00 — scheduled tick scaffold reconciliation
+
+- Issues touched: attempted to work #2 (`T1 Clean workspace and scaffold extension repository`). Public GitHub issue query still shows #2 open with `status:ready`; `gh` is not installed and no `GITHUB_TOKEN` is available in this cron environment, so I could not comment, relabel, or close issues from this tick.
+- Files changed: added the coherent WebExtension scaffold deliverables: `package.json`, `manifest.json`, `popup/popup.html`, `popup/popup.css`, `popup/popup.js`, `src/.gitkeep`, `test/scaffold.test.js`, `scripts/lint.js`, `icons/.gitkeep`, `README.md`, and `LICENSE`.
+- Verification: `python3 scripts/validate_project_state.py` passed; JSON validation for `manifest.json` and `package.json` passed; required scaffold path checks passed; repository secret-pattern scan found no matches. `npm test` and `npm run lint` could not run because `npm`/`node` are not installed in this execution environment (`exit 127`).
+- TDD note: wrote `test/scaffold.test.js` before scaffold implementation and attempted `node --test test/scaffold.test.js`; the RED verification was blocked by missing Node.js rather than a behavioral assertion failure.
+- Blockers: missing `gh`/GitHub mutation credentials prevents authoritative issue updates; missing Node.js/npm prevents JavaScript test/lint verification.
+- Next recommended issue: after #2 can be authoritatively closed and Node.js is available, start #3 (`T2 Core URL note library with TDD`).

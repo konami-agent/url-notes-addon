@@ -1,0 +1,15 @@
+{
+  "name": "url-notes-addon",
+  "version": "0.1.0",
+  "description": "Firefox and Edge WebExtension for per-URL notes.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "node --test",
+    "lint": "node scripts/lint.js",
+    "build:zip": "node scripts/build-zip.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

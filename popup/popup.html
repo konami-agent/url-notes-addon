@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>URL Notes</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <main>
+    <h1>URL Notes</h1>
+    <p id="url-key" class="url-key">Loading current tab…</p>
+    <textarea id="note" placeholder="Write a note for this URL"></textarea>
+    <p id="status" class="status" role="status">Not loaded yet.</p>
+    <div class="actions">
+      <button id="export-notes" type="button">Export JSON</button>
+      <label class="import-label">Import JSON<input id="import-notes" type="file" accept="application/json"></label>
+    </div>
+  </main>
+  <script type="module" src="../src/popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="URL Notes icon">
+  <rect width="128" height="128" rx="24" fill="#2563eb"/>
+  <path d="M34 28h60v72H34z" fill="#f8fafc"/>
+  <path d="M46 46h36M46 62h36M46 78h24" stroke="#2563eb" stroke-width="8" stroke-linecap="round"/>
+</svg>

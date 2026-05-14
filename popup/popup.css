@@ -1,0 +1,9 @@
+:root { color-scheme: light dark; font-family: system-ui, sans-serif; }
+body { width: 340px; margin: 0; padding: 12px; }
+h1 { font-size: 1rem; margin: 0 0 8px; }
+.url-key { overflow-wrap: anywhere; font-size: 0.75rem; opacity: 0.8; }
+textarea { box-sizing: border-box; width: 100%; min-height: 180px; resize: vertical; }
+.status { min-height: 1.2em; font-size: 0.75rem; }
+.actions { display: flex; gap: 8px; align-items: center; }
+.import-label { cursor: pointer; }
+.import-label input { display: none; }
