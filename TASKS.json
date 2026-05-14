@@ -1,0 +1,247 @@
+{
+  "project": "url-notes-addon",
+  "schemaVersion": 1,
+  "created_at": "2026-05-14T20:49:58+09:00",
+  "last_updated_at": "2026-05-14T20:49:58+09:00",
+  "tasks": [
+    {
+      "id": "T0",
+      "title": "Project board bootstrap",
+      "status": "completed",
+      "priority": 0,
+      "dependencies": [],
+      "deliverables": [
+        "PROJECT.md",
+        "TASKS.json",
+        "PROGRESS.md",
+        "cron_prompt.md",
+        "scripts/validate_project_state.py"
+      ],
+      "acceptance_criteria": [
+        "Project board files exist",
+        "Validation script passes"
+      ],
+      "evidence": [
+        "Created by initial scheduling setup"
+      ],
+      "attempts": 1,
+      "last_error": null,
+      "blocked_reason": null
+    },
+    {
+      "id": "T1",
+      "title": "Clean workspace and scaffold extension repository",
+      "status": "ready",
+      "priority": 1,
+      "dependencies": [
+        "T0"
+      ],
+      "deliverables": [
+        "package.json",
+        "manifest.json",
+        "popup/",
+        "src/",
+        "test/",
+        "scripts/",
+        "icons/",
+        "README.md",
+        "LICENSE"
+      ],
+      "acceptance_criteria": [
+        "Directory contains a coherent WebExtension skeleton",
+        "No secrets or unrelated files are present",
+        "README describes v0.1 scope"
+      ],
+      "evidence": [],
+      "attempts": 0,
+      "last_error": null,
+      "blocked_reason": null
+    },
+    {
+      "id": "T2",
+      "title": "Core URL note library with TDD",
+      "status": "pending",
+      "priority": 2,
+      "dependencies": [
+        "T1"
+      ],
+      "deliverables": [
+        "src/urlNotes.js",
+        "test/urlNotes.test.js"
+      ],
+      "acceptance_criteria": [
+        "Tests first cover URL normalization, save/load, blank delete, export/import",
+        "`npm test` passes"
+      ],
+      "evidence": [],
+      "attempts": 0,
+      "last_error": null,
+      "blocked_reason": null
+    },
+    {
+      "id": "T3",
+      "title": "Cross-browser API wrapper",
+      "status": "pending",
+      "priority": 3,
+      "dependencies": [
+        "T1"
+      ],
+      "deliverables": [
+        "src/browserApi.js",
+        "test/browserApi.test.js"
+      ],
+      "acceptance_criteria": [
+        "Wrapper supports browser.* promise API and chrome.* callback API where practical",
+        "Unit tests cover storage and active tab adapter behavior without real browser dependency"
+      ],
+      "evidence": [],
+      "attempts": 0,
+      "last_error": null,
+      "blocked_reason": null
+    },
+    {
+      "id": "T4",
+      "title": "Popup UI implementation",
+      "status": "pending",
+      "priority": 4,
+      "dependencies": [
+        "T2",
+        "T3"
+      ],
+      "deliverables": [
+        "popup/popup.html",
+        "popup/popup.css",
+        "src/popup.js"
+      ],
+      "acceptance_criteria": [
+        "Popup loads current tab note",
+        "Textarea auto-saves with debounce",
+        "Blank note deletes",
+        "Status message shows saved/deleted/error"
+      ],
+      "evidence": [],
+      "attempts": 0,
+      "last_error": null,
+      "blocked_reason": null
+    },
+    {
+      "id": "T5",
+      "title": "Export and import JSON UX",
+      "status": "pending",
+      "priority": 5,
+      "dependencies": [
+        "T2",
+        "T4"
+      ],
+      "deliverables": [
+        "Export/import controls in popup",
+        "Schema-versioned JSON format documentation"
+      ],
+      "acceptance_criteria": [
+        "Export downloads JSON",
+        "Import merges notes and documents overwrite behavior",
+        "Invalid import reports error without corrupting existing data"
+      ],
+      "evidence": [],
+      "attempts": 0,
+      "last_error": null,
+      "blocked_reason": null
+    },
+    {
+      "id": "T6",
+      "title": "Validation, build zip, and CI",
+      "status": "pending",
+      "priority": 6,
+      "dependencies": [
+        "T1",
+        "T2",
+        "T3",
+        "T4",
+        "T5"
+      ],
+      "deliverables": [
+        "scripts/validate-extension.js",
+        "scripts/build-zip.js",
+        ".github/workflows/ci.yml"
+      ],
+      "acceptance_criteria": [
+        "`npm test` passes",
+        "`npm run lint` passes",
+        "Build zip script creates distributable archive",
+        "GitHub Actions workflow validates on push"
+      ],
+      "evidence": [],
+      "attempts": 0,
+      "last_error": null,
+      "blocked_reason": null
+    },
+    {
+      "id": "T7",
+      "title": "Manual browser loading documentation",
+      "status": "pending",
+      "priority": 7,
+      "dependencies": [
+        "T4",
+        "T6"
+      ],
+      "deliverables": [
+        "README.md manual test section"
+      ],
+      "acceptance_criteria": [
+        "Firefox about:debugging instructions present",
+        "Edge edge://extensions instructions present",
+        "Manual smoke checklist included"
+      ],
+      "evidence": [],
+      "attempts": 0,
+      "last_error": null,
+      "blocked_reason": null
+    },
+    {
+      "id": "T8",
+      "title": "GitHub repository publication",
+      "status": "pending",
+      "priority": 8,
+      "dependencies": [
+        "T6",
+        "T7"
+      ],
+      "deliverables": [
+        "Public GitHub repository",
+        "Initial commit pushed",
+        "Remote URL recorded in PROGRESS.md"
+      ],
+      "acceptance_criteria": [
+        "Repo exists as konami-agent/url-notes-addon",
+        "Remote main branch contains tested source",
+        "No secrets committed",
+        "CI status checked if available"
+      ],
+      "evidence": [],
+      "attempts": 0,
+      "last_error": null,
+      "blocked_reason": null
+    },
+    {
+      "id": "T9",
+      "title": "v0.1 review and next-phase proposal",
+      "status": "pending",
+      "priority": 9,
+      "dependencies": [
+        "T8"
+      ],
+      "deliverables": [
+        "reports/v0.1-review.md",
+        "reports/next-phase-options.md"
+      ],
+      "acceptance_criteria": [
+        "Review summarizes implemented behavior and limitations",
+        "Next-phase options include search, domain notes, ignore-query setting, markdown preview, floating note"
+      ],
+      "evidence": [],
+      "attempts": 0,
+      "last_error": null,
+      "blocked_reason": null
+    }
+  ]
+}
