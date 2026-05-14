@@ -21,16 +21,17 @@ Every tick procedure:
 1. Confirm current directory is the project root.
 2. Ensure the scheduled environment can find user-installed developer tools by running `export PATH="$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin:$PATH"` before `node`, `npm`, `gh`, or `git` commands.
 3. Run `python3 scripts/validate_project_state.py` before making changes. If it fails, fix local consistency first.
-4. Read `PROJECT.md`, recent `PROGRESS.md`, and GitHub issues via `gh issue list --repo konami-agent/url-notes-addon --state open --label project:manager`.
-5. Inspect candidate issues with `gh issue view`. Determine readiness from labels and issue-body dependencies. A dependency is complete when its corresponding GitHub issue is closed.
-6. Work on at most two ready issues per tick. Choose lower priority label first (`priority:P1` before `priority:P2`, etc.) and earlier issue number on ties.
-7. When starting an issue, comment with a brief tick-start note and, if useful, adjust labels from `status:ready`/`status:pending` to an appropriate progress label if one exists.
-8. Produce deliverables and run relevant verification commands (`npm test`, `npm run lint`, build/validation scripts as available).
-9. Mark an issue completed only when every acceptance criterion in the issue body is satisfied and evidence is recorded in an issue comment. Close completed issues with reason `completed`.
-10. For newly unblocked issues, update labels from `status:pending` to `status:ready`.
-11. Commit and push coherent source changes when verification passes. Keep commits small and reference issue numbers where applicable.
-12. Run `python3 scripts/validate_project_state.py` again before finishing.
-13. Append a tick log to `PROGRESS.md` including: timestamp, GitHub issues touched, files changed, verification results, blockers, and next recommended issue.
+4. Read `PROJECT.md`, recent `PROGRESS.md`, and the full GitHub issue board via `gh issue list --repo konami-agent/url-notes-addon --state all --label project:manager --limit 100`.
+5. Start-of-tick review gate: before selecting implementation work, review the whole project for process/design/testing/security/maintainability gaps. Check recent commits, open issues, closed issues from the previous tick, and current code structure. If you find a concrete improvement, bug, risk, missing test, unclear acceptance criterion, or better task split, create or update a GitHub issue for it. Avoid duplicate issues; search/list existing issues first. Improvements must be actionable, scoped, and labeled with `project:manager`, an appropriate `type:*`, `status:pending` or `status:ready`, and a `priority:*` label.
+6. Inspect candidate issues with `gh issue view`. Determine readiness from labels and issue-body dependencies. A dependency is complete when its corresponding GitHub issue is closed.
+7. Work on at most two ready implementation issues per tick after the review gate. Choose lower priority label first (`priority:P1` before `priority:P2`, etc.) and earlier issue number on ties. Do not let review-only meta work consume the entire tick unless it reveals a blocker or serious risk.
+8. When starting an issue, comment with a brief tick-start note and, if useful, adjust labels from `status:ready`/`status:pending` to an appropriate progress label if one exists.
+9. Produce deliverables and run relevant verification commands (`npm test`, `npm run lint`, build/validation scripts as available).
+10. Mark an issue completed only when every acceptance criterion in the issue body is satisfied and evidence is recorded in an issue comment. Close completed issues with reason `completed`.
+11. End-of-tick issue refresh: after implementation and verification, re-list the GitHub issue board, close completed issues with evidence, update labels for newly unblocked issues, downgrade/raise priorities if the new state warrants it, and add short comments to issues whose scope/readiness changed.
+12. Commit and push coherent source changes when verification passes. Keep commits small and reference issue numbers where applicable.
+13. Run `python3 scripts/validate_project_state.py` again before finishing.
+14. Append a tick log to `PROGRESS.md` including: timestamp, review findings/issues created or updated, GitHub issues touched, files changed, verification results, blockers, issue-board refresh summary, and next recommended issue.
 
 Implementation guidance:
 - Project path: `/home/mm/konami-github-workspace/url-notes-addon`.
@@ -41,4 +42,4 @@ Implementation guidance:
 - README should be practical: local dev, Firefox temporary add-on, Edge load unpacked, tests, privacy.
 
 Final response for each cron tick:
-Return a concise Traditional Chinese progress report. Mention GitHub issues touched, verification status, blockers, and next step. If nothing changed, say so clearly and explain why.
+Return a concise Traditional Chinese progress report. Mention start-of-tick review findings, GitHub issues created/updated/touched, verification status, end-of-tick issue refresh result, blockers, and next step. If nothing changed, say so clearly and explain why.
