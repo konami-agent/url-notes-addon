@@ -37,3 +37,11 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - TDD note: wrote `test/scaffold.test.js` before scaffold implementation and attempted `node --test test/scaffold.test.js`; the RED verification was blocked by missing Node.js rather than a behavioral assertion failure.
 - Blockers: missing `gh`/GitHub mutation credentials prevents authoritative issue updates; missing Node.js/npm prevents JavaScript test/lint verification.
 - Next recommended issue: after #2 can be authoritatively closed and Node.js is available, start #3 (`T2 Core URL note library with TDD`).
+
+## 2026-05-14T21:04:34+09:00 — scheduled tick final board recheck
+
+- Issues touched: rechecked GitHub issue state through the public GitHub REST API. #2 is now closed with `status:completed`; #3 and #4 are open with `status:ready`.
+- Files changed: no new source changes after commit `101c436` (`feat: scaffold url notes extension`) already reached `origin/main`.
+- Verification: `python3 scripts/validate_project_state.py` passed. `npm test` and `npm run lint` still cannot run in this environment because `npm` is missing (`exit 127`).
+- Blockers: Node.js/npm are required before safely starting #3 under strict TDD, because RED/GREEN verification for `node:test` cannot be performed here.
+- Next recommended issue: #3 (`T2 Core URL note library with TDD`) once Node.js/npm are available in the scheduled execution environment.
