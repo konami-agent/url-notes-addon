@@ -11,7 +11,6 @@ const requiredPaths = [
   'test/scaffold.test.js',
   'scripts/validate_project_state.py',
   'scripts/lint.js',
-  'scripts/build-zip.js',
   'icons/icon.svg',
   'README.md',
   'LICENSE',

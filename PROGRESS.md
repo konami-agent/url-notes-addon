@@ -53,3 +53,15 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Verification: pre-change `python3 scripts/validate_project_state.py` passed. `node`/`npm` discovery failed (commands not found), so `npm test`/`npm run lint` could not be run. `git push origin main` failed with `fatal: could not read Username for 'https://github.com': No such device or address`; local branch remains ahead of `origin/main`.
 - Blockers: install/provide Node.js+npm for RED/GREEN verification; provide `gh` or GitHub credentials for authoritative issue mutation and git push.
 - Next recommended issue: #3 (`T2 Core URL note library with TDD`) once Node.js/npm and GitHub mutation credentials are available.
+
+## 2026-05-14T21:16:32+09:00 — scheduled tick implemented core libraries with local Node toolchain
+
+- Issues touched: worked on #3 (`T2 Core URL note library with TDD`) and #4 (`T3 Cross-browser API wrapper`). Public issue reads succeeded, but GitHub mutation through the available token returned HTTP 401, so authoritative comments/labels/closures could not be updated from this tick.
+- Files changed: `.gitignore`, `scripts/lint.js`, `src/urlNotes.js`, `src/browserApi.js`, `test/urlNotes.test.js`, `test/browserApi.test.js`, `PROGRESS.md`.
+- TDD evidence: reset the previously untested `src/urlNotes.js`/`src/browserApi.js`, wrote failing `node:test` suites first, observed RED failures for missing exports, then implemented minimal code to pass.
+- Deliverables completed locally for #3: URL normalization, save/load by normalized URL key, blank-note delete, schema-versioned export/import.
+- Deliverables completed locally for #4: `browser.*` promise adapter, `chrome.*` callback promisification for storage and active-tab query, and `runtime.lastError` rejection tests.
+- Verification: `node --test test/urlNotes.test.js` passed; `node --test test/browserApi.test.js` passed; `npm test` passed with 8 tests; `npm run lint` passed; final `python3 scripts/validate_project_state.py` passed.
+- Local commit: `feat: implement core URL notes libraries` is the current local `HEAD`. Push failed with `fatal: could not read Username for 'https://github.com': No such device or address`, so the local branch is ahead of `origin/main` by 1 commit.
+- Blockers: `gh` is still not installed, the available GitHub token returned HTTP 401 for issue mutation, and Git HTTPS credentials are unavailable for push; GitHub Issues #3/#4 remain open even though local acceptance criteria are satisfied.
+- Next recommended issue: after pushing and closing #3/#4 when credentials work, mark newly unblocked #5 (`T4 Popup UI implementation`) as `status:ready` and start it next.
