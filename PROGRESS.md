@@ -65,3 +65,15 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Local commit: `feat: implement core URL notes libraries` is the current local `HEAD`. Push failed with `fatal: could not read Username for 'https://github.com': No such device or address`, so the local branch is ahead of `origin/main` by 1 commit.
 - Blockers: `gh` is still not installed, the available GitHub token returned HTTP 401 for issue mutation, and Git HTTPS credentials are unavailable for push; GitHub Issues #3/#4 remain open even though local acceptance criteria are satisfied.
 - Next recommended issue: after pushing and closing #3/#4 when credentials work, mark newly unblocked #5 (`T4 Popup UI implementation`) as `status:ready` and start it next.
+
+## 2026-05-15T01:20:24+09:00 — scheduled tick hardened Chrome adapter error handling
+
+- Start-of-tick review: verified project root and `scripts/validate_project_state.py`; reviewed recent commits, open/closed project-manager issues, and current code. Concrete finding: `src/browserApi.js` was mutating `chrome.runtime.lastError`, which is browser-owned and can be read-only in real Chrome/Edge contexts. This is an actionable #4 correctness/maintainability gap; GitHub issue creation/update could not be performed because `gh` is not installed and no `GITHUB_TOKEN`/`GH_TOKEN` is present.
+- Issues touched: #4 (`T3 Cross-browser API wrapper`) via local implementation/test hardening. #3 remains locally complete from the prior tick but still open on GitHub; #5 remains blocked by authoritative issue dependencies because #3/#4 are not closed on the GitHub board.
+- TDD evidence: added `test/browserApi.test.js` coverage for read-only `runtime.lastError`, observed RED failure (`TypeError: Cannot set property lastError...`), then removed the mutation from `src/browserApi.js` and observed GREEN.
+- Files changed: `src/browserApi.js`, `test/browserApi.test.js`, `PROGRESS.md`.
+- Verification: `node --test test/browserApi.test.js` passed; `npm test` passed (9 tests); `npm run lint` passed; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: public GitHub board still shows #3 and #4 open with `status:ready`, #5–#10 open with `status:pending`, #1–#2 closed. Unable to comment, relabel, or close issues without GitHub mutation tooling/credentials.
+- Local commit: `fix: avoid mutating chrome lastError` created at current local `HEAD`. Push failed with `fatal: could not read Username for 'https://github.com': No such device or address`, so the local branch is ahead of `origin/main`.
+- Blockers: missing `gh` and missing GitHub token prevent authoritative issue comments/labels/closures; missing Git HTTPS credentials prevent push. The board cannot be advanced to unblock #5 even though #3/#4 are locally satisfied.
+- Next recommended issue: once GitHub mutation/push works, push local commits, close #3/#4 with evidence and mark #5 (`T4 Popup UI implementation`) `status:ready`; then implement popup UI using strict TDD.

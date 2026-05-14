@@ -87,3 +87,23 @@ test('browser adapter rejects chrome callback APIs when runtime.lastError is set
 
   await assert.rejects(() => adapter.storage.local.get('note'), /storage failed/);
 });
+
+test('browser adapter rejects chrome callback APIs without mutating read-only runtime.lastError', async () => {
+  const chrome = {
+    runtime: {},
+    storage: {
+      local: {
+        get(_key, callback) {
+          callback({});
+        },
+      },
+    },
+    tabs: { query(_queryInfo, callback) { callback([]); } },
+  };
+  Object.defineProperty(chrome.runtime, 'lastError', {
+    get: () => ({ message: 'read-only storage failed' }),
+  });
+  const adapter = createBrowserAdapter({ chrome });
+
+  await assert.rejects(() => adapter.storage.local.get('note'), /read-only storage failed/);
+});

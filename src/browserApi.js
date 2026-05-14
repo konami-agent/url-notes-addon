@@ -42,7 +42,6 @@ function callChrome(chrome, method, argument) {
   return new Promise((resolve, reject) => {
     method(argument, (result) => {
       const lastError = chrome.runtime?.lastError;
-      chrome.runtime.lastError = null;
       if (lastError) {
         reject(new Error(lastError.message ?? String(lastError)));
         return;
