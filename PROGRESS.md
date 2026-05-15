@@ -97,7 +97,7 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Review/process improvement: updated `cron_prompt.md` to record the absolute bundled Node/npm fallback path for future scheduled ticks. A GitHub issue for this process gap could not be created without issue-mutation credentials.
 - Files changed: `cron_prompt.md`, `PROGRESS.md`.
 - Verification: `PATH="/home/mm/.hermes/node/bin:..." /home/mm/.hermes/node/bin/npm test` passed (10 tests); `npm run lint` passed; `python3 scripts/validate_project_state.py` passed.
-- Git: pushed prior local commits through SSH (`d663a35..1a51e6c main -> main`). A new local docs/progress commit is pending after this log entry.
+- Git: pushed prior local commits through SSH (`d663a35..1a51e6c main -> main`), then committed and pushed this process/log update as `6366249` (`docs: record scheduled toolchain fallback`).
 - End-of-tick issue refresh: public GitHub board still shows #3 and #4 open with `status:ready`, #5–#10 open with `status:pending`, #1–#2 closed. #5 remains authoritatively blocked because #3/#4 are not closed on GitHub despite source and tests now being pushed.
 - Blockers: no `gh` command and no GitHub API token for issue comments, relabeling, or closing. SSH push works, but it does not provide GitHub Issues mutation.
 - Next recommended issue: install/provide `gh` or a valid GitHub token for the scheduled environment, then close #3/#4 with evidence, mark #5 (`T4 Popup UI implementation`) `status:ready`, and start #5 with strict TDD.
