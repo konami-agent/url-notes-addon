@@ -19,7 +19,7 @@ Hard rules:
 
 Every tick procedure:
 1. Confirm current directory is the project root.
-2. Ensure the scheduled environment can find user-installed developer tools by running `export PATH="$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin:$PATH"` before `node`, `npm`, `gh`, or `git` commands.
+2. Ensure the scheduled environment can find user-installed developer tools before `node`, `npm`, `gh`, or `git` commands. First run `export PATH="$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin:$PATH"`; if `node`/`npm` are still unavailable, use the bundled Node toolchain at `/home/mm/.hermes/node/bin` with `PATH="/home/mm/.hermes/node/bin:/home/mm/.local/bin:/usr/local/bin:/usr/bin:/bin:$PATH" /home/mm/.hermes/node/bin/npm ...`.
 3. Run `python3 scripts/validate_project_state.py` before making changes. If it fails, fix local consistency first.
 4. Read `PROJECT.md`, recent `PROGRESS.md`, and the full GitHub issue board via `gh issue list --repo konami-agent/url-notes-addon --state all --label project:manager --limit 100`.
 5. Start-of-tick review gate: before selecting implementation work, review the whole project for process/design/testing/security/maintainability gaps. Check recent commits, open issues, closed issues from the previous tick, and current code structure. If you find a concrete improvement, bug, risk, missing test, unclear acceptance criterion, or better task split, create or update a GitHub issue for it. Avoid duplicate issues; search/list existing issues first. Improvements must be actionable, scoped, and labeled with `project:manager`, an appropriate `type:*`, `status:pending` or `status:ready`, and a `priority:*` label.

@@ -89,3 +89,15 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Local commit: `f21b56f` (`fix: validate imports before saving`) created. Push failed with `fatal: could not read Username for 'https://github.com': No such device or address`, so local `main` is now ahead of `origin/main` by 2 commits.
 - Blockers: no `gh`, no GitHub mutation token, and no Git HTTPS credentials; issue board and remote branch still cannot be updated from this scheduled environment.
 - Next recommended issue: once credentials/tooling are restored, push local commits, close #3/#4 with accumulated evidence, mark #5 (`T4 Popup UI implementation`) `status:ready`, then implement popup UI with strict TDD.
+
+## 2026-05-15T09:28:43+09:00 — scheduled tick pushed local core work and documented toolchain fallback
+
+- Start-of-tick review: confirmed project root and preflight `scripts/validate_project_state.py`; read `PROJECT.md`, recent `PROGRESS.md`, recent commits, current source structure, and the public GitHub issue board. Concrete process finding: this scheduled environment has `HOME=/home/mm/.hermes/home`, while the bundled Node/npm toolchain is at `/home/mm/.hermes/node/bin`, so the existing `$HOME/.hermes/node/bin` fallback can miss Node.
+- Issues touched: #3 (`T2 Core URL note library with TDD`) and #4 (`T3 Cross-browser API wrapper`) were re-verified locally and their accumulated local commits were pushed to `origin/main`. Could not add authoritative issue comments/labels/closures because `gh` is not installed and no `GH_TOKEN`/`GITHUB_TOKEN` is present.
+- Review/process improvement: updated `cron_prompt.md` to record the absolute bundled Node/npm fallback path for future scheduled ticks. A GitHub issue for this process gap could not be created without issue-mutation credentials.
+- Files changed: `cron_prompt.md`, `PROGRESS.md`.
+- Verification: `PATH="/home/mm/.hermes/node/bin:..." /home/mm/.hermes/node/bin/npm test` passed (10 tests); `npm run lint` passed; `python3 scripts/validate_project_state.py` passed.
+- Git: pushed prior local commits through SSH (`d663a35..1a51e6c main -> main`). A new local docs/progress commit is pending after this log entry.
+- End-of-tick issue refresh: public GitHub board still shows #3 and #4 open with `status:ready`, #5–#10 open with `status:pending`, #1–#2 closed. #5 remains authoritatively blocked because #3/#4 are not closed on GitHub despite source and tests now being pushed.
+- Blockers: no `gh` command and no GitHub API token for issue comments, relabeling, or closing. SSH push works, but it does not provide GitHub Issues mutation.
+- Next recommended issue: install/provide `gh` or a valid GitHub token for the scheduled environment, then close #3/#4 with evidence, mark #5 (`T4 Popup UI implementation`) `status:ready`, and start #5 with strict TDD.
