@@ -146,3 +146,18 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: #1–#8 are closed with `status:completed`; #9 is open with `status:ready`; #10 remains open with `status:pending`.
 - Blockers: none observed in this tick.
 - Next recommended issue: #9 (`T8 GitHub repository publication`).
+
+## 2026-05-16T20:26:09+09:00 — scheduled tick minimized permissions and completed repository publication
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, recent commits, full GitHub project-manager issue board, and current manifest/source structure. Concrete finding: the popup-only extension still requested broad `tabs` permission even though user-triggered active-tab access should be sufficient for v0.1; created #11 (`Minimize tab URL permissions in manifest`) with `project:manager`, `type:task`, `status:ready`, and `priority:P2`.
+- Issues touched: #11 moved to in progress, completed, commented with evidence, and closed; #9 (`T8 GitHub repository publication`) moved to in progress and verified for completion.
+- TDD evidence for #11: added a manifest permission invariant to `test/scaffold.test.js` first; observed RED via `node --test test/scaffold.test.js` because `manifest.json` requested `tabs`; removed `tabs` from the manifest; observed GREEN.
+- Files changed: `manifest.json`, `test/scaffold.test.js`, `PROGRESS.md`.
+- Verification: `node --test test/scaffold.test.js` passed; `npm test` passed (21 tests); `npm run lint` passed; `npm run validate:extension` passed; `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip` with 9 extension files; `gh repo view konami-agent/url-notes-addon` confirmed public repo `https://github.com/konami-agent/url-notes-addon`; `git ls-remote origin HEAD` confirmed remote main at `a569a51897c7ddddaceab1b11c39b60e67f3808b`; GitHub Actions CI run `25960707870` for that commit completed successfully.
+- Secret/privacy check: `npm run lint` secret-pattern checks passed for release metadata; an additional broad `git grep` only matched the scanner pattern inside `scripts/lint.js` itself, not committed credentials.
+- Git: pushed `a569a51` (`fix: minimize tab permissions`) to `origin/main`; this log entry records the remote URL for #9 acceptance: `https://github.com/konami-agent/url-notes-addon`.
+- End-of-tick issue refresh: pending final #9 closure and #10 readiness update after this log commit; #1–#8 and #11 are closed, #9 is in progress, #10 remains pending until #9 is closed.
+- Blockers: none observed in this tick.
+- Next recommended issue: after closing #9 and marking #10 ready, work #10 (`T9 v0.1 review and next-phase proposal`).
