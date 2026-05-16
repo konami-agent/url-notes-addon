@@ -161,3 +161,9 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: pending final #9 closure and #10 readiness update after this log commit; #1–#8 and #11 are closed, #9 is in progress, #10 remains pending until #9 is closed.
 - Blockers: none observed in this tick.
 - Next recommended issue: after closing #9 and marking #10 ready, work #10 (`T9 v0.1 review and next-phase proposal`).
+
+### 2026-05-16T20:27:19+09:00 — final board refresh addendum
+
+- Closed #9 (`T8 GitHub repository publication`) with evidence after confirming remote `main` at `92f5003cf5f2500b41940627ae85424fb780c980` and CI run `25960732938` succeeded.
+- Moved #10 (`T9 v0.1 review and next-phase proposal`) from `status:pending` to `status:ready` because #9 is now closed.
+- Final board state: #1–#9 and #11 closed with `status:completed`; #10 open with `status:ready`.
