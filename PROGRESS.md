@@ -181,3 +181,17 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: #1–#11 are closed with `status:completed`; #12 is open with `status:ready` and `priority:P2`.
 - Blockers: none observed in this tick.
 - Next recommended issue: #12 (`Address GitHub Actions Node.js 20 deprecation warning`).
+
+## 2026-05-17T04:35:44+09:00 — scheduled tick resolved CI Node.js action runtime warning
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, recent commits, full GitHub project-manager issue board, and current CI workflow. The existing #12 covered the only concrete reviewed gap, so no duplicate review issue was created.
+- Issues touched: #12 (`Address GitHub Actions Node.js 20 deprecation warning`) moved from `status:ready` to `status:in-progress`, then to `status:completed`, commented with evidence, and closed.
+- TDD evidence for #12: added `test/scaffold.test.js` invariant requiring `actions/checkout@v6`, `actions/setup-node@v6`, and `actions/upload-artifact@v7`; observed RED because the workflow still used v4 actions; updated `.github/workflows/ci.yml`; observed GREEN.
+- Files changed: `.github/workflows/ci.yml`, `test/scaffold.test.js`, `PROGRESS.md`.
+- Verification: `node --test test/scaffold.test.js` passed; `npm test` passed (23 tests); `npm run lint` passed; `npm run validate:extension` passed; `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `python3 scripts/validate_project_state.py` passed.
+- Git/CI: pushed `4c597c6` (`ci: update GitHub actions runtimes`) to `origin/main`; GitHub Actions CI run `25970979548` completed successfully and `gh run view` reported no job annotations.
+- End-of-tick issue refresh: #1–#12 are all closed with `status:completed`; no open `project:manager` issues remain.
+- Blockers: none observed in this tick.
+- Next recommended issue: no ready implementation issue remains; next tick should perform review-gate triage and create a scoped next-phase issue only if a concrete risk or approved next-step candidate is found.
