@@ -8,6 +8,8 @@ test('manifest is a valid MV3 WebExtension manifest', async () => {
   assert.equal(manifest.manifest_version, 3);
   assert.equal(manifest.action.default_popup, 'popup/popup.html');
   assert.ok(manifest.permissions.includes('storage'));
+  assert.ok(manifest.permissions.includes('activeTab'));
+  assert.ok(!manifest.permissions.includes('tabs'), 'popup-only active tab access must not request broad tabs permission');
 });
 
 test('popup html loads the single source module script', async () => {

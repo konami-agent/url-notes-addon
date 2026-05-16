@@ -5,8 +5,7 @@
   "description": "Store private notes for the current page URL.",
   "permissions": [
     "storage",
-    "activeTab",
-    "tabs"
+    "activeTab"
   ],
   "action": {
     "default_popup": "popup/popup.html",
