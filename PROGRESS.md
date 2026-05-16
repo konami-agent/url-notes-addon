@@ -101,3 +101,16 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: public GitHub board still shows #3 and #4 open with `status:ready`, #5–#10 open with `status:pending`, #1–#2 closed. #5 remains authoritatively blocked because #3/#4 are not closed on GitHub despite source and tests now being pushed.
 - Blockers: no `gh` command and no GitHub API token for issue comments, relabeling, or closing. SSH push works, but it does not provide GitHub Issues mutation.
 - Next recommended issue: install/provide `gh` or a valid GitHub token for the scheduled environment, then close #3/#4 with evidence, mark #5 (`T4 Popup UI implementation`) `status:ready`, and start #5 with strict TDD.
+
+## 2026-05-16T11:40:57+09:00 — scheduled tick removed stale popup script entrypoint
+
+- Start-of-tick review: confirmed project root and preflight `scripts/validate_project_state.py`; read `PROJECT.md`, recent `PROGRESS.md`, recent commits, current source structure, and the public GitHub issue board. Concrete maintainability finding: `popup/popup.js` was a stale scaffold script with obsolete selectors while the manifest-loaded popup HTML uses `../src/popup.js`, creating a future T4 confusion risk.
+- Issue/process note: a dedicated GitHub issue for the review finding could not be created because `gh` is not installed and no `GH_TOKEN`/`GITHUB_TOKEN` is present in this scheduled environment. The improvement was small, local, and verified, so it was committed as test/cleanup work.
+- Issues touched: #3 and #4 were rechecked as the authoritative ready issues and remain locally satisfied from prior commits; #5 remains blocked authoritatively because #3/#4 are still open on GitHub. No issue comments/labels/closures were possible without issue-mutation credentials.
+- TDD evidence: added `test/scaffold.test.js` coverage requiring the popup HTML to load only `../src/popup.js` and requiring no stale `popup/popup.js`; observed RED (`Missing expected rejection`) while the stale file existed; removed `popup/popup.js`; observed GREEN.
+- Files changed: deleted `popup/popup.js`; updated `test/scaffold.test.js`.
+- Verification: `node --test test/scaffold.test.js` passed; `npm test` passed (11 tests); `npm run lint` passed; `python3 scripts/validate_project_state.py` passed.
+- Git: committed and pushed `882f94a` (`test: ensure popup has single entry module`) to `origin/main` via SSH.
+- End-of-tick issue refresh: public board still shows #3 and #4 open with `status:ready`, #5–#10 open with `status:pending`, #1–#2 closed. The board cannot be advanced from this environment without `gh` or a valid GitHub API token.
+- Blockers: no `gh` command and no GitHub API token for authoritative issue comments, relabeling, readiness updates, or closures.
+- Next recommended issue: restore GitHub issue-mutation access, close #3/#4 with accumulated evidence, mark #5 (`T4 Popup UI implementation`) `status:ready`, then implement #5 with strict TDD.
