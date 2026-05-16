@@ -10,10 +10,14 @@ export async function initializePopup({
   debounceMs = DEFAULT_DEBOUNCE_MS,
   setTimeout: schedule = globalThis.setTimeout.bind(globalThis),
   clearTimeout: cancelSchedule = globalThis.clearTimeout.bind(globalThis),
+  urlApi = globalThis.URL,
+  BlobConstructor = globalThis.Blob,
 } = {}) {
   const urlKey = requiredElement(document, '#url-key');
   const note = requiredElement(document, '#note');
   const status = requiredElement(document, '#status');
+  const exportButton = requiredElement(document, '#export-notes');
+  const importInput = requiredElement(document, '#import-notes');
   const store = createStore(adapter.storage.local);
   let activeUrl;
   let saveTimer;
@@ -42,6 +46,36 @@ export async function initializePopup({
         status.textContent = `Error: ${error.message}`;
       }
     }, debounceMs);
+  });
+
+  exportButton.addEventListener('click', async () => {
+    try {
+      const payload = await store.exportNotes();
+      const blob = new BlobConstructor([`${JSON.stringify(payload, null, 2)}\n`], { type: 'application/json' });
+      const objectUrl = urlApi.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.setAttribute('href', objectUrl);
+      anchor.setAttribute('download', 'url-notes-export.json');
+      anchor.click();
+      urlApi.revokeObjectURL(objectUrl);
+      status.textContent = 'Exported JSON.';
+    } catch (error) {
+      status.textContent = `Error: ${error.message}`;
+    }
+  });
+
+  importInput.addEventListener('change', async (event) => {
+    const [file] = Array.from(event.target.files ?? []);
+    if (!file) return;
+
+    try {
+      const payload = JSON.parse(await file.text());
+      const importedCount = await store.importNotes(payload);
+      note.value = await store.loadNote(activeUrl);
+      status.textContent = `Imported ${importedCount} notes.`;
+    } catch (error) {
+      status.textContent = `Error: ${error.message}`;
+    }
   });
 }
 
