@@ -34,3 +34,25 @@ test('readme documents Firefox and Edge loading with a manual smoke checklist', 
   assert.match(readme, /Export JSON/);
   assert.match(readme, /Import JSON/);
 });
+
+test('v0.1 review reports summarize delivered behavior limitations and next-phase options', async () => {
+  const review = await readFile(new URL('../reports/v0.1-review.md', import.meta.url), 'utf8');
+  const options = await readFile(new URL('../reports/next-phase-options.md', import.meta.url), 'utf8');
+
+  assert.match(review, /Implemented behavior/);
+  assert.match(review, /Limitations/);
+  assert.match(review, /popup-only/i);
+  assert.match(review, /local browser storage/i);
+  assert.match(review, /hash fragments are ignored/i);
+  assert.match(review, /query strings are preserved/i);
+
+  for (const nextPhaseTopic of [
+    /search/i,
+    /domain notes/i,
+    /ignore-query/i,
+    /markdown preview/i,
+    /floating note/i,
+  ]) {
+    assert.match(options, nextPhaseTopic);
+  }
+});
