@@ -45,6 +45,14 @@ export function createUrlNoteStore(storageArea) {
       return { schemaVersion: SCHEMA_VERSION, notes };
     },
 
+    async listNotes() {
+      const allItems = await storageArea.get(null);
+      return Object.entries(allItems)
+        .filter(([key, value]) => key.startsWith(NOTE_KEY_PREFIX) && typeof value === 'string')
+        .map(([key, noteText]) => ({ url: key.slice(NOTE_KEY_PREFIX.length), noteText }))
+        .sort((left, right) => left.url.localeCompare(right.url));
+    },
+
     async importNotes(payload) {
       if (!payload || payload.schemaVersion !== SCHEMA_VERSION || typeof payload.notes !== 'object' || payload.notes === null) {
         throw new Error('Unsupported URL notes export format');

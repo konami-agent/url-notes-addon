@@ -89,6 +89,21 @@ test('URL note store exports and imports schema-versioned notes', async () => {
   assert.equal(await target.loadNote('https://example.com/blank'), '');
 });
 
+test('URL note store lists saved notes sorted by URL key', async () => {
+  const storage = new MemoryStorageArea({
+    'unrelated.setting': true,
+    'urlNotes.notes.https://example.com/b': 'bravo',
+    'urlNotes.notes.https://example.com/a': 'alpha',
+    'urlNotes.notes.https://example.com/ignored': 42,
+  });
+  const store = createUrlNoteStore(storage);
+
+  assert.deepEqual(await store.listNotes(), [
+    { url: 'https://example.com/a', noteText: 'alpha' },
+    { url: 'https://example.com/b', noteText: 'bravo' },
+  ]);
+});
+
 test('URL note store rejects invalid imports without changing existing notes', async () => {
   const storage = new MemoryStorageArea();
   const store = createUrlNoteStore(storage);

@@ -1,9 +1,16 @@
 :root { color-scheme: light dark; font-family: system-ui, sans-serif; }
 body { width: 340px; margin: 0; padding: 12px; }
 h1 { font-size: 1rem; margin: 0 0 8px; }
+h2 { font-size: 0.9rem; margin: 12px 0 6px; }
 .url-key { overflow-wrap: anywhere; font-size: 0.75rem; opacity: 0.8; }
 textarea { box-sizing: border-box; width: 100%; min-height: 180px; resize: vertical; }
 .status { min-height: 1.2em; font-size: 0.75rem; }
 .actions { display: flex; gap: 8px; align-items: center; }
 .import-label { cursor: pointer; }
 .import-label input { display: none; }
+.overview input { box-sizing: border-box; width: 100%; margin-bottom: 6px; }
+.empty-state { min-height: 1.2em; margin: 4px 0; font-size: 0.75rem; opacity: 0.75; }
+.notes-list { list-style: none; margin: 0; padding: 0; max-height: 160px; overflow: auto; }
+.notes-list li { border-top: 1px solid color-mix(in srgb, currentColor 20%, transparent); padding: 6px 0; }
+.notes-list a { display: block; overflow-wrap: anywhere; font-size: 0.75rem; }
+.notes-list p { margin: 2px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 0.75rem; opacity: 0.85; }

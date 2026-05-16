@@ -9,6 +9,7 @@
 - Per-URL notes keyed by a normalized URL.
 - Hash fragments are ignored; query strings are preserved.
 - JSON export/import is available from the popup.
+- The popup lists saved notes and filters them locally by URL or note text.
 - No account, remote sync, or external service.
 
 ## Export/import JSON
@@ -61,10 +62,12 @@ After loading the extension in Firefox or Edge:
 2. Confirm the popup shows the current tab URL and the normalized note key.
 3. Type a note, wait for the saved status, close the popup, and reopen it on the same URL to confirm the note reloads.
 4. Open a different normalized URL and confirm it has a different note.
-5. Clear the note text and confirm the saved note is deleted.
-6. Use **Export JSON** and confirm a schema-versioned `.json` file downloads.
-7. Use **Import JSON** with a valid backup and confirm the current note reloads from imported data.
-8. Try an invalid JSON import and confirm the popup reports an error without losing existing notes.
+5. Confirm the saved-notes list shows existing URL keys, then search by URL text and by note text.
+6. Click a listed URL key and confirm it opens as a normal link without changing the stored notes.
+7. Clear the note text and confirm the saved note is deleted.
+8. Use **Export JSON** and confirm a schema-versioned `.json` file downloads.
+9. Use **Import JSON** with a valid backup and confirm the current note reloads from imported data.
+10. Try an invalid JSON import and confirm the popup reports an error without losing existing notes.
 
 ## Privacy
 

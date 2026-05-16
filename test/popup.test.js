@@ -10,6 +10,7 @@ class FakeElement {
     this.listeners = new Map();
     this.attributes = new Map();
     this.clicked = false;
+    this.children = [];
   }
 
   addEventListener(type, listener) {
@@ -22,6 +23,14 @@ class FakeElement {
 
   click() {
     this.clicked = true;
+  }
+
+  append(...children) {
+    this.children.push(...children);
+  }
+
+  replaceChildren(...children) {
+    this.children = children;
   }
 
   dispatch(type, event = { target: this }) {
@@ -39,6 +48,9 @@ function createPopupDocument() {
     '#status': new FakeElement(),
     '#export-notes': new FakeElement(),
     '#import-notes': new FakeElement(),
+    '#notes-search': new FakeElement(),
+    '#notes-list': new FakeElement(),
+    '#notes-empty': new FakeElement(),
   };
   return {
     elements,
@@ -47,10 +59,10 @@ function createPopupDocument() {
       return elements[selector] ?? null;
     },
     createElement(tagName) {
-      assert.equal(tagName, 'a');
-      const anchor = new FakeElement();
-      anchors.push(anchor);
-      return anchor;
+      const element = new FakeElement();
+      element.tagName = tagName;
+      if (tagName === 'a') anchors.push(element);
+      return element;
     },
   };
 }
@@ -92,6 +104,7 @@ test('popup loads active tab note and displays normalized key', async () => {
     },
     async exportNotes() { return { schemaVersion: 1, notes: {} }; },
     async importNotes() { return 0; },
+    async listNotes() { return []; },
   };
 
   await initializePopup({
@@ -116,6 +129,7 @@ test('popup debounces note edits and reports saved status', async () => {
     async saveNote(url, noteText) { saved.push([url, noteText]); },
     async exportNotes() { return { schemaVersion: 1, notes: {} }; },
     async importNotes() { return 0; },
+    async listNotes() { return []; },
   };
   await initializePopup({
     document,
@@ -144,6 +158,7 @@ test('popup treats blank edits as deleted notes', async () => {
     async saveNote(url, noteText) { saved.push([url, noteText]); },
     async exportNotes() { return { schemaVersion: 1, notes: {} }; },
     async importNotes() { return 0; },
+    async listNotes() { return []; },
   };
   await initializePopup({
     document,
@@ -171,6 +186,7 @@ test('popup exports notes as a schema-versioned JSON download', async () => {
     async saveNote() {},
     async exportNotes() { return { schemaVersion: 1, notes: { 'https://example.com/page': 'note' } }; },
     async importNotes() { return 0; },
+    async listNotes() { return []; },
   };
 
   await initializePopup({
@@ -214,6 +230,7 @@ test('popup imports JSON, merges via the note store, and reloads the current not
       imported.push(payload);
       return 2;
     },
+    async listNotes() { return []; },
   };
   await initializePopup({ document, adapter: createAdapter(), createStore: () => store });
 
@@ -237,6 +254,7 @@ test('popup reports invalid import errors without reloading the current note', a
     async saveNote() {},
     async exportNotes() { return { schemaVersion: 1, notes: {} }; },
     async importNotes() { throw new Error('Unsupported URL notes export format'); },
+    async listNotes() { return []; },
   };
   await initializePopup({ document, adapter: createAdapter(), createStore: () => store });
 
@@ -247,6 +265,43 @@ test('popup reports invalid import errors without reloading the current note', a
   assert.equal(loadCount, 1);
   assert.equal(document.elements['#note'].value, 'existing note');
   assert.equal(document.elements['#status'].textContent, 'Error: Unsupported URL notes export format');
+});
+
+test('popup lists saved notes and filters by URL or note text', async () => {
+  const document = createPopupDocument();
+  const store = {
+    async loadNote() { return ''; },
+    async saveNote() {},
+    async exportNotes() { return { schemaVersion: 1, notes: {} }; },
+    async importNotes() { return 0; },
+    async listNotes() {
+      return [
+        { url: 'https://example.com/alpha', noteText: 'meeting notes' },
+        { url: 'https://example.org/bravo', noteText: 'recipe draft' },
+      ];
+    },
+  };
+
+  await initializePopup({ document, adapter: createAdapter(), createStore: () => store });
+
+  assert.equal(document.elements['#notes-list'].children.length, 2);
+  assert.equal(document.elements['#notes-list'].children[0].children[0].textContent, 'https://example.com/alpha');
+  assert.equal(document.elements['#notes-list'].children[0].children[0].attributes.get('href'), 'https://example.com/alpha');
+  assert.equal(document.elements['#notes-list'].children[0].children[0].attributes.get('target'), '_blank');
+  assert.equal(document.elements['#notes-list'].children[0].children[0].attributes.get('rel'), 'noopener noreferrer');
+  assert.equal(document.elements['#notes-empty'].textContent, '');
+
+  document.elements['#notes-search'].value = 'recipe';
+  document.elements['#notes-search'].dispatch('input');
+
+  assert.equal(document.elements['#notes-list'].children.length, 1);
+  assert.equal(document.elements['#notes-list'].children[0].children[0].textContent, 'https://example.org/bravo');
+
+  document.elements['#notes-search'].value = 'missing';
+  document.elements['#notes-search'].dispatch('input');
+
+  assert.equal(document.elements['#notes-list'].children.length, 0);
+  assert.equal(document.elements['#notes-empty'].textContent, 'No matching notes.');
 });
 
 test('popup reports errors without throwing during initialization', async () => {

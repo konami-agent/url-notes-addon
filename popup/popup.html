@@ -16,6 +16,12 @@
       <button id="export-notes" type="button">Export JSON</button>
       <label class="import-label">Import JSON<input id="import-notes" type="file" accept="application/json"></label>
     </div>
+    <section class="overview" aria-labelledby="notes-overview-title">
+      <h2 id="notes-overview-title">Saved notes</h2>
+      <input id="notes-search" type="search" placeholder="Search URL or note text" aria-label="Search saved notes">
+      <p id="notes-empty" class="empty-state"></p>
+      <ul id="notes-list" class="notes-list"></ul>
+    </section>
   </main>
   <script type="module" src="../src/popup.js"></script>
 </body>

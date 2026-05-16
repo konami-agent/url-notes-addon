@@ -18,9 +18,15 @@ export async function initializePopup({
   const status = requiredElement(document, '#status');
   const exportButton = requiredElement(document, '#export-notes');
   const importInput = requiredElement(document, '#import-notes');
+  const notesSearch = requiredElement(document, '#notes-search');
+  const notesList = requiredElement(document, '#notes-list');
+  const notesEmpty = requiredElement(document, '#notes-empty');
   const store = createStore(adapter.storage.local);
   let activeUrl;
   let saveTimer;
+  let listedNotes = [];
+
+  const renderNotes = () => renderNoteOverview({ document, notesList, notesEmpty, notes: listedNotes, query: notesSearch.value });
 
   try {
     const activeTab = await adapter.getActiveTab();
@@ -29,6 +35,8 @@ export async function initializePopup({
     activeUrl = activeTab.url;
     urlKey.textContent = normalizeUrlForNoteKey(activeUrl);
     note.value = await store.loadNote(activeUrl);
+    listedNotes = await store.listNotes();
+    renderNotes();
     status.textContent = 'Loaded.';
   } catch (error) {
     status.textContent = `Error: ${error.message}`;
@@ -41,6 +49,8 @@ export async function initializePopup({
     saveTimer = schedule(async () => {
       try {
         await store.saveNote(activeUrl, note.value);
+        listedNotes = await store.listNotes();
+        renderNotes();
         status.textContent = note.value.trim() === '' ? 'Deleted.' : 'Saved.';
       } catch (error) {
         status.textContent = `Error: ${error.message}`;
@@ -72,11 +82,44 @@ export async function initializePopup({
       const payload = JSON.parse(await file.text());
       const importedCount = await store.importNotes(payload);
       note.value = await store.loadNote(activeUrl);
+      listedNotes = await store.listNotes();
+      renderNotes();
       status.textContent = `Imported ${importedCount} notes.`;
     } catch (error) {
       status.textContent = `Error: ${error.message}`;
     }
   });
+
+  notesSearch.addEventListener('input', renderNotes);
+}
+
+function renderNoteOverview({ document, notesList, notesEmpty, notes, query }) {
+  const normalizedQuery = String(query ?? '').trim().toLowerCase();
+  const matchingNotes = notes.filter(({ url, noteText }) => {
+    if (normalizedQuery === '') return true;
+    return url.toLowerCase().includes(normalizedQuery) || noteText.toLowerCase().includes(normalizedQuery);
+  });
+
+  notesList.replaceChildren(...matchingNotes.map(({ url, noteText }) => {
+    const item = document.createElement('li');
+    const link = document.createElement('a');
+    link.textContent = url;
+    link.setAttribute('href', url);
+    link.setAttribute('target', '_blank');
+    link.setAttribute('rel', 'noopener noreferrer');
+    const preview = document.createElement('p');
+    preview.textContent = noteText;
+    item.append(link, preview);
+    return item;
+  }));
+
+  if (matchingNotes.length > 0) {
+    notesEmpty.textContent = '';
+  } else if (notes.length === 0) {
+    notesEmpty.textContent = 'No saved notes yet.';
+  } else {
+    notesEmpty.textContent = 'No matching notes.';
+  }
 }
 
 function requiredElement(document, selector) {
