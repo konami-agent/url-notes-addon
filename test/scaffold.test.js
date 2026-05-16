@@ -19,3 +19,16 @@ test('popup html loads the single source module script', async () => {
     { code: 'ENOENT' },
   );
 });
+
+test('readme documents Firefox and Edge loading with a manual smoke checklist', async () => {
+  const readme = await readFile(new URL('../README.md', import.meta.url), 'utf8');
+
+  assert.match(readme, /about:debugging/);
+  assert.match(readme, /Load Temporary Add-on/);
+  assert.match(readme, /edge:\/\/extensions/);
+  assert.match(readme, /Load unpacked/);
+  assert.match(readme, /Manual smoke checklist/);
+  assert.match(readme, /current tab URL/);
+  assert.match(readme, /Export JSON/);
+  assert.match(readme, /Import JSON/);
+});

@@ -31,7 +31,11 @@ Use **Import JSON** to merge a backup into local extension storage. Imported not
 ```bash
 npm test
 npm run lint
+npm run validate:extension
+npm run build:zip
 ```
+
+`npm run build:zip` writes the distributable extension archive to `dist/`.
 
 ## Load unpacked during development
 
@@ -48,6 +52,19 @@ Microsoft Edge:
 2. Enable Developer mode.
 3. Click “Load unpacked”.
 4. Select this repository directory.
+
+## Manual smoke checklist
+
+After loading the extension in Firefox or Edge:
+
+1. Open a normal web page and click the URL Notes toolbar button.
+2. Confirm the popup shows the current tab URL and the normalized note key.
+3. Type a note, wait for the saved status, close the popup, and reopen it on the same URL to confirm the note reloads.
+4. Open a different normalized URL and confirm it has a different note.
+5. Clear the note text and confirm the saved note is deleted.
+6. Use **Export JSON** and confirm a schema-versioned `.json` file downloads.
+7. Use **Import JSON** with a valid backup and confirm the current note reloads from imported data.
+8. Try an invalid JSON import and confirm the popup reports an error without losing existing notes.
 
 ## Privacy
 
