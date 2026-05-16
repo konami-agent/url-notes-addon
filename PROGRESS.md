@@ -167,3 +167,17 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Closed #9 (`T8 GitHub repository publication`) with evidence after confirming remote `main` at `92f5003cf5f2500b41940627ae85424fb780c980` and CI run `25960732938` succeeded.
 - Moved #10 (`T9 v0.1 review and next-phase proposal`) from `status:pending` to `status:ready` because #9 is now closed.
 - Final board state: #1–#9 and #11 closed with `status:completed`; #10 open with `status:ready`.
+
+## 2026-05-17T00:31:39+09:00 — scheduled tick completed v0.1 review and opened CI deprecation follow-up
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, recent commits, full GitHub project-manager issue board, and current project structure. No duplicate review issue was created before implementation because #10 already covered the remaining v0.1 review/next-phase reporting gap.
+- Issues touched: #10 moved to in progress, completed, commented with evidence, and closed; #12 (`Address GitHub Actions Node.js 20 deprecation warning`) was created as a follow-up after the successful CI run emitted a Node.js 20 JavaScript action deprecation annotation.
+- TDD evidence for #10: added a documentation invariant to `test/scaffold.test.js` first and observed RED via `node --test test/scaffold.test.js` failing on missing `reports/v0.1-review.md`; added `reports/v0.1-review.md` and `reports/next-phase-options.md`; observed GREEN.
+- Files changed: `test/scaffold.test.js`, `reports/v0.1-review.md`, `reports/next-phase-options.md`, `PROGRESS.md`.
+- Verification: `node --test test/scaffold.test.js` passed; `npm test` passed (22 tests); `npm run lint` passed; `npm run validate:extension` passed; `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; final `python3 scripts/validate_project_state.py` passed.
+- Git/CI: pushed `13c475c` (`docs: add v0.1 review reports`) to `origin/main`; GitHub Actions CI run `25965761832` completed successfully.
+- End-of-tick issue refresh: #1–#11 are closed with `status:completed`; #12 is open with `status:ready` and `priority:P2`.
+- Blockers: none observed in this tick.
+- Next recommended issue: #12 (`Address GitHub Actions Node.js 20 deprecation warning`).
