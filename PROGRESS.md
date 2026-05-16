@@ -130,3 +130,19 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: #1–#6 are closed with `status:completed`; #7 (`T6 Validation, build zip, and CI`) is open with `status:ready`; #8–#10 remain pending.
 - Blockers: none observed in this tick.
 - Next recommended issue: #7 (`T6 Validation, build zip, and CI`).
+
+
+## 2026-05-16T16:22:18+09:00 — scheduled tick completed validation/CI and manual docs
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, recent commits, issue board, and current build/source structure. Concrete finding while implementing #7: the first build archive included `.gitkeep` placeholders; I captured this as a failing test and fixed the builder to exclude them. No duplicate review issue was created because #7 already covered distributable build quality.
+- Issues touched: #7 (`T6 Validation, build zip, and CI`) moved to in progress, completed, commented with evidence, and closed; #8 (`T7 Manual browser loading documentation`) was unblocked, moved to in progress, completed, commented with evidence, and closed; #9 (`T8 GitHub repository publication`) was moved to `status:ready` because #7/#8 are closed.
+- TDD evidence for #7: wrote `test/buildScripts.test.js` before scripts existed and observed RED (`ERR_MODULE_NOT_FOUND` for `scripts/build-zip.js`); implemented `scripts/validate-extension.js`, `scripts/build-zip.js`, npm script wiring, and `.github/workflows/ci.yml`; added a second RED assertion for excluding `.gitkeep` from the archive, then fixed the builder; observed GREEN.
+- TDD evidence for #8: added README documentation assertions to `test/scaffold.test.js` and observed RED for missing `Manual smoke checklist`; updated `README.md`; observed GREEN.
+- Files changed: `.github/workflows/ci.yml`, `package.json`, `scripts/build-zip.js`, `scripts/validate-extension.js`, `scripts/lint.js`, `test/buildScripts.test.js`, `test/scaffold.test.js`, `README.md`, `PROGRESS.md`.
+- Verification: `node --test test/buildScripts.test.js` passed; `node --test test/scaffold.test.js` passed; `npm test` passed (21 tests); `npm run lint` passed; `npm run validate:extension` passed; `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip` with 9 extension files and no `.gitkeep`; final `python3 scripts/validate_project_state.py` passed.
+- Git/CI: pushed `b24ec2c` (`feat: add extension validation and CI`) and `98efbe4` (`docs: add manual loading smoke checklist`) to `origin/main`; GitHub Actions CI runs `25955990371` and `25956022306` both completed successfully.
+- End-of-tick issue refresh: #1–#8 are closed with `status:completed`; #9 is open with `status:ready`; #10 remains open with `status:pending`.
+- Blockers: none observed in this tick.
+- Next recommended issue: #9 (`T8 GitHub repository publication`).
