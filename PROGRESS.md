@@ -114,3 +114,19 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: public board still shows #3 and #4 open with `status:ready`, #5–#10 open with `status:pending`, #1–#2 closed. The board cannot be advanced from this environment without `gh` or a valid GitHub API token.
 - Blockers: no `gh` command and no GitHub API token for authoritative issue comments, relabeling, readiness updates, or closures.
 - Next recommended issue: restore GitHub issue-mutation access, close #3/#4 with accumulated evidence, mark #5 (`T4 Popup UI implementation`) `status:ready`, then implement #5 with strict TDD.
+
+
+## 2026-05-16T12:14:42+09:00 — scheduled tick restored issue mutation and completed popup/export UX
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, recent commits, issue board, and current popup/source structure. Finding: previous blocker is resolved because `gh` issue mutation now works; the existing #5 covered the remaining scaffold-only popup UI gap, so no duplicate review issue was created.
+- Issues touched: closed #3 and #4 with accumulated evidence; moved #5 to in progress, completed it, and closed it; moved #6 to ready, then in progress, completed it, and closed it; moved #7 to `status:ready` because all dependencies are now closed.
+- TDD evidence for #5: wrote `test/popup.test.js` first and observed RED because `src/popup.js` did not export `initializePopup`; implemented minimal popup loading/editing/debounce/status behavior; observed GREEN.
+- TDD evidence for #6: extended `test/popup.test.js` first and observed RED for missing export/import event handlers; implemented minimal export/download and import/merge handlers; observed GREEN.
+- Files changed: `src/popup.js`, `test/popup.test.js`, `README.md`, `PROGRESS.md`.
+- Verification: `node --test test/popup.test.js` passed; `npm test` passed (18 tests); `npm run lint` passed; final `python3 scripts/validate_project_state.py` passed.
+- Git: pushed `3a8540e` (`feat: implement popup note editing`) and `dae7d64` (`feat: add popup export import UX`) to `origin/main`.
+- End-of-tick issue refresh: #1–#6 are closed with `status:completed`; #7 (`T6 Validation, build zip, and CI`) is open with `status:ready`; #8–#10 remain pending.
+- Blockers: none observed in this tick.
+- Next recommended issue: #7 (`T6 Validation, build zip, and CI`).
