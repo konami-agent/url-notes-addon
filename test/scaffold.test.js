@@ -35,6 +35,15 @@ test('readme documents Firefox and Edge loading with a manual smoke checklist', 
   assert.match(readme, /Import JSON/);
 });
 
+test('ci workflow uses action versions that have migrated off Node.js 20 runtime', async () => {
+  const workflow = await readFile(new URL('../.github/workflows/ci.yml', import.meta.url), 'utf8');
+
+  assert.match(workflow, /uses: actions\/checkout@v6/);
+  assert.match(workflow, /uses: actions\/setup-node@v6/);
+  assert.match(workflow, /uses: actions\/upload-artifact@v7/);
+  assert.doesNotMatch(workflow, /uses: actions\/(?:checkout|setup-node|upload-artifact)@v4/);
+});
+
 test('v0.1 review reports summarize delivered behavior limitations and next-phase options', async () => {
   const review = await readFile(new URL('../reports/v0.1-review.md', import.meta.url), 'utf8');
   const options = await readFile(new URL('../reports/next-phase-options.md', import.meta.url), 'utf8');
