@@ -313,3 +313,11 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #18, review remaining next-phase options; markdown preview should remain proposal-only unless sanitizer/dependency policy is explicit.
 
+### 2026-05-18T01:14:02+09:00 — final board refresh addendum
+
+- Pushed commit `60b955b` (`fix: prevalidate combined backup imports`) to `origin/main`.
+- GitHub Actions CI run `25996019253` completed successfully for commit `60b955b438f93a8af4d244751978f16b221edf5e`; `gh run view` reported the validate job succeeded.
+- Commented on and closed #18 with `status:completed` after recording verification evidence.
+- Final board state: #1–#18 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed before commit; no blockers observed.
+
