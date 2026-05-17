@@ -335,3 +335,11 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #19, review remaining next-phase options; markdown preview should remain proposal-only unless sanitizer and dependency policy are explicit.
 
+### 2026-05-18T05:23:05+09:00 — final board refresh addendum
+
+- Pushed commit `3524d7c` (`feat: include domain notes in overview`) to `origin/main`.
+- GitHub Actions CI run `26001685992` completed successfully for commit `3524d7ccc3da346f8978d02dd8c70fdd9b2ef7c4`; `gh run view` reported the validate job succeeded.
+- Commented on and closed #19 with `status:completed` after recording verification evidence. A first evidence comment was mangled by shell backtick expansion; a corrected authoritative evidence comment was added via `--body-file`.
+- Final board state: #1–#19 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed before feature commit; no blockers observed.
+
