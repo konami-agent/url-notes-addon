@@ -97,7 +97,9 @@ export async function initializePopup({
 
   exportButton.addEventListener('click', async () => {
     try {
-      const payload = await store.exportNotes();
+      const urlPayload = await store.exportNotes();
+      const domainPayload = await domainStore.exportNotes();
+      const payload = { ...urlPayload, domainNotes: domainPayload.domainNotes };
       const blob = new BlobConstructor([`${JSON.stringify(payload, null, 2)}\n`], { type: 'application/json' });
       const objectUrl = urlApi.createObjectURL(blob);
       const anchor = document.createElement('a');
@@ -117,11 +119,13 @@ export async function initializePopup({
 
     try {
       const payload = JSON.parse(await file.text());
-      const importedCount = await store.importNotes(payload);
+      const importedDomainCount = await domainStore.importNotes(payload);
+      const importedUrlCount = await store.importNotes(payload);
       note.value = await store.loadNote(activeUrl);
+      domainNote.value = await domainStore.loadNote(activeUrl);
       listedNotes = await store.listNotes();
       renderNotes();
-      status.textContent = `Imported ${importedCount} notes.`;
+      status.textContent = `Imported ${importedUrlCount + importedDomainCount} notes.`;
     } catch (error) {
       status.textContent = `Error: ${error.message}`;
     }

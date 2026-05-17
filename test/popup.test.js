@@ -334,7 +334,7 @@ test('popup treats blank edits as deleted notes', async () => {
   assert.equal(document.elements['#status'].textContent, 'Deleted.');
 });
 
-test('popup exports notes as a schema-versioned JSON download', async () => {
+test('popup exports URL and domain notes as a schema-versioned JSON download', async () => {
   const document = createPopupDocument();
   const objectUrls = [];
   let revoked;
@@ -345,11 +345,18 @@ test('popup exports notes as a schema-versioned JSON download', async () => {
     async importNotes() { return 0; },
     async listNotes() { return []; },
   };
+  const domainStore = {
+    async loadNote() { return ''; },
+    async saveNote() {},
+    async exportNotes() { return { schemaVersion: 1, domainNotes: { 'example.com': 'domain note' } }; },
+    async importNotes() { return 0; },
+  };
 
   await initializePopup({
     document,
     adapter: createAdapter(),
     createStore: () => store,
+    createDomainStore: () => domainStore,
     urlApi: {
       createObjectURL(blob) {
         objectUrls.push(blob);
@@ -369,6 +376,8 @@ test('popup exports notes as a schema-versioned JSON download', async () => {
 
   assert.equal(objectUrls[0].type, 'application/json');
   assert.match(objectUrls[0].text, /"schemaVersion": 1/);
+  assert.match(objectUrls[0].text, /"https:\/\/example.com\/page": "note"/);
+  assert.match(objectUrls[0].text, /"example.com": "domain note"/);
   assert.equal(document.anchors[0].attributes.get('download'), 'url-notes-export.json');
   assert.equal(document.anchors[0].attributes.get('href'), 'blob:export-url');
   assert.equal(document.anchors[0].clicked, true);
@@ -376,28 +385,40 @@ test('popup exports notes as a schema-versioned JSON download', async () => {
   assert.equal(document.elements['#status'].textContent, 'Exported JSON.');
 });
 
-test('popup imports JSON, merges via the note store, and reloads the current note', async () => {
+test('popup imports JSON, merges via URL and domain note stores, and reloads the current note', async () => {
   const document = createPopupDocument();
-  const imported = [];
+  const urlImports = [];
+  const domainImports = [];
   const store = {
-    async loadNote() { return imported.length ? 'imported current note' : ''; },
+    async loadNote() { return urlImports.length ? 'imported current note' : ''; },
     async saveNote() {},
     async exportNotes() { return { schemaVersion: 1, notes: {} }; },
     async importNotes(payload) {
-      imported.push(payload);
+      urlImports.push(payload);
       return 2;
     },
     async listNotes() { return []; },
   };
-  await initializePopup({ document, adapter: createAdapter(), createStore: () => store });
+  const domainStore = {
+    async loadNote() { return domainImports.length ? 'imported domain note' : ''; },
+    async saveNote() {},
+    async exportNotes() { return { schemaVersion: 1, domainNotes: {} }; },
+    async importNotes(payload) {
+      domainImports.push(payload);
+      return 1;
+    },
+  };
+  await initializePopup({ document, adapter: createAdapter(), createStore: () => store, createDomainStore: () => domainStore });
 
   await document.elements['#import-notes'].dispatch('change', {
-    target: { files: [{ text: async () => '{"schemaVersion":1,"notes":{"https://example.com/page":"imported current note"}}' }] },
+    target: { files: [{ text: async () => '{"schemaVersion":1,"notes":{"https://example.com/page":"imported current note"},"domainNotes":{"example.com":"imported domain note"}}' }] },
   });
 
-  assert.deepEqual(imported, [{ schemaVersion: 1, notes: { 'https://example.com/page': 'imported current note' } }]);
+  assert.deepEqual(urlImports, [{ schemaVersion: 1, notes: { 'https://example.com/page': 'imported current note' }, domainNotes: { 'example.com': 'imported domain note' } }]);
+  assert.deepEqual(domainImports, [{ schemaVersion: 1, notes: { 'https://example.com/page': 'imported current note' }, domainNotes: { 'example.com': 'imported domain note' } }]);
   assert.equal(document.elements['#note'].value, 'imported current note');
-  assert.equal(document.elements['#status'].textContent, 'Imported 2 notes.');
+  assert.equal(document.elements['#domain-note'].value, 'imported domain note');
+  assert.equal(document.elements['#status'].textContent, 'Imported 3 notes.');
 });
 
 test('popup reports invalid import errors without reloading the current note', async () => {

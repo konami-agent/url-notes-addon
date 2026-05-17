@@ -16,18 +16,21 @@
 
 ## Export/import JSON
 
-Use **Export JSON** in the popup to download a schema-versioned backup file:
+Use **Export JSON** in the popup to download a schema-versioned backup file. The backup backs up both URL notes and domain notes:
 
 ```json
 {
   "schemaVersion": 1,
   "notes": {
     "https://example.com/page?query=1": "Example note"
+  },
+  "domainNotes": {
+    "example.com": "Site-level note"
   }
 }
 ```
 
-Use **Import JSON** to merge a backup into local extension storage. Imported notes are normalized with the same URL-key rules as saved notes. If an imported URL normalizes to an existing note key, the imported note overwrites the existing note for that key. Blank imported notes are ignored. Invalid files are rejected before saving, so existing notes are not partially corrupted.
+Use **Import JSON** to merge a backup into local extension storage. Imported URL notes are normalized with the same URL-key rules as saved notes. Imported domain notes are normalized to lowercase host keys. If an imported URL or domain normalizes to an existing note key, the imported note overwrites the existing note for that key. Blank imported notes are ignored. Invalid files are rejected before saving, so existing notes are not partially corrupted.
 
 ## Development
 

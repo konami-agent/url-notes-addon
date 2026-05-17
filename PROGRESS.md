@@ -277,3 +277,17 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Final board state: #1–#16 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed before commit; no blockers observed.
 
+## 2026-05-17T21:07:29+09:00 — scheduled tick included domain notes in JSON backups
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, the full `project:manager` board, current popup/source structure, and next-phase reports. Concrete finding: after #16 added domain notes, JSON export/import still backed up only URL notes, leaving domain notes out of local backups.
+- Issues touched: created #17 (`Include domain notes in JSON backup`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy comment. Completion/closure are pending commit, push, and CI evidence.
+- Issue trust/autonomy decision: #17 is local-only backup-completeness maintenance/product work derived from existing domain-note behavior, privacy-preserving, small, and verifiable; it does not add sync/login/external services/store publishing or major architecture churn, so implementation proceeded without additional owner approval.
+- TDD evidence for #17: added `test/urlNotes.test.js` coverage for domain-note export/import, old-export compatibility, and invalid domain-note import rejection; added `test/popup.test.js` coverage for popup backup export/import using URL and domain stores; added `test/scaffold.test.js` README documentation invariant. Observed RED via `node --test test/urlNotes.test.js test/popup.test.js test/scaffold.test.js` with missing `domainStore.exportNotes`/`importNotes`, popup payload omissions, and README documentation failure; implemented minimal store, popup, and docs; observed GREEN.
+- Files changed: `src/urlNotes.js`, `src/popup.js`, `test/urlNotes.test.js`, `test/popup.test.js`, `test/scaffold.test.js`, `README.md`, `PROGRESS.md`.
+- Verification: `node --test test/urlNotes.test.js test/popup.test.js test/scaffold.test.js` passed (31 tests); `npm test` passed (37 tests); `npm run lint` passed; `npm run validate:extension` passed; `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI, and final #17 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #17, review remaining next-phase options; markdown preview should stay pending/proposal unless sanitizer and dependency policy are explicit.
+

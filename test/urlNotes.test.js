@@ -172,3 +172,58 @@ test('domain note store saves and deletes notes in a separate namespace from URL
   assert.equal(await domainStore.loadNote('https://example.com/path'), '');
   assert.equal(await urlStore.loadNote('https://example.com/path'), 'page note');
 });
+
+test('domain note store exports and imports schema-versioned domain notes', async () => {
+  const source = createDomainNoteStore(new MemoryStorageArea());
+  await source.saveNote('HTTPS://Example.COM/path?x=1#section', 'example domain note');
+  await source.saveNote('https://example.org/other', 'org domain note');
+
+  assert.deepEqual(await source.exportNotes(), {
+    schemaVersion: 1,
+    domainNotes: {
+      'example.com': 'example domain note',
+      'example.org': 'org domain note',
+    },
+  });
+
+  const target = createDomainNoteStore(new MemoryStorageArea());
+  const importedCount = await target.importNotes({
+    schemaVersion: 1,
+    domainNotes: {
+      'Example.COM': 'new example note',
+      'example.net': 'net note',
+      'blank.example': '',
+    },
+  });
+
+  assert.equal(importedCount, 2);
+  assert.equal(await target.loadNote('https://example.com/page'), 'new example note');
+  assert.equal(await target.loadNote('https://example.net/page'), 'net note');
+  assert.equal(await target.loadNote('https://blank.example/page'), '');
+});
+
+test('domain note store accepts old exports without domain notes', async () => {
+  const domainStore = createDomainNoteStore(new MemoryStorageArea());
+
+  assert.equal(await domainStore.importNotes({ schemaVersion: 1, notes: { 'https://example.com': 'url note only' } }), 0);
+});
+
+test('domain note store rejects invalid imports without changing existing domain notes', async () => {
+  const storage = new MemoryStorageArea();
+  const domainStore = createDomainNoteStore(storage);
+  await domainStore.saveNote('https://example.com/existing', 'keep me');
+
+  await assert.rejects(
+    () => domainStore.importNotes({
+      schemaVersion: 1,
+      domainNotes: {
+        'example.net': 'should not be saved',
+        'bad domain name': 'invalid',
+      },
+    }),
+    /Unsupported URL notes export format/,
+  );
+
+  assert.equal(await domainStore.loadNote('https://example.com/anything'), 'keep me');
+  assert.equal(await domainStore.loadNote('https://example.net/anything'), '');
+});

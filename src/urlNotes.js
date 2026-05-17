@@ -98,6 +98,42 @@ export function createDomainNoteStore(storageArea) {
       }
       await storageArea.set({ [storageKey]: String(noteText) });
     },
+
+    async exportNotes() {
+      const allItems = await storageArea.get(null);
+      const domainNotes = {};
+      for (const [key, value] of Object.entries(allItems)) {
+        if (key.startsWith(DOMAIN_NOTE_KEY_PREFIX) && typeof value === 'string') {
+          domainNotes[key.slice(DOMAIN_NOTE_KEY_PREFIX.length)] = value;
+        }
+      }
+      return { schemaVersion: SCHEMA_VERSION, domainNotes };
+    },
+
+    async importNotes(payload) {
+      if (!payload || payload.schemaVersion !== SCHEMA_VERSION) {
+        throw new Error('Unsupported URL notes export format');
+      }
+      if (payload.domainNotes == null) return 0;
+      if (typeof payload.domainNotes !== 'object') {
+        throw new Error('Unsupported URL notes export format');
+      }
+
+      const domainNotesToImport = [];
+      try {
+        for (const [rawDomain, noteText] of Object.entries(payload.domainNotes)) {
+          if (String(noteText ?? '').trim() === '') continue;
+          domainNotesToImport.push([normalizeDomainForImport(rawDomain), String(noteText)]);
+        }
+      } catch {
+        throw new Error('Unsupported URL notes export format');
+      }
+
+      for (const [domain, noteText] of domainNotesToImport) {
+        await storageArea.set({ [`${DOMAIN_NOTE_KEY_PREFIX}${domain}`]: noteText });
+      }
+      return domainNotesToImport.length;
+    },
   };
 }
 
@@ -107,4 +143,10 @@ function noteStorageKey(rawUrl, keyOptions) {
 
 function domainNoteStorageKey(rawUrl) {
   return `${DOMAIN_NOTE_KEY_PREFIX}${normalizeUrlForDomainNoteKey(rawUrl)}`;
+}
+
+function normalizeDomainForImport(rawDomain) {
+  const domain = String(rawDomain ?? '').trim();
+  if (domain === '' || domain.includes('/')) throw new Error('Invalid domain');
+  return new URL(`https://${domain}`).hostname.toLowerCase();
 }
