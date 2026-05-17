@@ -2,7 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 import {
+  createDomainNoteStore,
   createUrlNoteStore,
+  normalizeUrlForDomainNoteKey,
   normalizeUrlForNoteKey,
 } from '../src/urlNotes.js';
 
@@ -44,6 +46,13 @@ test('normalizeUrlForNoteKey can ignore query strings when explicitly requested'
   assert.equal(
     normalizeUrlForNoteKey('HTTPS://Example.COM/path/?b=2&a=1#section', { ignoreQuery: true }),
     'https://example.com/path',
+  );
+});
+
+test('normalizeUrlForDomainNoteKey extracts a lowercase host without URL path or query', () => {
+  assert.equal(
+    normalizeUrlForDomainNoteKey('HTTPS://Example.COM/path/?b=2&a=1#section'),
+    'example.com',
   );
 });
 
@@ -141,4 +150,25 @@ test('URL note store rejects invalid imports without changing existing notes', a
 
   assert.equal(await store.loadNote('https://example.com/existing'), 'keep me');
   assert.equal(await store.loadNote('https://example.com/new'), '');
+});
+
+test('domain note store saves and deletes notes in a separate namespace from URL notes', async () => {
+  const storage = new MemoryStorageArea();
+  const urlStore = createUrlNoteStore(storage);
+  const domainStore = createDomainNoteStore(storage);
+
+  await urlStore.saveNote('https://example.com/path', 'page note');
+  await domainStore.saveNote('HTTPS://Example.COM/other?x=1#section', 'domain note');
+
+  assert.equal(await domainStore.loadNote('https://example.com/another'), 'domain note');
+  assert.equal(await urlStore.loadNote('https://example.com/path'), 'page note');
+  assert.deepEqual(await urlStore.exportNotes(), {
+    schemaVersion: 1,
+    notes: { 'https://example.com/path': 'page note' },
+  });
+
+  await domainStore.saveNote('https://example.com/anything', '  ');
+
+  assert.equal(await domainStore.loadNote('https://example.com/path'), '');
+  assert.equal(await urlStore.loadNote('https://example.com/path'), 'page note');
 });

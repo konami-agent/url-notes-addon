@@ -33,6 +33,8 @@ test('readme documents Firefox and Edge loading with a manual smoke checklist', 
   assert.match(readme, /current tab URL/);
   assert.match(readme, /Export JSON/);
   assert.match(readme, /Import JSON/);
+  assert.match(readme, /Domain note/);
+  assert.match(readme, /separate from the URL note/);
 });
 
 test('ci workflow uses action versions that have migrated off Node.js 20 runtime', async () => {

@@ -255,3 +255,17 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Downloaded the release asset back from GitHub and inspected the zip entries: `manifest.json`, `popup/popup.html`, `popup/popup.css`, `src/browserApi.js`, `src/popup.js`, `src/urlNotes.js`, `icons/icon.svg`, `README.md`, and `LICENSE`; no `.git/` or `.gitkeep` entries were present.
 - Issue #15 is ready to close with `status:completed`.
 
+## 2026-05-17T16:59:36+09:00 — scheduled tick added local domain notes
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, recent commits, full `project:manager` board, source/popup structure, and `reports/next-phase-options.md`. Concrete finding: after #13/#14 and release automation, the next scoped local-only roadmap item is domain notes for site-level reminders.
+- Issues touched: created #16 (`Add local domain notes`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added an autonomy decision comment. #15 was already closed with `status:completed` before this tick.
+- Issue trust/autonomy decision: #16 is autonomous product work derived from repo roadmap, local-only, privacy-preserving, testable, and does not add sync/login/external services/store publishing or major architecture churn, so implementation proceeded without owner approval.
+- TDD evidence for #16: added `test/urlNotes.test.js` coverage for lowercase domain keys and a separate domain-note storage namespace, observed RED (`createDomainNoteStore` missing); added `test/popup.test.js` coverage for loading/saving domain notes, observed RED (domain store not called and no input listener); added `test/scaffold.test.js` README documentation invariant, observed RED; implemented the minimal store, popup UI, docs, and styles; observed GREEN.
+- Files changed: `src/urlNotes.js`, `src/popup.js`, `popup/popup.html`, `popup/popup.css`, `test/urlNotes.test.js`, `test/popup.test.js`, `test/scaffold.test.js`, `README.md`, `PROGRESS.md`.
+- Verification: `node --test test/urlNotes.test.js test/popup.test.js test/scaffold.test.js` passed; `npm test` passed (34 tests); `npm run lint` passed; `npm run validate:extension` passed; `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI, and final #16 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #16, review remaining next-phase options; markdown preview requires sanitizer/dependency policy, so create a scoped proposal or implementation issue only if the security boundary is explicit.
+

@@ -1,5 +1,10 @@
 import { createBrowserAdapter } from './browserApi.js';
-import { createUrlNoteStore, normalizeUrlForNoteKey } from './urlNotes.js';
+import {
+  createDomainNoteStore,
+  createUrlNoteStore,
+  normalizeUrlForDomainNoteKey,
+  normalizeUrlForNoteKey,
+} from './urlNotes.js';
 
 const DEFAULT_DEBOUNCE_MS = 250;
 const IGNORE_QUERY_SETTING_KEY = 'urlNotes.settings.ignoreQuery';
@@ -8,6 +13,7 @@ export async function initializePopup({
   document,
   adapter = createBrowserAdapter(),
   createStore = (storageArea) => createUrlNoteStore(storageArea),
+  createDomainStore = (storageArea) => createDomainNoteStore(storageArea),
   debounceMs = DEFAULT_DEBOUNCE_MS,
   setTimeout: schedule = globalThis.setTimeout.bind(globalThis),
   clearTimeout: cancelSchedule = globalThis.clearTimeout.bind(globalThis),
@@ -23,17 +29,23 @@ export async function initializePopup({
   const notesList = requiredElement(document, '#notes-list');
   const notesEmpty = requiredElement(document, '#notes-empty');
   const ignoreQuery = requiredElement(document, '#ignore-query');
+  const domainKey = requiredElement(document, '#domain-key');
+  const domainNote = requiredElement(document, '#domain-note');
   let keyOptions = { ignoreQuery: false };
   let store;
+  let domainStore;
   let activeUrl;
   let saveTimer;
+  let domainSaveTimer;
   let listedNotes = [];
 
   const renderNotes = () => renderNoteOverview({ document, notesList, notesEmpty, notes: listedNotes, query: notesSearch.value });
 
   async function reloadCurrentNote(message) {
     urlKey.textContent = normalizeUrlForNoteKey(activeUrl, keyOptions);
+    domainKey.textContent = normalizeUrlForDomainNoteKey(activeUrl);
     note.value = await store.loadNote(activeUrl);
+    domainNote.value = await domainStore.loadNote(activeUrl);
     listedNotes = await store.listNotes();
     renderNotes();
     status.textContent = message;
@@ -46,6 +58,7 @@ export async function initializePopup({
     const settings = await adapter.storage.local.get(IGNORE_QUERY_SETTING_KEY);
     keyOptions = { ignoreQuery: settings[IGNORE_QUERY_SETTING_KEY] === true };
     store = createStore(adapter.storage.local, keyOptions);
+    domainStore = createDomainStore(adapter.storage.local);
     ignoreQuery.checked = keyOptions.ignoreQuery;
     activeUrl = activeTab.url;
     await reloadCurrentNote('Loaded.');
@@ -63,6 +76,19 @@ export async function initializePopup({
         listedNotes = await store.listNotes();
         renderNotes();
         status.textContent = note.value.trim() === '' ? 'Deleted.' : 'Saved.';
+      } catch (error) {
+        status.textContent = `Error: ${error.message}`;
+      }
+    }, debounceMs);
+  });
+
+  domainNote.addEventListener('input', () => {
+    if (domainSaveTimer) cancelSchedule(domainSaveTimer);
+    status.textContent = 'Saving domain note…';
+    domainSaveTimer = schedule(async () => {
+      try {
+        await domainStore.saveNote(activeUrl, domainNote.value);
+        status.textContent = domainNote.value.trim() === '' ? 'Domain note deleted.' : 'Domain note saved.';
       } catch (error) {
         status.textContent = `Error: ${error.message}`;
       }

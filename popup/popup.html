@@ -16,6 +16,11 @@
     </label>
     <p class="setting-help">Changing this affects future note lookup for the current URL; existing notes are not migrated.</p>
     <textarea id="note" placeholder="Write a note for this URL"></textarea>
+    <section class="domain-note" aria-labelledby="domain-note-title">
+      <h2 id="domain-note-title">Domain note</h2>
+      <p id="domain-key" class="url-key">Loading current domain…</p>
+      <textarea id="domain-note" placeholder="Write a note for this domain"></textarea>
+    </section>
     <p id="status" class="status" role="status">Not loaded yet.</p>
     <div class="actions">
       <button id="export-notes" type="button">Export JSON</button>

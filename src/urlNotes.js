@@ -1,4 +1,5 @@
 const NOTE_KEY_PREFIX = 'urlNotes.notes.';
+const DOMAIN_NOTE_KEY_PREFIX = 'urlNotes.domainNotes.';
 const SCHEMA_VERSION = 1;
 
 export function normalizeUrlForNoteKey(rawUrl, { ignoreQuery = false } = {}) {
@@ -11,6 +12,10 @@ export function normalizeUrlForNoteKey(rawUrl, { ignoreQuery = false } = {}) {
     url.pathname = url.pathname.slice(0, -1);
   }
   return url.toString();
+}
+
+export function normalizeUrlForDomainNoteKey(rawUrl) {
+  return new URL(rawUrl).hostname.toLowerCase();
 }
 
 export function createUrlNoteStore(storageArea, keyOptions = {}) {
@@ -77,6 +82,29 @@ export function createUrlNoteStore(storageArea, keyOptions = {}) {
   };
 }
 
+export function createDomainNoteStore(storageArea) {
+  return {
+    async loadNote(rawUrl) {
+      const storageKey = domainNoteStorageKey(rawUrl);
+      const result = await storageArea.get(storageKey);
+      return result[storageKey] ?? '';
+    },
+
+    async saveNote(rawUrl, noteText) {
+      const storageKey = domainNoteStorageKey(rawUrl);
+      if (String(noteText ?? '').trim() === '') {
+        await storageArea.remove(storageKey);
+        return;
+      }
+      await storageArea.set({ [storageKey]: String(noteText) });
+    },
+  };
+}
+
 function noteStorageKey(rawUrl, keyOptions) {
   return `${NOTE_KEY_PREFIX}${normalizeUrlForNoteKey(rawUrl, keyOptions)}`;
+}
+
+function domainNoteStorageKey(rawUrl) {
+  return `${DOMAIN_NOTE_KEY_PREFIX}${normalizeUrlForDomainNoteKey(rawUrl)}`;
 }

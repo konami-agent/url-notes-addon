@@ -53,6 +53,8 @@ function createPopupDocument() {
     '#notes-list': new FakeElement(),
     '#notes-empty': new FakeElement(),
     '#ignore-query': new FakeElement(),
+    '#domain-key': new FakeElement(),
+    '#domain-note': new FakeElement(),
   };
   return {
     elements,
@@ -133,6 +135,37 @@ test('popup loads active tab note and displays normalized key', async () => {
   assert.equal(document.elements['#url-key'].textContent, 'https://example.com/path');
   assert.equal(document.elements['#note'].value, 'existing note');
   assert.equal(document.elements['#status'].textContent, 'Loaded.');
+});
+
+test('popup loads active tab domain note independently from the URL note', async () => {
+  const document = createPopupDocument();
+  const domainCalls = [];
+  const urlStore = {
+    async loadNote() { return 'page note'; },
+    async saveNote() {},
+    async exportNotes() { return { schemaVersion: 1, notes: {} }; },
+    async importNotes() { return 0; },
+    async listNotes() { return []; },
+  };
+  const domainStore = {
+    async loadNote(url) {
+      domainCalls.push(['load', url]);
+      return 'site note';
+    },
+    async saveNote() {},
+  };
+
+  await initializePopup({
+    document,
+    adapter: createAdapter('HTTPS://Example.COM/path/?q=1#section'),
+    createStore: () => urlStore,
+    createDomainStore: () => domainStore,
+  });
+
+  assert.deepEqual(domainCalls, [['load', 'HTTPS://Example.COM/path/?q=1#section']]);
+  assert.equal(document.elements['#domain-key'].textContent, 'example.com');
+  assert.equal(document.elements['#domain-note'].value, 'site note');
+  assert.equal(document.elements['#note'].value, 'page note');
 });
 
 test('popup loads ignore-query setting, updates the key, and creates a matching note store', async () => {
@@ -236,6 +269,41 @@ test('popup debounces note edits and reports saved status', async () => {
 
   assert.deepEqual(saved, [['https://example.com/page', 'draft note']]);
   assert.equal(document.elements['#status'].textContent, 'Saved.');
+});
+
+test('popup debounces domain note edits and reports saved status', async () => {
+  const document = createPopupDocument();
+  const timer = createManualTimer();
+  const saved = [];
+  const urlStore = {
+    async loadNote() { return ''; },
+    async saveNote() {},
+    async exportNotes() { return { schemaVersion: 1, notes: {} }; },
+    async importNotes() { return 0; },
+    async listNotes() { return []; },
+  };
+  const domainStore = {
+    async loadNote() { return ''; },
+    async saveNote(url, noteText) { saved.push([url, noteText]); },
+  };
+
+  await initializePopup({
+    document,
+    adapter: createAdapter('https://example.com/page'),
+    createStore: () => urlStore,
+    createDomainStore: () => domainStore,
+    debounceMs: 250,
+    setTimeout: timer.setTimeout,
+    clearTimeout: timer.clearTimeout,
+  });
+
+  document.elements['#domain-note'].value = 'domain draft';
+  document.elements['#domain-note'].dispatch('input');
+  assert.equal(document.elements['#status'].textContent, 'Saving domain note…');
+  await timer.runPending();
+
+  assert.deepEqual(saved, [['https://example.com/page', 'domain draft']]);
+  assert.equal(document.elements['#status'].textContent, 'Domain note saved.');
 });
 
 test('popup treats blank edits as deleted notes', async () => {

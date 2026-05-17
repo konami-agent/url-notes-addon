@@ -7,6 +7,7 @@
 - Popup-only UI.
 - Local browser storage only.
 - Per-URL notes keyed by a normalized URL.
+- Domain notes store site-level reminders separately from the URL note for the current page.
 - Hash fragments are ignored; query strings are preserved by default.
 - A local popup setting can ignore query strings for future note-key lookups when tracking/search parameters create duplicates.
 - JSON export/import is available from the popup.
@@ -67,15 +68,17 @@ After loading the extension in Firefox or Edge:
 
 1. Open a normal web page and click the URL Notes toolbar button.
 2. Confirm the popup shows the current tab URL and the normalized note key.
-3. Type a note, wait for the saved status, close the popup, and reopen it on the same URL to confirm the note reloads.
-4. Open a different normalized URL and confirm it has a different note.
-5. Confirm the saved-notes list shows existing URL keys, then search by URL text and by note text.
-6. Toggle **Ignore query strings for note keys**, confirm the displayed key drops or restores the query string, and confirm the warning says existing notes are not migrated.
-7. Click a listed URL key and confirm it opens as a normal link without changing the stored notes.
-8. Clear the note text and confirm the saved note is deleted.
-9. Use **Export JSON** and confirm a schema-versioned `.json` file downloads.
-10. Use **Import JSON** with a valid backup and confirm the current note reloads from imported data.
-11. Try an invalid JSON import and confirm the popup reports an error without losing existing notes.
+3. Type a URL note, wait for the saved status, close the popup, and reopen it on the same URL to confirm the note reloads.
+4. Type a **Domain note**, wait for the domain-note saved status, then open another page on the same host and confirm the domain note reloads separate from the URL note.
+5. Open a different normalized URL and confirm it has a different URL note.
+6. Confirm the saved-notes list shows existing URL keys, then search by URL text and by note text.
+7. Toggle **Ignore query strings for note keys**, confirm the displayed key drops or restores the query string, and confirm the warning says existing notes are not migrated.
+8. Click a listed URL key and confirm it opens as a normal link without changing the stored notes.
+9. Clear the URL note text and confirm the saved URL note is deleted.
+10. Clear the domain note text and confirm only the domain note is deleted.
+11. Use **Export JSON** and confirm a schema-versioned `.json` file downloads.
+12. Use **Import JSON** with a valid backup and confirm the current note reloads from imported data.
+13. Try an invalid JSON import and confirm the popup reports an error without losing existing notes.
 
 ## Privacy
 
