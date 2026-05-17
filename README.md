@@ -39,6 +39,12 @@ npm run build:zip
 
 `npm run build:zip` writes the distributable extension archive to `dist/`.
 
+## Download a release build
+
+Tagged releases are built automatically by GitHub Actions. Open the project's GitHub Release page, choose the desired version, and download the extension asset such as `url-notes-addon-0.1.0.zip` from the release assets.
+
+The release workflow runs tests, lint, extension validation, and `npm run build:zip` before publishing the zip asset.
+
 ## Load unpacked during development
 
 Firefox:

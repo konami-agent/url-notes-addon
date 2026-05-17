@@ -235,3 +235,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #14 with `status:completed` after recording verification evidence.
 - Final board state: #1–#14 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed before this addendum; no blockers observed.
+
+## 2026-05-17T15:39:25+09:00 — manual request added automatic GitHub Release builds
+
+- User request: complete automatic builds so source code can be built by GitHub Actions into a directly downloadable release artifact.
+- Issue touched: created #15 (`Add automatic GitHub Release build`) with `project:manager`, `type:task`, `status:in-progress`, and `priority:P1`.
+- TDD evidence: added `test/scaffold.test.js` coverage requiring `.github/workflows/release.yml`, tag/manual triggers, `contents: write`, test/lint/validation/build commands, `gh release create`, `dist/*.zip`, and README download documentation; observed RED because the release workflow file did not exist.
+- Files changed: `.github/workflows/release.yml`, `README.md`, `scripts/lint.js`, `test/scaffold.test.js`, `PROGRESS.md`.
+- Local verification so far: `node --test test/scaffold.test.js` passed after implementation; `npm test` passed (30 tests); `npm run lint` passed; `npm run validate:extension` passed; `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `python3 scripts/validate_project_state.py` passed.
+- Next verification: commit/push, create/push tag `v0.1.0`, then verify the Release workflow publishes a GitHub Release asset.

@@ -14,6 +14,7 @@ const requiredPaths = [
   'scripts/validate-extension.js',
   'scripts/build-zip.js',
   '.github/workflows/ci.yml',
+  '.github/workflows/release.yml',
   'icons/icon.svg',
   'README.md',
   'LICENSE',
