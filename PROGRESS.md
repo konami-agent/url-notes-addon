@@ -244,3 +244,14 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Files changed: `.github/workflows/release.yml`, `README.md`, `scripts/lint.js`, `test/scaffold.test.js`, `PROGRESS.md`.
 - Local verification so far: `node --test test/scaffold.test.js` passed after implementation; `npm test` passed (30 tests); `npm run lint` passed; `npm run validate:extension` passed; `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `python3 scripts/validate_project_state.py` passed.
 - Next verification: commit/push, create/push tag `v0.1.0`, then verify the Release workflow publishes a GitHub Release asset.
+
+### 2026-05-17T15:41:00+09:00 — release workflow verification addendum
+
+- Pushed commit `cc48faa` (`ci: publish release zip assets`) to `origin/main`.
+- Created and pushed tag `v0.1.0`.
+- GitHub Actions verification: CI run `25983717508` succeeded on `main`; Release workflow run `25983719711` succeeded on tag `v0.1.0`.
+- GitHub Release created: https://github.com/konami-agent/url-notes-addon/releases/tag/v0.1.0
+- Downloadable release asset verified: `url-notes-addon-0.1.0.zip`, size 19060 bytes, sha256 `13d4b93372d58e82d489ad143c4dee07beb0da656140405b0b4c4d93fc2d08e4`.
+- Downloaded the release asset back from GitHub and inspected the zip entries: `manifest.json`, `popup/popup.html`, `popup/popup.css`, `src/browserApi.js`, `src/popup.js`, `src/urlNotes.js`, `icons/icon.svg`, `README.md`, and `LICENSE`; no `.git/` or `.gitkeep` entries were present.
+- Issue #15 is ready to close with `status:completed`.
+
