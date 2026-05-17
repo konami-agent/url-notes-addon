@@ -215,3 +215,15 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #13 with `status:completed` after recording verification evidence.
 - Final board state: #1–#13 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed; working tree clean before this addendum.
+
+## 2026-05-17T12:51:17+09:00 — scheduled tick added optional ignore-query note keys
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, recent commits, the full `project:manager` board, current source structure, and `reports/next-phase-options.md`. Concrete finding: after #13 completed note overview/search, the next scoped local-only usability improvement is the already-documented optional ignore-query setting for duplicate notes caused by tracking/search/session query strings. Created #14 (`Add optional ignore-query URL key setting`) with `project:manager`, `type:task`, `status:ready`, and `priority:P2`.
+- Issues touched: #14 moved to `status:in-progress` and was implemented locally with strict TDD. Closure/comment are pending until commit/push evidence and CI status are available.
+- TDD evidence for #14: added `test/urlNotes.test.js` coverage for opt-in query removal and query-ignored note storage, plus `test/popup.test.js` coverage for loading/persisting the setting and reloading the current note; observed RED via `node --test test/urlNotes.test.js test/popup.test.js` with four expected assertion failures; implemented minimal URL/store/popup behavior; observed GREEN.
+- Files changed: `src/urlNotes.js`, `src/popup.js`, `popup/popup.html`, `popup/popup.css`, `test/urlNotes.test.js`, `test/popup.test.js`, `README.md`, `PROGRESS.md`.
+- Verification: `node --test test/urlNotes.test.js test/popup.test.js` passed; `npm test` passed (29 tests); `npm run lint` passed; `npm run validate:extension` passed; `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `python3 scripts/validate_project_state.py` passed.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #14, review remaining next-phase options and create a scoped issue only for a concrete local-only improvement.

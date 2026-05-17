@@ -40,6 +40,13 @@ test('normalizeUrlForNoteKey removes hash, preserves query, lowercases scheme an
   );
 });
 
+test('normalizeUrlForNoteKey can ignore query strings when explicitly requested', () => {
+  assert.equal(
+    normalizeUrlForNoteKey('HTTPS://Example.COM/path/?b=2&a=1#section', { ignoreQuery: true }),
+    'https://example.com/path',
+  );
+});
+
 test('URL note store saves and loads notes by normalized URL key', async () => {
   const store = createUrlNoteStore(new MemoryStorageArea());
 
@@ -47,6 +54,18 @@ test('URL note store saves and loads notes by normalized URL key', async () => {
 
   assert.equal(await store.loadNote('https://EXAMPLE.com/path#two'), 'first note');
   assert.equal(await store.loadNote('https://example.com/path?query=1'), '');
+});
+
+test('URL note store can save and load notes with query strings ignored', async () => {
+  const store = createUrlNoteStore(new MemoryStorageArea(), { ignoreQuery: true });
+
+  await store.saveNote('https://example.com/path?utm_source=one#section', 'shared note');
+
+  assert.equal(await store.loadNote('https://EXAMPLE.com/path?utm_source=two#other'), 'shared note');
+  assert.deepEqual(await store.exportNotes(), {
+    schemaVersion: 1,
+    notes: { 'https://example.com/path': 'shared note' },
+  });
 });
 
 test('URL note store deletes the note when saving blank text', async () => {

@@ -3,6 +3,8 @@ body { width: 340px; margin: 0; padding: 12px; }
 h1 { font-size: 1rem; margin: 0 0 8px; }
 h2 { font-size: 0.9rem; margin: 12px 0 6px; }
 .url-key { overflow-wrap: anywhere; font-size: 0.75rem; opacity: 0.8; }
+.setting-row { display: flex; gap: 6px; align-items: center; margin: 6px 0 2px; font-size: 0.8rem; }
+.setting-help { margin: 0 0 8px; font-size: 0.7rem; opacity: 0.75; }
 textarea { box-sizing: border-box; width: 100%; min-height: 180px; resize: vertical; }
 .status { min-height: 1.2em; font-size: 0.75rem; }
 .actions { display: flex; gap: 8px; align-items: center; }

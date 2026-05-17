@@ -10,6 +10,11 @@
   <main>
     <h1>URL Notes</h1>
     <p id="url-key" class="url-key">Loading current tab…</p>
+    <label class="setting-row">
+      <input id="ignore-query" type="checkbox">
+      <span>Ignore query strings for note keys</span>
+    </label>
+    <p class="setting-help">Changing this affects future note lookup for the current URL; existing notes are not migrated.</p>
     <textarea id="note" placeholder="Write a note for this URL"></textarea>
     <p id="status" class="status" role="status">Not loaded yet.</p>
     <div class="actions">

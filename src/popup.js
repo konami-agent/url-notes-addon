@@ -2,6 +2,7 @@ import { createBrowserAdapter } from './browserApi.js';
 import { createUrlNoteStore, normalizeUrlForNoteKey } from './urlNotes.js';
 
 const DEFAULT_DEBOUNCE_MS = 250;
+const IGNORE_QUERY_SETTING_KEY = 'urlNotes.settings.ignoreQuery';
 
 export async function initializePopup({
   document,
@@ -21,23 +22,33 @@ export async function initializePopup({
   const notesSearch = requiredElement(document, '#notes-search');
   const notesList = requiredElement(document, '#notes-list');
   const notesEmpty = requiredElement(document, '#notes-empty');
-  const store = createStore(adapter.storage.local);
+  const ignoreQuery = requiredElement(document, '#ignore-query');
+  let keyOptions = { ignoreQuery: false };
+  let store;
   let activeUrl;
   let saveTimer;
   let listedNotes = [];
 
   const renderNotes = () => renderNoteOverview({ document, notesList, notesEmpty, notes: listedNotes, query: notesSearch.value });
 
+  async function reloadCurrentNote(message) {
+    urlKey.textContent = normalizeUrlForNoteKey(activeUrl, keyOptions);
+    note.value = await store.loadNote(activeUrl);
+    listedNotes = await store.listNotes();
+    renderNotes();
+    status.textContent = message;
+  }
+
   try {
     const activeTab = await adapter.getActiveTab();
     if (!activeTab?.url) throw new Error('Active tab has no URL.');
 
+    const settings = await adapter.storage.local.get(IGNORE_QUERY_SETTING_KEY);
+    keyOptions = { ignoreQuery: settings[IGNORE_QUERY_SETTING_KEY] === true };
+    store = createStore(adapter.storage.local, keyOptions);
+    ignoreQuery.checked = keyOptions.ignoreQuery;
     activeUrl = activeTab.url;
-    urlKey.textContent = normalizeUrlForNoteKey(activeUrl);
-    note.value = await store.loadNote(activeUrl);
-    listedNotes = await store.listNotes();
-    renderNotes();
-    status.textContent = 'Loaded.';
+    await reloadCurrentNote('Loaded.');
   } catch (error) {
     status.textContent = `Error: ${error.message}`;
     return;
@@ -91,6 +102,17 @@ export async function initializePopup({
   });
 
   notesSearch.addEventListener('input', renderNotes);
+
+  ignoreQuery.addEventListener('change', async () => {
+    try {
+      keyOptions = { ignoreQuery: ignoreQuery.checked === true };
+      await adapter.storage.local.set({ [IGNORE_QUERY_SETTING_KEY]: keyOptions.ignoreQuery });
+      store = createStore(adapter.storage.local, keyOptions);
+      await reloadCurrentNote(keyOptions.ignoreQuery ? 'Loaded with query strings ignored.' : 'Loaded with query strings preserved.');
+    } catch (error) {
+      status.textContent = `Error: ${error.message}`;
+    }
+  });
 }
 
 function renderNoteOverview({ document, notesList, notesEmpty, notes, query }) {

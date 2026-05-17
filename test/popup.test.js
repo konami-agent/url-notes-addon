@@ -7,6 +7,7 @@ class FakeElement {
   constructor({ value = '', textContent = '' } = {}) {
     this.value = value;
     this.textContent = textContent;
+    this.checked = false;
     this.listeners = new Map();
     this.attributes = new Map();
     this.clicked = false;
@@ -51,6 +52,7 @@ function createPopupDocument() {
     '#notes-search': new FakeElement(),
     '#notes-list': new FakeElement(),
     '#notes-empty': new FakeElement(),
+    '#ignore-query': new FakeElement(),
   };
   return {
     elements,
@@ -86,9 +88,22 @@ function createManualTimer() {
   };
 }
 
-function createAdapter(url) {
+function createAdapter(url, initialStorage = {}) {
   const activeUrl = arguments.length === 0 ? 'https://example.com/page' : url;
-  return { getActiveTab: async () => ({ url: activeUrl }), storage: { local: {} } };
+  const storageData = { ...initialStorage };
+  return {
+    getActiveTab: async () => ({ url: activeUrl }),
+    storage: {
+      local: {
+        data: storageData,
+        async get(key) {
+          if (key == null) return { ...storageData };
+          return Object.hasOwn(storageData, key) ? { [key]: storageData[key] } : {};
+        },
+        async set(items) { Object.assign(storageData, items); },
+      },
+    },
+  };
 }
 
 test('popup loads active tab note and displays normalized key', async () => {
@@ -118,6 +133,80 @@ test('popup loads active tab note and displays normalized key', async () => {
   assert.equal(document.elements['#url-key'].textContent, 'https://example.com/path');
   assert.equal(document.elements['#note'].value, 'existing note');
   assert.equal(document.elements['#status'].textContent, 'Loaded.');
+});
+
+test('popup loads ignore-query setting, updates the key, and creates a matching note store', async () => {
+  const document = createPopupDocument();
+  const storeCreations = [];
+  const calls = [];
+  const adapter = createAdapter('HTTPS://Example.COM/path/?utm_source=one#section', {
+    'urlNotes.settings.ignoreQuery': true,
+  });
+  const store = {
+    async loadNote(url) {
+      calls.push(['load', url]);
+      return 'shared note';
+    },
+    async saveNote() {},
+    async exportNotes() { return { schemaVersion: 1, notes: {} }; },
+    async importNotes() { return 0; },
+    async listNotes() { return []; },
+  };
+
+  await initializePopup({
+    document,
+    adapter,
+    createStore(storageArea, keyOptions) {
+      storeCreations.push([storageArea, keyOptions]);
+      return store;
+    },
+  });
+
+  assert.equal(document.elements['#ignore-query'].checked, true);
+  assert.equal(document.elements['#url-key'].textContent, 'https://example.com/path');
+  assert.deepEqual(storeCreations.map(([, keyOptions]) => keyOptions), [{ ignoreQuery: true }]);
+  assert.deepEqual(calls, [['load', 'HTTPS://Example.COM/path/?utm_source=one#section']]);
+  assert.equal(document.elements['#note'].value, 'shared note');
+});
+
+test('popup persists ignore-query changes and reloads the current note with the new setting', async () => {
+  const document = createPopupDocument();
+  const adapter = createAdapter('https://example.com/path?tracking=1', {
+    'urlNotes.settings.ignoreQuery': false,
+  });
+  const createdOptions = [];
+  const loadOptions = [];
+
+  await initializePopup({
+    document,
+    adapter,
+    createStore(storageArea, keyOptions) {
+      createdOptions.push(keyOptions);
+      return {
+        async loadNote() {
+          loadOptions.push(keyOptions);
+          return keyOptions.ignoreQuery ? 'query ignored note' : 'query note';
+        },
+        async saveNote() {},
+        async exportNotes() { return { schemaVersion: 1, notes: {} }; },
+        async importNotes() { return 0; },
+        async listNotes() { return []; },
+      };
+    },
+  });
+
+  assert.equal(document.elements['#url-key'].textContent, 'https://example.com/path?tracking=1');
+  assert.equal(document.elements['#note'].value, 'query note');
+
+  document.elements['#ignore-query'].checked = true;
+  await document.elements['#ignore-query'].dispatch('change');
+
+  assert.equal(adapter.storage.local.data['urlNotes.settings.ignoreQuery'], true);
+  assert.equal(document.elements['#url-key'].textContent, 'https://example.com/path');
+  assert.equal(document.elements['#note'].value, 'query ignored note');
+  assert.deepEqual(createdOptions, [{ ignoreQuery: false }, { ignoreQuery: true }]);
+  assert.deepEqual(loadOptions, [{ ignoreQuery: false }, { ignoreQuery: true }]);
+  assert.equal(document.elements['#status'].textContent, 'Loaded with query strings ignored.');
 });
 
 test('popup debounces note edits and reports saved status', async () => {

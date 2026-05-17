@@ -7,7 +7,8 @@
 - Popup-only UI.
 - Local browser storage only.
 - Per-URL notes keyed by a normalized URL.
-- Hash fragments are ignored; query strings are preserved.
+- Hash fragments are ignored; query strings are preserved by default.
+- A local popup setting can ignore query strings for future note-key lookups when tracking/search parameters create duplicates.
 - JSON export/import is available from the popup.
 - The popup lists saved notes and filters them locally by URL or note text.
 - No account, remote sync, or external service.
@@ -63,11 +64,12 @@ After loading the extension in Firefox or Edge:
 3. Type a note, wait for the saved status, close the popup, and reopen it on the same URL to confirm the note reloads.
 4. Open a different normalized URL and confirm it has a different note.
 5. Confirm the saved-notes list shows existing URL keys, then search by URL text and by note text.
-6. Click a listed URL key and confirm it opens as a normal link without changing the stored notes.
-7. Clear the note text and confirm the saved note is deleted.
-8. Use **Export JSON** and confirm a schema-versioned `.json` file downloads.
-9. Use **Import JSON** with a valid backup and confirm the current note reloads from imported data.
-10. Try an invalid JSON import and confirm the popup reports an error without losing existing notes.
+6. Toggle **Ignore query strings for note keys**, confirm the displayed key drops or restores the query string, and confirm the warning says existing notes are not migrated.
+7. Click a listed URL key and confirm it opens as a normal link without changing the stored notes.
+8. Clear the note text and confirm the saved note is deleted.
+9. Use **Export JSON** and confirm a schema-versioned `.json` file downloads.
+10. Use **Import JSON** with a valid backup and confirm the current note reloads from imported data.
+11. Try an invalid JSON import and confirm the popup reports an error without losing existing notes.
 
 ## Privacy
 
