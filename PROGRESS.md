@@ -299,3 +299,17 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Final board state: #1–#17 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed before commit; no blockers observed.
 
+## 2026-05-18T01:12:54+09:00 — scheduled tick made combined JSON imports prevalidated
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, recent commits, full `project:manager` board, current popup/source structure, and next-phase reports. Concrete finding: after #17 included domain notes in backups, popup import could apply valid domain notes before a later URL-note validation failure, causing partial restores.
+- Issues touched: created #18 (`Make JSON backup import atomic across URL and domain notes`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy comment. Completion/closure are pending commit, push, and CI evidence.
+- Issue trust/autonomy decision: #18 is local-only backup-integrity maintenance/product-correctness work derived from code review, privacy-preserving, small, and verifiable; it does not add sync/login/external services/store publishing or major architecture churn, so implementation proceeded without additional owner approval.
+- TDD evidence for #18: added `test/popup.test.js` coverage that a combined import with valid `domainNotes` but invalid URL `notes` must not import the domain note; observed RED via `node --test test/popup.test.js` because `urlNotes.domainNotes.example.com` was written before the URL import failed; implemented store `validateImport()` prevalidation and popup prevalidation before applying either namespace; observed GREEN.
+- Files changed: `src/urlNotes.js`, `src/popup.js`, `test/popup.test.js`, `PROGRESS.md`.
+- Verification: `node --test test/popup.test.js test/urlNotes.test.js` passed (26 tests); `npm test` passed (38 tests); `npm run lint` passed; `npm run validate:extension` passed; `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI, and final #18 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #18, review remaining next-phase options; markdown preview should remain proposal-only unless sanitizer/dependency policy is explicit.
+

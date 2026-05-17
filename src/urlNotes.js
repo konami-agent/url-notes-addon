@@ -59,21 +59,12 @@ export function createUrlNoteStore(storageArea, keyOptions = {}) {
         .sort((left, right) => left.url.localeCompare(right.url));
     },
 
+    validateImport(payload) {
+      return collectUrlNotesForImport(payload, keyOptions);
+    },
+
     async importNotes(payload) {
-      if (!payload || payload.schemaVersion !== SCHEMA_VERSION || typeof payload.notes !== 'object' || payload.notes === null) {
-        throw new Error('Unsupported URL notes export format');
-      }
-
-      const notesToImport = [];
-      try {
-        for (const [rawUrl, noteText] of Object.entries(payload.notes)) {
-          if (String(noteText ?? '').trim() === '') continue;
-          notesToImport.push([normalizeUrlForNoteKey(rawUrl, keyOptions), String(noteText)]);
-        }
-      } catch {
-        throw new Error('Unsupported URL notes export format');
-      }
-
+      const notesToImport = this.validateImport(payload);
       for (const [normalizedUrl, noteText] of notesToImport) {
         await this.saveNote(normalizedUrl, noteText);
       }
@@ -110,25 +101,12 @@ export function createDomainNoteStore(storageArea) {
       return { schemaVersion: SCHEMA_VERSION, domainNotes };
     },
 
+    validateImport(payload) {
+      return collectDomainNotesForImport(payload);
+    },
+
     async importNotes(payload) {
-      if (!payload || payload.schemaVersion !== SCHEMA_VERSION) {
-        throw new Error('Unsupported URL notes export format');
-      }
-      if (payload.domainNotes == null) return 0;
-      if (typeof payload.domainNotes !== 'object') {
-        throw new Error('Unsupported URL notes export format');
-      }
-
-      const domainNotesToImport = [];
-      try {
-        for (const [rawDomain, noteText] of Object.entries(payload.domainNotes)) {
-          if (String(noteText ?? '').trim() === '') continue;
-          domainNotesToImport.push([normalizeDomainForImport(rawDomain), String(noteText)]);
-        }
-      } catch {
-        throw new Error('Unsupported URL notes export format');
-      }
-
+      const domainNotesToImport = this.validateImport(payload);
       for (const [domain, noteText] of domainNotesToImport) {
         await storageArea.set({ [`${DOMAIN_NOTE_KEY_PREFIX}${domain}`]: noteText });
       }
@@ -143,6 +121,44 @@ function noteStorageKey(rawUrl, keyOptions) {
 
 function domainNoteStorageKey(rawUrl) {
   return `${DOMAIN_NOTE_KEY_PREFIX}${normalizeUrlForDomainNoteKey(rawUrl)}`;
+}
+
+function collectUrlNotesForImport(payload, keyOptions) {
+  if (!payload || payload.schemaVersion !== SCHEMA_VERSION || typeof payload.notes !== 'object' || payload.notes === null) {
+    throw new Error('Unsupported URL notes export format');
+  }
+
+  const notesToImport = [];
+  try {
+    for (const [rawUrl, noteText] of Object.entries(payload.notes)) {
+      if (String(noteText ?? '').trim() === '') continue;
+      notesToImport.push([normalizeUrlForNoteKey(rawUrl, keyOptions), String(noteText)]);
+    }
+  } catch {
+    throw new Error('Unsupported URL notes export format');
+  }
+  return notesToImport;
+}
+
+function collectDomainNotesForImport(payload) {
+  if (!payload || payload.schemaVersion !== SCHEMA_VERSION) {
+    throw new Error('Unsupported URL notes export format');
+  }
+  if (payload.domainNotes == null) return [];
+  if (typeof payload.domainNotes !== 'object') {
+    throw new Error('Unsupported URL notes export format');
+  }
+
+  const domainNotesToImport = [];
+  try {
+    for (const [rawDomain, noteText] of Object.entries(payload.domainNotes)) {
+      if (String(noteText ?? '').trim() === '') continue;
+      domainNotesToImport.push([normalizeDomainForImport(rawDomain), String(noteText)]);
+    }
+  } catch {
+    throw new Error('Unsupported URL notes export format');
+  }
+  return domainNotesToImport;
 }
 
 function normalizeDomainForImport(rawDomain) {

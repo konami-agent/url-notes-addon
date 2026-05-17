@@ -119,6 +119,8 @@ export async function initializePopup({
 
     try {
       const payload = JSON.parse(await file.text());
+      if (typeof domainStore.validateImport === 'function') domainStore.validateImport(payload);
+      if (typeof store.validateImport === 'function') store.validateImport(payload);
       const importedDomainCount = await domainStore.importNotes(payload);
       const importedUrlCount = await store.importNotes(payload);
       note.value = await store.loadNote(activeUrl);
