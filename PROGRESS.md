@@ -291,3 +291,11 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #17, review remaining next-phase options; markdown preview should stay pending/proposal unless sanitizer and dependency policy are explicit.
 
+### 2026-05-17T21:09:06+09:00 — final board refresh addendum
+
+- Pushed commit `f3c245b` (`feat: include domain notes in backups`) to `origin/main`.
+- GitHub Actions CI run `25990415445` completed successfully for commit `f3c245b00ff67e81488f78a166a5c36f5df9f592`.
+- Commented on and closed #17 with `status:completed` after recording verification evidence.
+- Final board state: #1–#17 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed before commit; no blockers observed.
+
