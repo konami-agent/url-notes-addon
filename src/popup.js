@@ -46,7 +46,7 @@ export async function initializePopup({
     domainKey.textContent = normalizeUrlForDomainNoteKey(activeUrl);
     note.value = await store.loadNote(activeUrl);
     domainNote.value = await domainStore.loadNote(activeUrl);
-    listedNotes = await store.listNotes();
+    listedNotes = await listOverviewEntries(store, domainStore);
     renderNotes();
     status.textContent = message;
   }
@@ -73,7 +73,7 @@ export async function initializePopup({
     saveTimer = schedule(async () => {
       try {
         await store.saveNote(activeUrl, note.value);
-        listedNotes = await store.listNotes();
+        listedNotes = await listOverviewEntries(store, domainStore);
         renderNotes();
         status.textContent = note.value.trim() === '' ? 'Deleted.' : 'Saved.';
       } catch (error) {
@@ -125,7 +125,7 @@ export async function initializePopup({
       const importedUrlCount = await store.importNotes(payload);
       note.value = await store.loadNote(activeUrl);
       domainNote.value = await domainStore.loadNote(activeUrl);
-      listedNotes = await store.listNotes();
+      listedNotes = await listOverviewEntries(store, domainStore);
       renderNotes();
       status.textContent = `Imported ${importedUrlCount + importedDomainCount} notes.`;
     } catch (error) {
@@ -149,21 +149,24 @@ export async function initializePopup({
 
 function renderNoteOverview({ document, notesList, notesEmpty, notes, query }) {
   const normalizedQuery = String(query ?? '').trim().toLowerCase();
-  const matchingNotes = notes.filter(({ url, noteText }) => {
+  const matchingNotes = notes.filter(({ key, noteText }) => {
     if (normalizedQuery === '') return true;
-    return url.toLowerCase().includes(normalizedQuery) || noteText.toLowerCase().includes(normalizedQuery);
+    return key.toLowerCase().includes(normalizedQuery) || noteText.toLowerCase().includes(normalizedQuery);
   });
 
-  notesList.replaceChildren(...matchingNotes.map(({ url, noteText }) => {
+  notesList.replaceChildren(...matchingNotes.map(({ type, key, href, noteText }) => {
     const item = document.createElement('li');
+    const label = document.createElement('span');
+    label.textContent = type === 'domain' ? 'Domain note' : 'URL note';
+    label.setAttribute('class', 'note-kind');
     const link = document.createElement('a');
-    link.textContent = url;
-    link.setAttribute('href', url);
+    link.textContent = key;
+    link.setAttribute('href', href);
     link.setAttribute('target', '_blank');
     link.setAttribute('rel', 'noopener noreferrer');
     const preview = document.createElement('p');
     preview.textContent = noteText;
-    item.append(link, preview);
+    item.append(label, link, preview);
     return item;
   }));
 
@@ -174,6 +177,15 @@ function renderNoteOverview({ document, notesList, notesEmpty, notes, query }) {
   } else {
     notesEmpty.textContent = 'No matching notes.';
   }
+}
+
+async function listOverviewEntries(store, domainStore) {
+  const urlNotes = await store.listNotes();
+  const domainNotes = typeof domainStore.listNotes === 'function' ? await domainStore.listNotes() : [];
+  return [
+    ...urlNotes.map(({ url, noteText }) => ({ type: 'url', key: url, href: url, noteText })),
+    ...domainNotes.map(({ domain, noteText }) => ({ type: 'domain', key: domain, href: `https://${domain}/`, noteText })),
+  ];
 }
 
 function requiredElement(document, selector) {

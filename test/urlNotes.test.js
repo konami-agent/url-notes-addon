@@ -202,6 +202,21 @@ test('domain note store exports and imports schema-versioned domain notes', asyn
   assert.equal(await target.loadNote('https://blank.example/page'), '');
 });
 
+test('domain note store lists saved domain notes sorted by domain key', async () => {
+  const storage = new MemoryStorageArea({
+    'urlNotes.notes.https://example.com/page': 'page note',
+    'urlNotes.domainNotes.example.org': 'org domain note',
+    'urlNotes.domainNotes.example.com': 'example domain note',
+    'urlNotes.domainNotes.ignored.example': 42,
+  });
+  const domainStore = createDomainNoteStore(storage);
+
+  assert.deepEqual(await domainStore.listNotes(), [
+    { domain: 'example.com', noteText: 'example domain note' },
+    { domain: 'example.org', noteText: 'org domain note' },
+  ]);
+});
+
 test('domain note store accepts old exports without domain notes', async () => {
   const domainStore = createDomainNoteStore(new MemoryStorageArea());
 

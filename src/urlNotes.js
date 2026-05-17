@@ -101,6 +101,14 @@ export function createDomainNoteStore(storageArea) {
       return { schemaVersion: SCHEMA_VERSION, domainNotes };
     },
 
+    async listNotes() {
+      const allItems = await storageArea.get(null);
+      return Object.entries(allItems)
+        .filter(([key, value]) => key.startsWith(DOMAIN_NOTE_KEY_PREFIX) && typeof value === 'string')
+        .map(([key, noteText]) => ({ domain: key.slice(DOMAIN_NOTE_KEY_PREFIX.length), noteText }))
+        .sort((left, right) => left.domain.localeCompare(right.domain));
+    },
+
     validateImport(payload) {
       return collectDomainNotesForImport(payload);
     },

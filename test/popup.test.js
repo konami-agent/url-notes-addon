@@ -467,7 +467,7 @@ test('popup does not import domain notes when combined JSON import has invalid U
   assert.equal(document.elements['#status'].textContent, 'Error: Unsupported URL notes export format');
 });
 
-test('popup lists saved notes and filters by URL or note text', async () => {
+test('popup lists URL and domain notes and filters by key or note text', async () => {
   const document = createPopupDocument();
   const store = {
     async loadNote() { return ''; },
@@ -481,21 +481,44 @@ test('popup lists saved notes and filters by URL or note text', async () => {
       ];
     },
   };
+  const domainStore = {
+    async loadNote() { return ''; },
+    async saveNote() {},
+    async exportNotes() { return { schemaVersion: 1, domainNotes: {} }; },
+    async importNotes() { return 0; },
+    async listNotes() {
+      return [
+        { domain: 'example.net', noteText: 'site-wide checklist' },
+      ];
+    },
+  };
 
-  await initializePopup({ document, adapter: createAdapter(), createStore: () => store });
+  await initializePopup({ document, adapter: createAdapter(), createStore: () => store, createDomainStore: () => domainStore });
 
-  assert.equal(document.elements['#notes-list'].children.length, 2);
-  assert.equal(document.elements['#notes-list'].children[0].children[0].textContent, 'https://example.com/alpha');
-  assert.equal(document.elements['#notes-list'].children[0].children[0].attributes.get('href'), 'https://example.com/alpha');
-  assert.equal(document.elements['#notes-list'].children[0].children[0].attributes.get('target'), '_blank');
-  assert.equal(document.elements['#notes-list'].children[0].children[0].attributes.get('rel'), 'noopener noreferrer');
+  assert.equal(document.elements['#notes-list'].children.length, 3);
+  assert.equal(document.elements['#notes-list'].children[0].children[0].textContent, 'URL note');
+  assert.equal(document.elements['#notes-list'].children[0].children[1].textContent, 'https://example.com/alpha');
+  assert.equal(document.elements['#notes-list'].children[0].children[1].attributes.get('href'), 'https://example.com/alpha');
+  assert.equal(document.elements['#notes-list'].children[0].children[1].attributes.get('target'), '_blank');
+  assert.equal(document.elements['#notes-list'].children[0].children[1].attributes.get('rel'), 'noopener noreferrer');
+  assert.equal(document.elements['#notes-list'].children[2].children[0].textContent, 'Domain note');
+  assert.equal(document.elements['#notes-list'].children[2].children[1].textContent, 'example.net');
+  assert.equal(document.elements['#notes-list'].children[2].children[1].attributes.get('href'), 'https://example.net/');
+  assert.equal(document.elements['#notes-list'].children[2].children[1].attributes.get('rel'), 'noopener noreferrer');
   assert.equal(document.elements['#notes-empty'].textContent, '');
 
   document.elements['#notes-search'].value = 'recipe';
   document.elements['#notes-search'].dispatch('input');
 
   assert.equal(document.elements['#notes-list'].children.length, 1);
-  assert.equal(document.elements['#notes-list'].children[0].children[0].textContent, 'https://example.org/bravo');
+  assert.equal(document.elements['#notes-list'].children[0].children[1].textContent, 'https://example.org/bravo');
+
+  document.elements['#notes-search'].value = 'site-wide';
+  document.elements['#notes-search'].dispatch('input');
+
+  assert.equal(document.elements['#notes-list'].children.length, 1);
+  assert.equal(document.elements['#notes-list'].children[0].children[0].textContent, 'Domain note');
+  assert.equal(document.elements['#notes-list'].children[0].children[1].textContent, 'example.net');
 
   document.elements['#notes-search'].value = 'missing';
   document.elements['#notes-search'].dispatch('input');

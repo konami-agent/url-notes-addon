@@ -11,7 +11,7 @@
 - Hash fragments are ignored; query strings are preserved by default.
 - A local popup setting can ignore query strings for future note-key lookups when tracking/search parameters create duplicates.
 - JSON export/import is available from the popup.
-- The popup lists saved notes and filters them locally by URL or note text.
+- The popup lists saved URL notes and domain notes, then filters them locally by key or note text.
 - No account, remote sync, or external service.
 
 ## Export/import JSON
@@ -74,7 +74,7 @@ After loading the extension in Firefox or Edge:
 3. Type a URL note, wait for the saved status, close the popup, and reopen it on the same URL to confirm the note reloads.
 4. Type a **Domain note**, wait for the domain-note saved status, then open another page on the same host and confirm the domain note reloads separate from the URL note.
 5. Open a different normalized URL and confirm it has a different URL note.
-6. Confirm the saved-notes list shows existing URL keys, then search by URL text and by note text.
+6. Confirm the saved-notes list shows URL notes and domain notes, then search by URL/domain text and by note text.
 7. Toggle **Ignore query strings for note keys**, confirm the displayed key drops or restores the query string, and confirm the warning says existing notes are not migrated.
 8. Click a listed URL key and confirm it opens as a normal link without changing the stored notes.
 9. Clear the URL note text and confirm the saved URL note is deleted.
