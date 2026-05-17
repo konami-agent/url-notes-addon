@@ -227,3 +227,11 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Verification: `node --test test/urlNotes.test.js test/popup.test.js` passed; `npm test` passed (29 tests); `npm run lint` passed; `npm run validate:extension` passed; `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `python3 scripts/validate_project_state.py` passed.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #14, review remaining next-phase options and create a scoped issue only for a concrete local-only improvement.
+
+### 2026-05-17T12:52:37+09:00 — final board refresh addendum
+
+- Pushed commit `8bd7a7b` (`feat: add ignore-query note setting`) to `origin/main`.
+- GitHub Actions CI run `25980668389` completed successfully for commit `8bd7a7b20974ca66f8bb97824175e76885b1e798`.
+- Commented on and closed #14 with `status:completed` after recording verification evidence.
+- Final board state: #1–#14 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed before this addendum; no blockers observed.
