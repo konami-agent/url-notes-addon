@@ -269,3 +269,11 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #16, review remaining next-phase options; markdown preview requires sanitizer/dependency policy, so create a scoped proposal or implementation issue only if the security boundary is explicit.
 
+### 2026-05-17T17:00:57+09:00 — final board refresh addendum
+
+- Pushed commit `5a92921` (`feat: add local domain notes`) to `origin/main`.
+- GitHub Actions CI run `25985293345` completed successfully for commit `5a929219654ae21882dd2d09e93b909b4cd7e78d`; `gh run view` reported no job annotations.
+- Commented on and closed #16 with `status:completed` after recording verification evidence.
+- Final board state: #1–#16 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed before commit; no blockers observed.
+
