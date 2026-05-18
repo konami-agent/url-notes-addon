@@ -380,3 +380,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: pending commit/push, CI, and final #21 evidence comment/closure after this log entry.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #21, continue review-gate triage; markdown preview should remain proposal-only unless sanitizer and dependency policy are explicit.
+
+
+### 2026-05-18T13:33:09+09:00 — final board refresh addendum
+
+- Pushed commit `d7d1944` (`fix: reset import file input`) to `origin/main`.
+- GitHub Actions CI run `26013662798` completed successfully for commit `d7d194453d95a86e82e8ac0b1078beb2c4dc24dd`; `gh run view` reported the validate job succeeded.
+- Commented on and closed #21 with `status:completed` after recording verification evidence.
+- Final board state: #1–#21 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed before feature commit; no blockers observed.
