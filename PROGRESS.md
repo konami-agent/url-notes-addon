@@ -357,3 +357,11 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: pending commit/push, CI, and final #20 evidence comment/closure after this log entry.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #20, review remaining next-phase options; markdown preview should remain proposal-only unless sanitizer and dependency policy are explicit.
+
+### 2026-05-18T09:28:49+09:00 — final board refresh addendum
+
+- Pushed commit `0aecc6a` (`fix: refresh overview after domain note edits`) to `origin/main`.
+- GitHub Actions CI run `26007167206` completed successfully for commit `0aecc6abea70da215c5433dfee97cafede897dd8`; `gh run view` reported the validate job succeeded.
+- Commented on and closed #20 with `status:completed` after recording verification evidence.
+- Final board state: #1–#20 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed before feature commit; no blockers observed.
