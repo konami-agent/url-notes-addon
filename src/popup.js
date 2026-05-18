@@ -132,6 +132,8 @@ export async function initializePopup({
       status.textContent = `Imported ${importedUrlCount + importedDomainCount} notes.`;
     } catch (error) {
       status.textContent = `Error: ${error.message}`;
+    } finally {
+      event.target.value = '';
     }
   });
 

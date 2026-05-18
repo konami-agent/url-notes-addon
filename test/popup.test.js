@@ -490,14 +490,16 @@ test('popup imports JSON, merges via URL and domain note stores, and reloads the
   };
   await initializePopup({ document, adapter: createAdapter(), createStore: () => store, createDomainStore: () => domainStore });
 
-  await document.elements['#import-notes'].dispatch('change', {
-    target: { files: [{ text: async () => '{"schemaVersion":1,"notes":{"https://example.com/page":"imported current note"},"domainNotes":{"example.com":"imported domain note"}}' }] },
-  });
+  const importInput = document.elements['#import-notes'];
+  importInput.value = 'C:\\fakepath\\backup.json';
+  importInput.files = [{ text: async () => '{"schemaVersion":1,"notes":{"https://example.com/page":"imported current note"},"domainNotes":{"example.com":"imported domain note"}}' }];
+  await importInput.dispatch('change');
 
   assert.deepEqual(urlImports, [{ schemaVersion: 1, notes: { 'https://example.com/page': 'imported current note' }, domainNotes: { 'example.com': 'imported domain note' } }]);
   assert.deepEqual(domainImports, [{ schemaVersion: 1, notes: { 'https://example.com/page': 'imported current note' }, domainNotes: { 'example.com': 'imported domain note' } }]);
   assert.equal(document.elements['#note'].value, 'imported current note');
   assert.equal(document.elements['#domain-note'].value, 'imported domain note');
+  assert.equal(importInput.value, '');
   assert.equal(document.elements['#status'].textContent, 'Imported 3 notes.');
 });
 
