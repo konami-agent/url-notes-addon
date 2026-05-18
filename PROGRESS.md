@@ -472,3 +472,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: pending commit/push, CI, and final #25 evidence comment/closure after this log entry.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #25, continue review-gate triage; markdown preview should remain proposal-only unless sanitizer and dependency policy are explicit.
+
+
+### 2026-05-19T05:58:05+09:00 — final board refresh addendum
+
+- Pushed commit `2a1b259` (`fix: avoid invalid domain overview links`) to `origin/main`.
+- GitHub Actions CI run `26060042683` completed successfully for commit `2a1b259374997dade3328b5ba89ebbd3a8d78f2c`; `gh run view` reported the validate job succeeded.
+- Commented on and closed #25 with `status:completed` after recording verification evidence.
+- Final board state: #1–#25 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed before feature commit; no blockers observed.
