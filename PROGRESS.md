@@ -404,3 +404,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: pending commit/push, CI, and final #22 evidence comment/closure after this log entry.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #22, continue review-gate triage; markdown preview should remain proposal-only unless sanitizer and dependency policy are explicit.
+
+
+### 2026-05-18T17:39:17+09:00 — final board refresh addendum
+
+- Pushed commit `08eabfd` (`fix: harden domain note import keys`) to `origin/main`.
+- GitHub Actions CI run `26022654537` completed successfully for commit `08eabfd6fcd0cad9624f9369a48c64251d245670`; `gh run view` reported the validate job succeeded.
+- Commented on and closed #22 with `status:completed` after recording verification evidence.
+- Final board state: #1–#22 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
