@@ -560,6 +560,7 @@ test('popup lists URL and domain notes and filters by key or note text', async (
       return [
         { url: 'https://example.com/alpha', noteText: 'meeting notes' },
         { url: 'https://example.org/bravo', noteText: 'recipe draft' },
+        { url: 'javascript:alert(1)', noteText: 'unsafe stale imported note' },
       ];
     },
   };
@@ -577,16 +578,19 @@ test('popup lists URL and domain notes and filters by key or note text', async (
 
   await initializePopup({ document, adapter: createAdapter(), createStore: () => store, createDomainStore: () => domainStore });
 
-  assert.equal(document.elements['#notes-list'].children.length, 3);
+  assert.equal(document.elements['#notes-list'].children.length, 4);
   assert.equal(document.elements['#notes-list'].children[0].children[0].textContent, 'URL note');
   assert.equal(document.elements['#notes-list'].children[0].children[1].textContent, 'https://example.com/alpha');
   assert.equal(document.elements['#notes-list'].children[0].children[1].attributes.get('href'), 'https://example.com/alpha');
   assert.equal(document.elements['#notes-list'].children[0].children[1].attributes.get('target'), '_blank');
   assert.equal(document.elements['#notes-list'].children[0].children[1].attributes.get('rel'), 'noopener noreferrer');
-  assert.equal(document.elements['#notes-list'].children[2].children[0].textContent, 'Domain note');
-  assert.equal(document.elements['#notes-list'].children[2].children[1].textContent, 'example.net');
-  assert.equal(document.elements['#notes-list'].children[2].children[1].attributes.get('href'), 'https://example.net/');
-  assert.equal(document.elements['#notes-list'].children[2].children[1].attributes.get('rel'), 'noopener noreferrer');
+  assert.equal(document.elements['#notes-list'].children[2].children[0].textContent, 'URL note');
+  assert.equal(document.elements['#notes-list'].children[2].children[1].textContent, 'javascript:alert(1)');
+  assert.equal(document.elements['#notes-list'].children[2].children[1].attributes.get('href'), undefined);
+  assert.equal(document.elements['#notes-list'].children[3].children[0].textContent, 'Domain note');
+  assert.equal(document.elements['#notes-list'].children[3].children[1].textContent, 'example.net');
+  assert.equal(document.elements['#notes-list'].children[3].children[1].attributes.get('href'), 'https://example.net/');
+  assert.equal(document.elements['#notes-list'].children[3].children[1].attributes.get('rel'), 'noopener noreferrer');
   assert.equal(document.elements['#notes-empty'].textContent, '');
 
   document.elements['#notes-search'].value = 'recipe';

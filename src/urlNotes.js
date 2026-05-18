@@ -140,12 +140,19 @@ function collectUrlNotesForImport(payload, keyOptions) {
   try {
     for (const [rawUrl, noteText] of Object.entries(payload.notes)) {
       if (String(noteText ?? '').trim() === '') continue;
-      notesToImport.push([normalizeUrlForNoteKey(rawUrl, keyOptions), String(noteText)]);
+      const normalizedUrl = normalizeUrlForNoteKey(rawUrl, keyOptions);
+      if (!isSafeWebUrl(normalizedUrl)) throw new Error('Invalid URL scheme');
+      notesToImport.push([normalizedUrl, String(noteText)]);
     }
   } catch {
     throw new Error('Unsupported URL notes export format');
   }
   return notesToImport;
+}
+
+function isSafeWebUrl(rawUrl) {
+  const protocol = new URL(rawUrl).protocol;
+  return protocol === 'http:' || protocol === 'https:';
 }
 
 function collectDomainNotesForImport(payload) {

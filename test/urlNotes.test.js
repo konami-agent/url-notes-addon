@@ -152,6 +152,44 @@ test('URL note store rejects invalid imports without changing existing notes', a
   assert.equal(await store.loadNote('https://example.com/new'), '');
 });
 
+test('URL note store rejects unsafe non-web import URL schemes atomically', async () => {
+  const storage = new MemoryStorageArea();
+  const store = createUrlNoteStore(storage);
+
+  await assert.rejects(
+    () => store.importNotes({
+      schemaVersion: 1,
+      notes: {
+        'https://example.com/safe': 'should not be saved',
+        'javascript:alert(1)': 'unsafe script URL',
+      },
+    }),
+    /Unsupported URL notes export format/,
+  );
+
+  await assert.rejects(
+    () => store.importNotes({
+      schemaVersion: 1,
+      notes: {
+        'data:text/html,<h1>unsafe</h1>': 'unsafe data URL',
+      },
+    }),
+    /Unsupported URL notes export format/,
+  );
+
+  assert.equal(await store.loadNote('https://example.com/safe'), '');
+
+  assert.equal(await store.importNotes({
+    schemaVersion: 1,
+    notes: {
+      'http://example.org/path#section': 'http note',
+      'https://example.net/path?x=1': 'https note',
+    },
+  }), 2);
+  assert.equal(await store.loadNote('http://example.org/path'), 'http note');
+  assert.equal(await store.loadNote('https://example.net/path?x=1'), 'https note');
+});
+
 test('domain note store saves and deletes notes in a separate namespace from URL notes', async () => {
   const storage = new MemoryStorageArea();
   const urlStore = createUrlNoteStore(storage);

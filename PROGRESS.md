@@ -413,3 +413,17 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #22 with `status:completed` after recording verification evidence.
 - Final board state: #1–#22 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+## 2026-05-18T21:44:22+09:00 — scheduled tick hardened unsafe URL-note import links
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, recent commits, the full `project:manager` board, URL-note import validation, and saved-note overview rendering. Concrete finding: URL-note JSON import accepted non-web schemes such as `javascript:`/`data:`, and the overview rendered stored URL-note keys as clickable links.
+- Issues touched: created #23 (`Harden unsafe URL-note import links`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy comment. Completion/closure are pending commit, push, CI, and final evidence comment after this log entry.
+- Issue trust/autonomy decision: #23 is auto-implementable local security hardening, privacy-preserving, small, and verifiable; it does not add sync/login/external services/store publishing or major architecture churn, so implementation proceeded without additional owner approval.
+- TDD evidence for #23: added `test/urlNotes.test.js` coverage requiring URL-note imports to reject `javascript:` and `data:` schemes atomically while preserving valid `http:`/`https:` imports, and added `test/popup.test.js` coverage requiring unsafe stale URL-note keys to render without an `href`; observed RED via `node --test test/urlNotes.test.js test/popup.test.js` with missing rejection and unsafe `href`; implemented minimal import scheme validation and overview href gating; observed GREEN.
+- Files changed: `src/urlNotes.js`, `src/popup.js`, `test/urlNotes.test.js`, `test/popup.test.js`, `PROGRESS.md`.
+- Verification: `node --test test/urlNotes.test.js test/popup.test.js` passed (31 focused tests); `npm test` passed (43 tests); `npm run lint` passed; `npm run validate:extension` passed; `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI, and final #23 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #23, continue review-gate triage; markdown preview should remain proposal-only unless sanitizer and dependency policy are explicit.

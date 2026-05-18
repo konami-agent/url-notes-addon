@@ -165,9 +165,11 @@ function renderNoteOverview({ document, notesList, notesEmpty, notes, query }) {
     label.setAttribute('class', 'note-kind');
     const link = document.createElement('a');
     link.textContent = key;
-    link.setAttribute('href', href);
-    link.setAttribute('target', '_blank');
-    link.setAttribute('rel', 'noopener noreferrer');
+    if (isSafeOverviewHref(href)) {
+      link.setAttribute('href', href);
+      link.setAttribute('target', '_blank');
+      link.setAttribute('rel', 'noopener noreferrer');
+    }
     const preview = document.createElement('p');
     preview.textContent = noteText;
     item.append(label, link, preview);
@@ -190,6 +192,15 @@ async function listOverviewEntries(store, domainStore) {
     ...urlNotes.map(({ url, noteText }) => ({ type: 'url', key: url, href: url, noteText })),
     ...domainNotes.map(({ domain, noteText }) => ({ type: 'domain', key: domain, href: `https://${domain}/`, noteText })),
   ];
+}
+
+function isSafeOverviewHref(href) {
+  try {
+    const protocol = new URL(href).protocol;
+    return protocol === 'http:' || protocol === 'https:';
+  } catch {
+    return false;
+  }
 }
 
 function requiredElement(document, selector) {
