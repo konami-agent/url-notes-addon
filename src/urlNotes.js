@@ -15,7 +15,9 @@ export function normalizeUrlForNoteKey(rawUrl, { ignoreQuery = false } = {}) {
 }
 
 export function normalizeUrlForDomainNoteKey(rawUrl) {
-  return new URL(rawUrl).hostname.toLowerCase();
+  const hostname = new URL(rawUrl).hostname.toLowerCase();
+  if (hostname === '') throw new Error('Domain notes require a URL host');
+  return hostname;
 }
 
 export function createUrlNoteStore(storageArea, keyOptions = {}) {

@@ -386,6 +386,44 @@ test('popup refreshes overview after deleting a domain note', async () => {
   assert.equal(document.elements['#notes-empty'].textContent, 'No saved notes yet.');
 });
 
+test('popup disables domain notes for active URLs without a host', async () => {
+  const document = createPopupDocument();
+  const timer = createManualTimer();
+  const savedDomainNotes = [];
+  const urlStore = {
+    async loadNote() { return 'hostless page note'; },
+    async saveNote() {},
+    async exportNotes() { return { schemaVersion: 1, notes: {} }; },
+    async importNotes() { return 0; },
+    async listNotes() { return []; },
+  };
+  const domainStore = {
+    async loadNote() { throw new Error('domain note should not load for hostless URLs'); },
+    async saveNote(url, noteText) { savedDomainNotes.push([url, noteText]); },
+    async listNotes() { return []; },
+  };
+
+  await initializePopup({
+    document,
+    adapter: createAdapter('about:blank'),
+    createStore: () => urlStore,
+    createDomainStore: () => domainStore,
+    debounceMs: 250,
+    setTimeout: timer.setTimeout,
+    clearTimeout: timer.clearTimeout,
+  });
+
+  assert.equal(document.elements['#url-key'].textContent, 'about:blank');
+  assert.equal(document.elements['#note'].value, 'hostless page note');
+  assert.equal(document.elements['#domain-key'].textContent, 'Domain notes unavailable for this URL.');
+  assert.equal(document.elements['#domain-note'].disabled, true);
+
+  document.elements['#domain-note'].value = 'should not save';
+  document.elements['#domain-note'].dispatch('input');
+  assert.equal(document.elements['#status'].textContent, 'Domain notes are unavailable for this URL.');
+  assert.equal(savedDomainNotes.length, 0);
+});
+
 test('popup treats blank edits as deleted notes', async () => {
   const document = createPopupDocument();
   const timer = createManualTimer();

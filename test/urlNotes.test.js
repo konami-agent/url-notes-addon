@@ -56,6 +56,11 @@ test('normalizeUrlForDomainNoteKey extracts a lowercase host without URL path or
   );
 });
 
+test('normalizeUrlForDomainNoteKey rejects URLs without a host', () => {
+  assert.throws(() => normalizeUrlForDomainNoteKey('about:blank'), /Domain notes require a URL host/);
+  assert.throws(() => normalizeUrlForDomainNoteKey('file:///tmp/example.txt'), /Domain notes require a URL host/);
+});
+
 test('URL note store saves and loads notes by normalized URL key', async () => {
   const store = createUrlNoteStore(new MemoryStorageArea());
 
@@ -209,6 +214,16 @@ test('domain note store saves and deletes notes in a separate namespace from URL
 
   assert.equal(await domainStore.loadNote('https://example.com/path'), '');
   assert.equal(await urlStore.loadNote('https://example.com/path'), 'page note');
+});
+
+test('domain note store rejects hostless URLs without using an empty domain key', async () => {
+  const storage = new MemoryStorageArea();
+  const domainStore = createDomainNoteStore(storage);
+
+  await assert.rejects(() => domainStore.saveNote('about:blank', 'hostless note'), /Domain notes require a URL host/);
+  await assert.rejects(() => domainStore.loadNote('file:///tmp/example.txt'), /Domain notes require a URL host/);
+
+  assert.equal(storage.data['urlNotes.domainNotes.'], undefined);
 });
 
 test('domain note store exports and imports schema-versioned domain notes', async () => {

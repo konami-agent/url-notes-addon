@@ -35,6 +35,7 @@ export async function initializePopup({
   let store;
   let domainStore;
   let activeUrl;
+  let activeDomainAvailable = false;
   let saveTimer;
   let domainSaveTimer;
   let listedNotes = [];
@@ -43,9 +44,9 @@ export async function initializePopup({
 
   async function reloadCurrentNote(message) {
     urlKey.textContent = normalizeUrlForNoteKey(activeUrl, keyOptions);
-    domainKey.textContent = normalizeUrlForDomainNoteKey(activeUrl);
+    activeDomainAvailable = updateDomainNoteAvailability(activeUrl, { domainKey, domainNote });
     note.value = await store.loadNote(activeUrl);
-    domainNote.value = await domainStore.loadNote(activeUrl);
+    domainNote.value = activeDomainAvailable ? await domainStore.loadNote(activeUrl) : '';
     listedNotes = await listOverviewEntries(store, domainStore);
     renderNotes();
     status.textContent = message;
@@ -83,6 +84,10 @@ export async function initializePopup({
   });
 
   domainNote.addEventListener('input', () => {
+    if (!activeDomainAvailable) {
+      status.textContent = 'Domain notes are unavailable for this URL.';
+      return;
+    }
     if (domainSaveTimer) cancelSchedule(domainSaveTimer);
     status.textContent = 'Saving domain note…';
     domainSaveTimer = schedule(async () => {
@@ -192,6 +197,19 @@ async function listOverviewEntries(store, domainStore) {
     ...urlNotes.map(({ url, noteText }) => ({ type: 'url', key: url, href: url, noteText })),
     ...domainNotes.map(({ domain, noteText }) => ({ type: 'domain', key: domain, href: `https://${domain}/`, noteText })),
   ];
+}
+
+function updateDomainNoteAvailability(activeUrl, { domainKey, domainNote }) {
+  try {
+    domainKey.textContent = normalizeUrlForDomainNoteKey(activeUrl);
+    domainNote.disabled = false;
+    return true;
+  } catch {
+    domainKey.textContent = 'Domain notes unavailable for this URL.';
+    domainNote.value = '';
+    domainNote.disabled = true;
+    return false;
+  }
 }
 
 function isSafeOverviewHref(href) {
