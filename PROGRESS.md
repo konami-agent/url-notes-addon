@@ -389,3 +389,18 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #21 with `status:completed` after recording verification evidence.
 - Final board state: #1–#21 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed before feature commit; no blockers observed.
+
+
+## 2026-05-18T17:36:41+09:00 — scheduled tick hardened domain-note import keys
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, recent commits, the full `project:manager` board, source import validation, and current tests. Concrete finding: domain-note JSON import accepted URL-like keys such as query-string or credential-bearing strings by wrapping them in `https://...` and reading the hostname, which could silently normalize an unexpected backup key onto a real domain note.
+- Issues touched: created #22 (`Harden domain-note import key validation`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy comment. Completion/closure are pending commit, push, CI, and final evidence comment after this log entry.
+- Issue trust/autonomy decision: #22 is auto-implementable local-only maintenance/security-hardening work, privacy-preserving, small, and verifiable; it does not add sync/login/external services/store publishing or major architecture churn, so implementation proceeded without additional owner approval.
+- TDD evidence for #22: added `test/urlNotes.test.js` coverage requiring domain-note import to reject URL-like keys with query strings and credentials while preserving atomicity; observed RED via `node --test test/urlNotes.test.js` (`Missing expected rejection`); implemented minimal delimiter validation in `src/urlNotes.js`; observed GREEN.
+- Files changed: `src/urlNotes.js`, `test/urlNotes.test.js`, `PROGRESS.md`.
+- Verification: `node --test test/urlNotes.test.js` passed (15 tests); `npm test` passed (42 tests); `npm run lint` passed; `npm run validate:extension` passed; `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI, and final #22 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #22, continue review-gate triage; markdown preview should remain proposal-only unless sanitizer and dependency policy are explicit.

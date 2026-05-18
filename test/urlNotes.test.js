@@ -242,3 +242,33 @@ test('domain note store rejects invalid imports without changing existing domain
   assert.equal(await domainStore.loadNote('https://example.com/anything'), 'keep me');
   assert.equal(await domainStore.loadNote('https://example.net/anything'), '');
 });
+
+test('domain note store rejects URL-like import keys atomically', async () => {
+  const storage = new MemoryStorageArea();
+  const domainStore = createDomainNoteStore(storage);
+
+  await assert.rejects(
+    () => domainStore.importNotes({
+      schemaVersion: 1,
+      domainNotes: {
+        'example.net': 'should not be saved',
+        'example.com?tracking=1': 'query string should be rejected',
+      },
+    }),
+    /Unsupported URL notes export format/,
+  );
+
+  await assert.rejects(
+    () => domainStore.importNotes({
+      schemaVersion: 1,
+      domainNotes: {
+        'user@example.org': 'credentials should be rejected',
+      },
+    }),
+    /Unsupported URL notes export format/,
+  );
+
+  assert.equal(await domainStore.loadNote('https://example.net/anything'), '');
+  assert.equal(await domainStore.loadNote('https://example.com/anything'), '');
+  assert.equal(await domainStore.loadNote('https://example.org/anything'), '');
+});

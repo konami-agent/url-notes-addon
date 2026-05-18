@@ -171,6 +171,6 @@ function collectDomainNotesForImport(payload) {
 
 function normalizeDomainForImport(rawDomain) {
   const domain = String(rawDomain ?? '').trim();
-  if (domain === '' || domain.includes('/')) throw new Error('Invalid domain');
+  if (domain === '' || /[\s/?#@:]/u.test(domain)) throw new Error('Invalid domain');
   return new URL(`https://${domain}`).hostname.toLowerCase();
 }
