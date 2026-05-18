@@ -457,3 +457,18 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #24 with `status:completed` after recording verification evidence.
 - Final board state: #1–#24 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+
+## 2026-05-19T05:55:19+09:00 — scheduled tick avoided links for invalid stale domain overview keys
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, recent commits, the full `project:manager` board, popup overview rendering, and current URL/domain hardening tests. Concrete finding: stale or externally introduced domain-note overview keys such as credential-like strings could still become clickable `https://<domain>/` links even though imports now reject new invalid domain keys.
+- Issues touched: created #25 (`Avoid clickable links for invalid stale domain overview keys`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy comment. Completion/closure are pending commit, push, CI, and final evidence comment after this log entry.
+- Issue trust/autonomy decision: #25 is auto-implementable local UI/security hardening, privacy-preserving, small, and verifiable; it does not add sync/login/external services/store publishing or major architecture churn, so implementation proceeded without additional owner approval.
+- TDD evidence for #25: extended `test/popup.test.js` to require an invalid stale domain key (`user@example.org`) to render without `href`, `target`, or `rel`; observed RED via `node --test test/popup.test.js` because it rendered `https://user@example.org/`; implemented minimal domain-key validation before assigning overview hrefs; observed GREEN.
+- Files changed: `src/popup.js`, `test/popup.test.js`, `PROGRESS.md`.
+- Verification: `node --test test/popup.test.js` passed (16 tests); `npm test` passed (46 tests); `npm run lint` passed; `npm run validate:extension` passed; `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI, and final #25 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #25, continue review-gate triage; markdown preview should remain proposal-only unless sanitizer and dependency policy are explicit.

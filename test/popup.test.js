@@ -610,13 +610,14 @@ test('popup lists URL and domain notes and filters by key or note text', async (
     async listNotes() {
       return [
         { domain: 'example.net', noteText: 'site-wide checklist' },
+        { domain: 'user@example.org', noteText: 'stale confusable domain key' },
       ];
     },
   };
 
   await initializePopup({ document, adapter: createAdapter(), createStore: () => store, createDomainStore: () => domainStore });
 
-  assert.equal(document.elements['#notes-list'].children.length, 4);
+  assert.equal(document.elements['#notes-list'].children.length, 5);
   assert.equal(document.elements['#notes-list'].children[0].children[0].textContent, 'URL note');
   assert.equal(document.elements['#notes-list'].children[0].children[1].textContent, 'https://example.com/alpha');
   assert.equal(document.elements['#notes-list'].children[0].children[1].attributes.get('href'), 'https://example.com/alpha');
@@ -629,6 +630,11 @@ test('popup lists URL and domain notes and filters by key or note text', async (
   assert.equal(document.elements['#notes-list'].children[3].children[1].textContent, 'example.net');
   assert.equal(document.elements['#notes-list'].children[3].children[1].attributes.get('href'), 'https://example.net/');
   assert.equal(document.elements['#notes-list'].children[3].children[1].attributes.get('rel'), 'noopener noreferrer');
+  assert.equal(document.elements['#notes-list'].children[4].children[0].textContent, 'Domain note');
+  assert.equal(document.elements['#notes-list'].children[4].children[1].textContent, 'user@example.org');
+  assert.equal(document.elements['#notes-list'].children[4].children[1].attributes.get('href'), undefined);
+  assert.equal(document.elements['#notes-list'].children[4].children[1].attributes.get('target'), undefined);
+  assert.equal(document.elements['#notes-list'].children[4].children[1].attributes.get('rel'), undefined);
   assert.equal(document.elements['#notes-empty'].textContent, '');
 
   document.elements['#notes-search'].value = 'recipe';

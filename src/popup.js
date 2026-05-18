@@ -195,7 +195,12 @@ async function listOverviewEntries(store, domainStore) {
   const domainNotes = typeof domainStore.listNotes === 'function' ? await domainStore.listNotes() : [];
   return [
     ...urlNotes.map(({ url, noteText }) => ({ type: 'url', key: url, href: url, noteText })),
-    ...domainNotes.map(({ domain, noteText }) => ({ type: 'domain', key: domain, href: `https://${domain}/`, noteText })),
+    ...domainNotes.map(({ domain, noteText }) => ({
+      type: 'domain',
+      key: domain,
+      href: isValidDomainOverviewKey(domain) ? `https://${domain}/` : undefined,
+      noteText,
+    })),
   ];
 }
 
@@ -216,6 +221,16 @@ function isSafeOverviewHref(href) {
   try {
     const protocol = new URL(href).protocol;
     return protocol === 'http:' || protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
+function isValidDomainOverviewKey(domain) {
+  const normalizedDomain = String(domain ?? '').trim();
+  if (normalizedDomain === '' || /[\s/?#@:]/u.test(normalizedDomain)) return false;
+  try {
+    return new URL(`https://${normalizedDomain}`).hostname.toLowerCase() === normalizedDomain.toLowerCase();
   } catch {
     return false;
   }
