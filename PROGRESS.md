@@ -343,3 +343,17 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Final board state: #1–#19 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed before feature commit; no blockers observed.
 
+
+## 2026-05-18T09:27:27+09:00 — scheduled tick refreshed overview after domain-note edits
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, recent commits, full `project:manager` board, current popup/source structure, and next-phase reports. Concrete finding: after #19 included domain notes in the saved-note overview, editing or clearing the current domain note did not refresh the overview in the same open popup session.
+- Issues touched: created #20 (`Refresh overview after domain-note edits`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy comment. Completion/closure are pending commit, push, CI, and final evidence comment after this log entry.
+- Issue trust/autonomy decision: #20 is auto-implementable local-only maintenance/usability correctness work, privacy-preserving, small, and verifiable; it does not add sync/login/external services/store publishing or major architecture churn, so implementation proceeded without additional owner approval.
+- TDD evidence for #20: added `test/popup.test.js` coverage for refreshing the saved-note overview after saving a domain note and after deleting a domain note; observed RED via `node --test test/popup.test.js` with stale overview assertions; implemented minimal `src/popup.js` refresh after domain-note save/delete; observed GREEN.
+- Files changed: `src/popup.js`, `test/popup.test.js`, `PROGRESS.md`.
+- Verification: `node --test test/popup.test.js` passed (15 tests); `npm test` passed (41 tests); `npm run lint` passed; `npm run validate:extension` passed; `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI, and final #20 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #20, review remaining next-phase options; markdown preview should remain proposal-only unless sanitizer and dependency policy are explicit.

@@ -88,6 +88,8 @@ export async function initializePopup({
     domainSaveTimer = schedule(async () => {
       try {
         await domainStore.saveNote(activeUrl, domainNote.value);
+        listedNotes = await listOverviewEntries(store, domainStore);
+        renderNotes();
         status.textContent = domainNote.value.trim() === '' ? 'Domain note deleted.' : 'Domain note saved.';
       } catch (error) {
         status.textContent = `Error: ${error.message}`;

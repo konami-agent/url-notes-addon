@@ -306,6 +306,86 @@ test('popup debounces domain note edits and reports saved status', async () => {
   assert.equal(document.elements['#status'].textContent, 'Domain note saved.');
 });
 
+test('popup refreshes overview after saving a domain note', async () => {
+  const document = createPopupDocument();
+  const timer = createManualTimer();
+  const domainNotes = [];
+  const urlStore = {
+    async loadNote() { return ''; },
+    async saveNote() {},
+    async exportNotes() { return { schemaVersion: 1, notes: {} }; },
+    async importNotes() { return 0; },
+    async listNotes() { return []; },
+  };
+  const domainStore = {
+    async loadNote() { return ''; },
+    async saveNote(_url, noteText) {
+      domainNotes.splice(0, domainNotes.length, { domain: 'example.com', noteText });
+    },
+    async listNotes() { return [...domainNotes]; },
+  };
+
+  await initializePopup({
+    document,
+    adapter: createAdapter('https://example.com/page'),
+    createStore: () => urlStore,
+    createDomainStore: () => domainStore,
+    debounceMs: 250,
+    setTimeout: timer.setTimeout,
+    clearTimeout: timer.clearTimeout,
+  });
+
+  assert.equal(document.elements['#notes-list'].children.length, 0);
+
+  document.elements['#domain-note'].value = 'domain draft';
+  document.elements['#domain-note'].dispatch('input');
+  await timer.runPending();
+
+  assert.equal(document.elements['#notes-list'].children.length, 1);
+  assert.equal(document.elements['#notes-list'].children[0].children[0].textContent, 'Domain note');
+  assert.equal(document.elements['#notes-list'].children[0].children[1].textContent, 'example.com');
+  assert.equal(document.elements['#notes-list'].children[0].children[2].textContent, 'domain draft');
+});
+
+test('popup refreshes overview after deleting a domain note', async () => {
+  const document = createPopupDocument();
+  const timer = createManualTimer();
+  let domainNotes = [{ domain: 'example.com', noteText: 'old domain note' }];
+  const urlStore = {
+    async loadNote() { return ''; },
+    async saveNote() {},
+    async exportNotes() { return { schemaVersion: 1, notes: {} }; },
+    async importNotes() { return 0; },
+    async listNotes() { return []; },
+  };
+  const domainStore = {
+    async loadNote() { return 'old domain note'; },
+    async saveNote(_url, noteText) {
+      if (String(noteText).trim() === '') domainNotes = [];
+    },
+    async listNotes() { return [...domainNotes]; },
+  };
+
+  await initializePopup({
+    document,
+    adapter: createAdapter('https://example.com/page'),
+    createStore: () => urlStore,
+    createDomainStore: () => domainStore,
+    debounceMs: 250,
+    setTimeout: timer.setTimeout,
+    clearTimeout: timer.clearTimeout,
+  });
+
+  assert.equal(document.elements['#notes-list'].children.length, 1);
+
+  document.elements['#domain-note'].value = '   ';
+  document.elements['#domain-note'].dispatch('input');
+  await timer.runPending();
+
+  assert.equal(document.elements['#notes-list'].children.length, 0);
+  assert.equal(document.elements['#notes-empty'].textContent, 'No saved notes yet.');
+});
+
 test('popup treats blank edits as deleted notes', async () => {
   const document = createPopupDocument();
   const timer = createManualTimer();
