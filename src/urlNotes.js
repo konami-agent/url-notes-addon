@@ -180,6 +180,12 @@ function collectDomainNotesForImport(payload) {
 
 function normalizeDomainForImport(rawDomain) {
   const domain = String(rawDomain ?? '').trim();
-  if (domain === '' || /[\s/?#@:]/u.test(domain)) throw new Error('Invalid domain');
+  if (!isValidDomainKeyShape(domain)) throw new Error('Invalid domain');
   return new URL(`https://${domain}`).hostname.toLowerCase();
+}
+
+function isValidDomainKeyShape(domain) {
+  if (domain === '' || /[\s/?#@:]/u.test(domain)) return false;
+  const labels = domain.split('.');
+  return labels.every((label) => label !== '' && !label.startsWith('-') && !label.endsWith('-'));
 }

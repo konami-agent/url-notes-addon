@@ -325,3 +325,41 @@ test('domain note store rejects URL-like import keys atomically', async () => {
   assert.equal(await domainStore.loadNote('https://example.com/anything'), '');
   assert.equal(await domainStore.loadNote('https://example.org/anything'), '');
 });
+
+test('domain note store rejects malformed DNS-like import keys atomically', async () => {
+  const storage = new MemoryStorageArea();
+  const domainStore = createDomainNoteStore(storage);
+
+  await assert.rejects(
+    () => domainStore.importNotes({
+      schemaVersion: 1,
+      domainNotes: {
+        'example.net': 'should not be saved',
+        'example..com': 'empty label should be rejected',
+      },
+    }),
+    /Unsupported URL notes export format/,
+  );
+
+  await assert.rejects(
+    () => domainStore.importNotes({
+      schemaVersion: 1,
+      domainNotes: {
+        '-bad.example': 'leading hyphen should be rejected',
+        'bad-.example': 'trailing hyphen should be rejected',
+      },
+    }),
+    /Unsupported URL notes export format/,
+  );
+
+  assert.equal(await domainStore.loadNote('https://example.net/anything'), '');
+  assert.equal(storage.data['urlNotes.domainNotes.example..com'], undefined);
+  assert.equal(storage.data['urlNotes.domainNotes.-bad.example'], undefined);
+  assert.equal(storage.data['urlNotes.domainNotes.bad-.example'], undefined);
+
+  assert.equal(await domainStore.importNotes({
+    schemaVersion: 1,
+    domainNotes: { 'Example.COM': 'valid domain note' },
+  }), 1);
+  assert.equal(await domainStore.loadNote('https://example.com/page'), 'valid domain note');
+});
