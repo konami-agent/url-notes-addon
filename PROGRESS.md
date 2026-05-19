@@ -495,3 +495,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: pending commit/push, CI, and final #26 evidence comment/closure after this log entry.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #26, continue review-gate triage; markdown preview should remain proposal-only unless sanitizer and dependency policy are explicit.
+
+
+### 2026-05-19T10:03:49+09:00 — final board refresh addendum
+
+- Pushed commit `6e309e5` (`fix: keep imports working on hostless tabs`) to `origin/main`.
+- GitHub Actions CI run `26069717906` completed successfully for commit `6e309e5db243f3d9398ff3afd54bc7d60e132467`; `gh run view` reported the validate job succeeded.
+- Commented on and closed #26 with `status:completed` after recording verification evidence.
+- Final board state: #1–#26 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed before feature commit; no blockers observed.
