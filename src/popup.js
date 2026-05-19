@@ -131,7 +131,7 @@ export async function initializePopup({
       const importedDomainCount = await domainStore.importNotes(payload);
       const importedUrlCount = await store.importNotes(payload);
       note.value = await store.loadNote(activeUrl);
-      domainNote.value = await domainStore.loadNote(activeUrl);
+      domainNote.value = activeDomainAvailable ? await domainStore.loadNote(activeUrl) : '';
       listedNotes = await listOverviewEntries(store, domainStore);
       renderNotes();
       status.textContent = `Imported ${importedUrlCount + importedDomainCount} notes.`;
