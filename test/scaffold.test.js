@@ -87,3 +87,20 @@ test('v0.1 review reports summarize delivered behavior limitations and next-phas
     assert.match(options, nextPhaseTopic);
   }
 });
+
+test('markdown preview policy defines the local sanitizer boundary before implementation', async () => {
+  const policy = await readFile(new URL('../reports/markdown-preview-policy.md', import.meta.url), 'utf8');
+
+  assert.match(policy, /local-only/i);
+  assert.match(policy, /safe subset/i);
+  assert.match(policy, /headings/i);
+  assert.match(policy, /lists/i);
+  assert.match(policy, /emphasis/i);
+  assert.match(policy, /links/i);
+  assert.match(policy, /reject raw HTML/i);
+  assert.match(policy, /script/i);
+  assert.match(policy, /inline event handlers/i);
+  assert.match(policy, /no remote rendering/i);
+  assert.match(policy, /small audited local dependency/i);
+  assert.match(policy, /minimal internal renderer/i);
+});

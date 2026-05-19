@@ -594,3 +594,17 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #30 with `status:completed` after recording verification evidence.
 - Final board state: #1–#30 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+## 2026-05-20T06:30:45+09:00 — scheduled tick defined markdown preview sanitizer policy
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, recent commits, full `project:manager` board, current source/tests, and `reports/next-phase-options.md`. Concrete finding: markdown preview is the remaining roadmap option, but the sanitizer/dependency boundary was not yet captured as an actionable repository policy before any UI implementation.
+- Issues touched: created #31 (`Define markdown preview sanitizer policy`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy comment. Completion/closure are pending commit, push, CI, and final evidence comment after this log entry.
+- Issue trust/autonomy decision: #31 is autonomous product/security-preparation work, local-only, privacy-preserving, documentation/test scoped, and verifiable; it does not add sync/login/external services/store publishing or major architecture churn, so implementation proceeded without additional owner approval.
+- TDD evidence for #31: added `test/scaffold.test.js` coverage requiring `reports/markdown-preview-policy.md` to define the local-only safe subset, raw HTML/script/inline-event-handler rejection, no remote rendering, and dependency expectations; observed RED via `node --test test/scaffold.test.js` because the policy file did not exist; added the policy report; observed GREEN.
+- Files changed: `test/scaffold.test.js`, `reports/markdown-preview-policy.md`, `PROGRESS.md`.
+- Verification: `node --test test/scaffold.test.js` passed (7 tests); `npm test` passed (51 tests); `npm run lint` passed; `npm run validate:extension` passed; `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI, and final #31 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #31, consider a separate low-risk implementation issue for a minimal local markdown preview only if it follows this sanitizer policy with RED tests first.
