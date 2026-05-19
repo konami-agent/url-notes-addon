@@ -564,3 +564,11 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: pending commit/push, CI, and final #29 evidence comment/closure after this log entry.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #29, continue review-gate triage; markdown preview should remain proposal-only unless sanitizer and dependency policy are explicit.
+
+### 2026-05-19T22:21:10+09:00 — final board refresh addendum
+
+- Pushed commit `6203dac` (`fix: skip invalid domain note exports`) to `origin/main`.
+- GitHub Actions CI run `26099875361` completed successfully for commit `6203dacbb0019086b515eb867daf4db3ff0398e7`; `gh run view` reported the validate job succeeded.
+- Commented on and closed #29 with `status:completed` after recording verification evidence.
+- Final board state: #1–#29 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed before feature commit; no blockers observed.
