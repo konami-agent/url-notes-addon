@@ -270,6 +270,23 @@ test('domain note store lists saved domain notes sorted by domain key', async ()
   ]);
 });
 
+test('domain note store export skips malformed stale domain keys', async () => {
+  const storage = new MemoryStorageArea({
+    'urlNotes.domainNotes.example.com': 'valid note',
+    'urlNotes.domainNotes.bad_domain.example': 'invalid underscore note',
+    'urlNotes.domainNotes.user@example.org': 'invalid credential-like note',
+    'urlNotes.domainNotes.example..net': 'invalid empty-label note',
+  });
+  const domainStore = createDomainNoteStore(storage);
+
+  assert.deepEqual(await domainStore.exportNotes(), {
+    schemaVersion: 1,
+    domainNotes: {
+      'example.com': 'valid note',
+    },
+  });
+});
+
 test('domain note store accepts old exports without domain notes', async () => {
   const domainStore = createDomainNoteStore(new MemoryStorageArea());
 

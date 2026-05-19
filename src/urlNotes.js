@@ -97,7 +97,8 @@ export function createDomainNoteStore(storageArea) {
       const domainNotes = {};
       for (const [key, value] of Object.entries(allItems)) {
         if (key.startsWith(DOMAIN_NOTE_KEY_PREFIX) && typeof value === 'string') {
-          domainNotes[key.slice(DOMAIN_NOTE_KEY_PREFIX.length)] = value;
+          const domain = key.slice(DOMAIN_NOTE_KEY_PREFIX.length);
+          if (isValidDomainKeyShape(domain)) domainNotes[domain] = value;
         }
       }
       return { schemaVersion: SCHEMA_VERSION, domainNotes };
