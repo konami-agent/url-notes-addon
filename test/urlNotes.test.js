@@ -352,10 +352,21 @@ test('domain note store rejects malformed DNS-like import keys atomically', asyn
     /Unsupported URL notes export format/,
   );
 
+  await assert.rejects(
+    () => domainStore.importNotes({
+      schemaVersion: 1,
+      domainNotes: {
+        'bad_domain.example': 'underscore should be rejected',
+      },
+    }),
+    /Unsupported URL notes export format/,
+  );
+
   assert.equal(await domainStore.loadNote('https://example.net/anything'), '');
   assert.equal(storage.data['urlNotes.domainNotes.example..com'], undefined);
   assert.equal(storage.data['urlNotes.domainNotes.-bad.example'], undefined);
   assert.equal(storage.data['urlNotes.domainNotes.bad-.example'], undefined);
+  assert.equal(storage.data['urlNotes.domainNotes.bad_domain.example'], undefined);
 
   assert.equal(await domainStore.importNotes({
     schemaVersion: 1,

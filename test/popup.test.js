@@ -637,13 +637,14 @@ test('popup lists URL and domain notes and filters by key or note text', async (
         { domain: 'user@example.org', noteText: 'stale confusable domain key' },
         { domain: 'example..com', noteText: 'stale empty-label domain key' },
         { domain: '-bad.example', noteText: 'stale leading-hyphen domain key' },
+        { domain: 'bad_domain.example', noteText: 'stale underscore domain key' },
       ];
     },
   };
 
   await initializePopup({ document, adapter: createAdapter(), createStore: () => store, createDomainStore: () => domainStore });
 
-  assert.equal(document.elements['#notes-list'].children.length, 7);
+  assert.equal(document.elements['#notes-list'].children.length, 8);
   assert.equal(document.elements['#notes-list'].children[0].children[0].textContent, 'URL note');
   assert.equal(document.elements['#notes-list'].children[0].children[1].textContent, 'https://example.com/alpha');
   assert.equal(document.elements['#notes-list'].children[0].children[1].attributes.get('href'), 'https://example.com/alpha');
@@ -669,6 +670,10 @@ test('popup lists URL and domain notes and filters by key or note text', async (
   assert.equal(document.elements['#notes-list'].children[6].children[1].attributes.get('href'), undefined);
   assert.equal(document.elements['#notes-list'].children[6].children[1].attributes.get('target'), undefined);
   assert.equal(document.elements['#notes-list'].children[6].children[1].attributes.get('rel'), undefined);
+  assert.equal(document.elements['#notes-list'].children[7].children[1].textContent, 'bad_domain.example');
+  assert.equal(document.elements['#notes-list'].children[7].children[1].attributes.get('href'), undefined);
+  assert.equal(document.elements['#notes-list'].children[7].children[1].attributes.get('target'), undefined);
+  assert.equal(document.elements['#notes-list'].children[7].children[1].attributes.get('rel'), undefined);
   assert.equal(document.elements['#notes-empty'].textContent, '');
 
   document.elements['#notes-search'].value = 'recipe';

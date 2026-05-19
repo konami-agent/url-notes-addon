@@ -230,7 +230,12 @@ function isValidDomainOverviewKey(domain) {
   const normalizedDomain = String(domain ?? '').trim();
   if (normalizedDomain === '' || /[\s/?#@:]/u.test(normalizedDomain)) return false;
   const labels = normalizedDomain.split('.');
-  if (!labels.every((label) => label !== '' && !label.startsWith('-') && !label.endsWith('-'))) return false;
+  if (!labels.every((label) => (
+    label !== ''
+    && /^[a-z0-9-]+$/iu.test(label)
+    && !label.startsWith('-')
+    && !label.endsWith('-')
+  ))) return false;
   try {
     return new URL(`https://${normalizedDomain}`).hostname.toLowerCase() === normalizedDomain.toLowerCase();
   } catch {

@@ -187,5 +187,10 @@ function normalizeDomainForImport(rawDomain) {
 function isValidDomainKeyShape(domain) {
   if (domain === '' || /[\s/?#@:]/u.test(domain)) return false;
   const labels = domain.split('.');
-  return labels.every((label) => label !== '' && !label.startsWith('-') && !label.endsWith('-'));
+  return labels.every((label) => (
+    label !== ''
+    && /^[a-z0-9-]+$/iu.test(label)
+    && !label.startsWith('-')
+    && !label.endsWith('-')
+  ));
 }
