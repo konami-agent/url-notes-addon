@@ -542,3 +542,11 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: pending commit/push, CI, and final #28 evidence comment/closure after this log entry.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #28, continue review-gate triage; markdown preview should remain proposal-only unless sanitizer and dependency policy are explicit.
+
+### 2026-05-19T18:16:00+09:00 — final board refresh addendum
+
+- Pushed commit `5f5bca8` (`fix: reject non-DNS domain note keys`) to `origin/main`.
+- GitHub Actions CI run `26087881920` completed successfully for commit `5f5bca82a233d578d30937fa0c3054589bc55de2`; `gh run view` reported the validate job succeeded.
+- Commented on and closed #28 with `status:completed` after recording verification evidence.
+- Final board state: #1–#28 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed before feature commit and again during final verification; no blockers observed.
