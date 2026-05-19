@@ -137,6 +137,25 @@ test('URL note store lists saved notes sorted by URL key', async () => {
   ]);
 });
 
+test('URL note store export skips stale invalid URL keys', async () => {
+  const storage = new MemoryStorageArea({
+    'urlNotes.notes.https://example.com/safe': 'safe note',
+    'urlNotes.notes.http://example.org/page': 'http note',
+    'urlNotes.notes.javascript:alert(1)': 'script note',
+    'urlNotes.notes.data:text/html,<h1>unsafe</h1>': 'data note',
+    'urlNotes.notes.not a url': 'malformed note',
+  });
+  const store = createUrlNoteStore(storage);
+
+  assert.deepEqual(await store.exportNotes(), {
+    schemaVersion: 1,
+    notes: {
+      'http://example.org/page': 'http note',
+      'https://example.com/safe': 'safe note',
+    },
+  });
+});
+
 test('URL note store rejects invalid imports without changing existing notes', async () => {
   const storage = new MemoryStorageArea();
   const store = createUrlNoteStore(storage);

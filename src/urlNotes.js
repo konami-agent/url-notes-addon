@@ -47,7 +47,8 @@ export function createUrlNoteStore(storageArea, keyOptions = {}) {
       const notes = {};
       for (const [key, value] of Object.entries(allItems)) {
         if (key.startsWith(NOTE_KEY_PREFIX) && typeof value === 'string') {
-          notes[key.slice(NOTE_KEY_PREFIX.length)] = value;
+          const url = key.slice(NOTE_KEY_PREFIX.length);
+          if (isSafeStoredUrlKey(url)) notes[url] = value;
         }
       }
       return { schemaVersion: SCHEMA_VERSION, notes };
@@ -156,6 +157,14 @@ function collectUrlNotesForImport(payload, keyOptions) {
 function isSafeWebUrl(rawUrl) {
   const protocol = new URL(rawUrl).protocol;
   return protocol === 'http:' || protocol === 'https:';
+}
+
+function isSafeStoredUrlKey(rawUrl) {
+  try {
+    return isSafeWebUrl(rawUrl);
+  } catch {
+    return false;
+  }
 }
 
 function collectDomainNotesForImport(payload) {
