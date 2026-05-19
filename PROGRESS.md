@@ -608,3 +608,11 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: pending commit/push, CI, and final #31 evidence comment/closure after this log entry.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #31, consider a separate low-risk implementation issue for a minimal local markdown preview only if it follows this sanitizer policy with RED tests first.
+
+### 2026-05-20T06:32:30+09:00 — final board refresh addendum
+
+- Pushed commit `cd5cf12` (`docs: define markdown preview sanitizer policy`) to `origin/main`.
+- GitHub Actions CI run `26126550268` completed successfully for commit `cd5cf1259da11a4b0fb6674adbd5a436b0f9a483`; `gh run view` reported the validate job succeeded with no annotations.
+- Commented on and closed #31 with `status:completed` after recording verification evidence.
+- Final board state: #1–#31 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` will be run again after this addendum; no blockers observed.
