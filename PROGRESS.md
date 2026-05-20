@@ -721,3 +721,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: pending commit/push, CI, and final #36 evidence comment/closure after this log entry.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #36, continue review-gate triage with emphasis on remaining release-readiness and small security/usability invariants rather than expanding markdown syntax without tests.
+
+
+### 2026-05-21T03:06:20+09:00 — final board refresh addendum
+
+- Pushed commit `ac7649e` (`fix: reject credential URL note imports`) to `origin/main`.
+- GitHub Actions CI run `26180805510` completed successfully for commit `ac7649eb50583ebff9ed66efcb9a3dc1b38b0ecd`; the validate job succeeded.
+- Commented on and closed #36 with `status:completed` after recording verification evidence.
+- Final board state: #1–#36 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
