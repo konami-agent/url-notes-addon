@@ -155,8 +155,8 @@ function collectUrlNotesForImport(payload, keyOptions) {
 }
 
 function isSafeWebUrl(rawUrl) {
-  const protocol = new URL(rawUrl).protocol;
-  return protocol === 'http:' || protocol === 'https:';
+  const url = new URL(rawUrl);
+  return (url.protocol === 'http:' || url.protocol === 'https:') && url.username === '' && url.password === '';
 }
 
 function isSafeStoredUrlKey(rawUrl) {

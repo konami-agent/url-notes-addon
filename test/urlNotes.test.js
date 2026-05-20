@@ -141,6 +141,8 @@ test('URL note store export skips stale invalid URL keys', async () => {
   const storage = new MemoryStorageArea({
     'urlNotes.notes.https://example.com/safe': 'safe note',
     'urlNotes.notes.http://example.org/page': 'http note',
+    'urlNotes.notes.https://user@example.com/hidden': 'credential note',
+    'urlNotes.notes.https://user:pass@example.com/hidden': 'password note',
     'urlNotes.notes.javascript:alert(1)': 'script note',
     'urlNotes.notes.data:text/html,<h1>unsafe</h1>': 'data note',
     'urlNotes.notes.not a url': 'malformed note',
@@ -154,6 +156,34 @@ test('URL note store export skips stale invalid URL keys', async () => {
       'https://example.com/safe': 'safe note',
     },
   });
+});
+
+test('URL note store rejects credential-bearing import URL keys atomically', async () => {
+  const storage = new MemoryStorageArea();
+  const store = createUrlNoteStore(storage);
+
+  await assert.rejects(
+    () => store.importNotes({
+      schemaVersion: 1,
+      notes: {
+        'https://example.com/safe': 'should not be saved',
+        'https://user@example.com/hidden': 'credential note',
+      },
+    }),
+    /Unsupported URL notes export format/,
+  );
+
+  await assert.rejects(
+    () => store.importNotes({
+      schemaVersion: 1,
+      notes: {
+        'https://user:pass@example.com/hidden': 'password note',
+      },
+    }),
+    /Unsupported URL notes export format/,
+  );
+
+  assert.equal(await store.loadNote('https://example.com/safe'), '');
 });
 
 test('URL note store rejects invalid imports without changing existing notes', async () => {
