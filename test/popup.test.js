@@ -734,6 +734,45 @@ test('popup imports URL notes on hostless active tabs without reloading unavaila
   assert.equal(document.elements['#status'].textContent, 'Imported 2 notes.');
 });
 
+test('popup renders stale credential-bearing URL note overview keys as non-clickable text', async () => {
+  const document = createPopupDocument();
+  const store = {
+    async loadNote() { return ''; },
+    async saveNote() {},
+    async exportNotes() { return { schemaVersion: 1, notes: {} }; },
+    async importNotes() { return 0; },
+    async listNotes() {
+      return [
+        { url: 'https://example.com/safe', noteText: 'safe note' },
+        { url: 'https://user@example.com/hidden', noteText: 'stale userinfo note' },
+        { url: 'https://user:pass@example.com/hidden', noteText: 'stale password note' },
+      ];
+    },
+  };
+  const domainStore = {
+    async loadNote() { return ''; },
+    async saveNote() {},
+    async exportNotes() { return { schemaVersion: 1, domainNotes: {} }; },
+    async importNotes() { return 0; },
+    async listNotes() { return []; },
+  };
+
+  await initializePopup({ document, adapter: createAdapter(), createStore: () => store, createDomainStore: () => domainStore });
+
+  assert.equal(document.elements['#notes-list'].children[0].children[1].textContent, 'https://example.com/safe');
+  assert.equal(document.elements['#notes-list'].children[0].children[1].attributes.get('href'), 'https://example.com/safe');
+  assert.equal(document.elements['#notes-list'].children[0].children[1].attributes.get('target'), '_blank');
+  assert.equal(document.elements['#notes-list'].children[0].children[1].attributes.get('rel'), 'noopener noreferrer');
+  assert.equal(document.elements['#notes-list'].children[1].children[1].textContent, 'https://user@example.com/hidden');
+  assert.equal(document.elements['#notes-list'].children[1].children[1].attributes.get('href'), undefined);
+  assert.equal(document.elements['#notes-list'].children[1].children[1].attributes.get('target'), undefined);
+  assert.equal(document.elements['#notes-list'].children[1].children[1].attributes.get('rel'), undefined);
+  assert.equal(document.elements['#notes-list'].children[2].children[1].textContent, 'https://user:pass@example.com/hidden');
+  assert.equal(document.elements['#notes-list'].children[2].children[1].attributes.get('href'), undefined);
+  assert.equal(document.elements['#notes-list'].children[2].children[1].attributes.get('target'), undefined);
+  assert.equal(document.elements['#notes-list'].children[2].children[1].attributes.get('rel'), undefined);
+});
+
 test('popup lists URL and domain notes and filters by key or note text', async () => {
   const document = createPopupDocument();
   const store = {

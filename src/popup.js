@@ -232,8 +232,8 @@ function updateDomainNoteAvailability(activeUrl, { domainKey, domainNote }) {
 
 function isSafeOverviewHref(href) {
   try {
-    const protocol = new URL(href).protocol;
-    return protocol === 'http:' || protocol === 'https:';
+    const url = new URL(href);
+    return (url.protocol === 'http:' || url.protocol === 'https:') && url.username === '' && url.password === '';
   } catch {
     return false;
   }

@@ -684,3 +684,17 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #34 with `status:completed` after recording verification evidence.
 - Final board state: #1–#34 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+## 2026-05-20T22:58:00+09:00 — scheduled tick rejected credential-bearing URL-note overview links
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, recent commits, the full `project:manager` board, popup overview rendering, and current markdown-link hardening. Concrete finding: saved-note overview links rejected non-web and malformed domain keys, but stale URL-note keys with HTTP(S) userinfo such as `https://user@example.com/` still became clickable.
+- Issues touched: created #35 (`Avoid clickable credential URL-note overview links`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy comment. Completion/closure are pending commit, push, CI, and final evidence comment after this log entry.
+- Issue trust/autonomy decision: #35 is auto-implementable local security/UI hardening, privacy-preserving, small, and verifiable; it does not add sync/login/external services/store publishing or major architecture churn, so implementation proceeded without additional owner approval.
+- TDD evidence for #35: added `test/popup.test.js` coverage requiring stale credential-bearing URL-note overview keys to render without `href`, `target`, or `rel` while preserving ordinary safe URL links; observed RED via `node --test test/popup.test.js` because `https://user@example.com/hidden` was clickable; implemented minimal username/password rejection in `src/popup.js`; observed GREEN.
+- Files changed: `src/popup.js`, `test/popup.test.js`, `PROGRESS.md`.
+- Verification: `node --test test/popup.test.js` passed (21 tests); `npm test` passed (58 tests); `npm run lint` passed; `npm run validate:extension` passed; `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI, and final #35 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #35, continue review-gate triage with emphasis on release-readiness and small security/usability invariants rather than expanding the markdown subset prematurely.
