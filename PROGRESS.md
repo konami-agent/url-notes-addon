@@ -652,3 +652,11 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: pending commit/push, CI, and final #33 evidence comment/closure after this log entry.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #33, continue review-gate triage; avoid expanding the markdown subset unless each new syntax has an explicit sanitizer test and policy-compatible behavior.
+
+### 2026-05-20T14:47:40+09:00 — final board refresh addendum
+
+- Pushed commit `c9c32b5` (`fix: reject credential markdown preview links`) to `origin/main`.
+- GitHub Actions CI run `26143970441` completed successfully for commit `c9c32b5b5d14763823e9f8970ab9e9f4f893c29a`; the validate job succeeded.
+- Commented on and closed #33 with `status:completed` after recording verification evidence.
+- Final board state: #1–#33 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
