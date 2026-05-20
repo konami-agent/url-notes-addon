@@ -78,3 +78,20 @@ test('markdown preview treats raw HTML and unsafe links as non-clickable text', 
   assert.equal(container.children[0].children.some((child) => child.textContent === 'bad'), true);
   assert.equal(container.children[0].children.some((child) => child.textContent === 'data'), true);
 });
+
+test('markdown preview rejects credential-bearing links', () => {
+  const container = new FakeElement('div');
+
+  renderMarkdownPreview({
+    document: createDocument(),
+    container,
+    markdown: '[safe](https://example.com/path) [user](https://user@example.com/) [password](https://user:secret@example.com/)',
+  });
+
+  const clickable = container.children[0].children.filter((child) => child.tagName === 'a');
+  assert.equal(clickable.length, 1);
+  assert.equal(clickable[0].textContent, 'safe');
+  assert.equal(clickable[0].attributes.get('href'), 'https://example.com/path');
+  assert.equal(container.children[0].children.some((child) => child.textContent === 'user' && !child.attributes.has('href')), true);
+  assert.equal(container.children[0].children.some((child) => child.textContent === 'password' && !child.attributes.has('href')), true);
+});

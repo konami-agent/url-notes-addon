@@ -638,3 +638,17 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #32 with `status:completed` after recording verification evidence.
 - Final board state: #1–#32 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+## 2026-05-20T14:46:02+09:00 — scheduled tick rejected credential-bearing markdown preview links
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, recent commits, full `project:manager` board, current markdown preview renderer/tests, and the sanitizer policy. Concrete finding: markdown preview accepted credential-bearing `http`/`https` links such as `https://user@example.com/` or `https://user:secret@example.com/`, which can hide userinfo behind benign link labels.
+- Issues touched: created #33 (`Reject credential-bearing markdown preview links`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy comment. Completion/closure are pending commit, push, CI, and final evidence comment after this log entry.
+- Issue trust/autonomy decision: #33 is auto-implementable local security hardening, privacy-preserving, small, and verifiable; it does not add sync/login/external services/store publishing or major architecture churn, so implementation proceeded without additional owner approval.
+- TDD evidence for #33: added `test/markdownPreview.test.js` coverage requiring credential-bearing markdown links to render without `href`, `target`, or `rel` while preserving ordinary safe links; observed RED via `node --test test/markdownPreview.test.js` because three links were clickable; implemented minimal username/password rejection in `src/markdownPreview.js`; observed GREEN.
+- Files changed: `src/markdownPreview.js`, `test/markdownPreview.test.js`, `PROGRESS.md`.
+- Verification: `node --test test/markdownPreview.test.js` passed (3 tests); `npm test` passed (55 tests); `npm run lint` passed; `npm run validate:extension` passed; `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI, and final #33 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #33, continue review-gate triage; avoid expanding the markdown subset unless each new syntax has an explicit sanitizer test and policy-compatible behavior.

@@ -150,8 +150,8 @@ function textSpan(document, text) {
 
 function isSafeHttpUrl(rawHref) {
   try {
-    const protocol = new URL(rawHref).protocol;
-    return protocol === 'http:' || protocol === 'https:';
+    const url = new URL(rawHref);
+    return (url.protocol === 'http:' || url.protocol === 'https:') && url.username === '' && url.password === '';
   } catch {
     return false;
   }
