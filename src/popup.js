@@ -1,4 +1,5 @@
 import { createBrowserAdapter } from './browserApi.js';
+import { renderMarkdownPreview } from './markdownPreview.js';
 import {
   createDomainNoteStore,
   createUrlNoteStore,
@@ -31,6 +32,8 @@ export async function initializePopup({
   const ignoreQuery = requiredElement(document, '#ignore-query');
   const domainKey = requiredElement(document, '#domain-key');
   const domainNote = requiredElement(document, '#domain-note');
+  const notePreview = requiredElement(document, '#note-preview');
+  const domainPreview = requiredElement(document, '#domain-preview');
   let keyOptions = { ignoreQuery: false };
   let store;
   let domainStore;
@@ -41,12 +44,17 @@ export async function initializePopup({
   let listedNotes = [];
 
   const renderNotes = () => renderNoteOverview({ document, notesList, notesEmpty, notes: listedNotes, query: notesSearch.value });
+  const renderCurrentPreviews = () => {
+    renderMarkdownPreview({ document, container: notePreview, markdown: note.value });
+    renderMarkdownPreview({ document, container: domainPreview, markdown: activeDomainAvailable ? domainNote.value : '' });
+  };
 
   async function reloadCurrentNote(message) {
     urlKey.textContent = normalizeUrlForNoteKey(activeUrl, keyOptions);
     activeDomainAvailable = updateDomainNoteAvailability(activeUrl, { domainKey, domainNote });
     note.value = await store.loadNote(activeUrl);
     domainNote.value = activeDomainAvailable ? await domainStore.loadNote(activeUrl) : '';
+    renderCurrentPreviews();
     listedNotes = await listOverviewEntries(store, domainStore);
     renderNotes();
     status.textContent = message;
@@ -74,6 +82,7 @@ export async function initializePopup({
     saveTimer = schedule(async () => {
       try {
         await store.saveNote(activeUrl, note.value);
+        renderCurrentPreviews();
         listedNotes = await listOverviewEntries(store, domainStore);
         renderNotes();
         status.textContent = note.value.trim() === '' ? 'Deleted.' : 'Saved.';
@@ -93,6 +102,7 @@ export async function initializePopup({
     domainSaveTimer = schedule(async () => {
       try {
         await domainStore.saveNote(activeUrl, domainNote.value);
+        renderCurrentPreviews();
         listedNotes = await listOverviewEntries(store, domainStore);
         renderNotes();
         status.textContent = domainNote.value.trim() === '' ? 'Domain note deleted.' : 'Domain note saved.';
@@ -132,6 +142,7 @@ export async function initializePopup({
       const importedUrlCount = await store.importNotes(payload);
       note.value = await store.loadNote(activeUrl);
       domainNote.value = activeDomainAvailable ? await domainStore.loadNote(activeUrl) : '';
+      renderCurrentPreviews();
       listedNotes = await listOverviewEntries(store, domainStore);
       renderNotes();
       status.textContent = `Imported ${importedUrlCount + importedDomainCount} notes.`;

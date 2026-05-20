@@ -11,6 +11,7 @@
 - Hash fragments are ignored; query strings are preserved by default.
 - A local popup setting can ignore query strings for future note-key lookups when tracking/search parameters create duplicates.
 - JSON export/import is available from the popup.
+- Markdown preview renders a small safe local subset and treats raw HTML as text.
 - The popup lists saved URL notes and domain notes, then filters them locally by key or note text.
 - No account, remote sync, or external service.
 
@@ -76,12 +77,13 @@ After loading the extension in Firefox or Edge:
 5. Open a different normalized URL and confirm it has a different URL note.
 6. Confirm the saved-notes list shows URL notes and domain notes, then search by URL/domain text and by note text.
 7. Toggle **Ignore query strings for note keys**, confirm the displayed key drops or restores the query string, and confirm the warning says existing notes are not migrated.
-8. Click a listed URL key and confirm it opens as a normal link without changing the stored notes.
-9. Clear the URL note text and confirm the saved URL note is deleted.
-10. Clear the domain note text and confirm only the domain note is deleted.
-11. Use **Export JSON** and confirm a schema-versioned `.json` file downloads.
-12. Use **Import JSON** with a valid backup and confirm the current note reloads from imported data.
-13. Try an invalid JSON import and confirm the popup reports an error without losing existing notes.
+8. Confirm the URL note and domain note Markdown preview renders headings, lists, emphasis, code, and safe links while showing raw HTML as text.
+9. Click a listed URL key and confirm it opens as a normal link without changing the stored notes.
+10. Clear the URL note text and confirm the saved URL note is deleted.
+11. Clear the domain note text and confirm only the domain note is deleted.
+12. Use **Export JSON** and confirm a schema-versioned `.json` file downloads.
+13. Use **Import JSON** with a valid backup and confirm the current note reloads from imported data.
+14. Try an invalid JSON import and confirm the popup reports an error without losing existing notes.
 
 ## Privacy
 

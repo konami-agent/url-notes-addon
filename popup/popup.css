@@ -7,6 +7,13 @@ h2 { font-size: 0.9rem; margin: 12px 0 6px; }
 .setting-help { margin: 0 0 8px; font-size: 0.7rem; opacity: 0.75; }
 textarea { box-sizing: border-box; width: 100%; min-height: 150px; resize: vertical; }
 .domain-note textarea { min-height: 90px; }
+.preview { margin: 8px 0; }
+.preview h2,
+.preview h3 { font-size: 0.78rem; margin: 6px 0 4px; }
+.markdown-preview { border: 1px solid color-mix(in srgb, currentColor 20%, transparent); border-radius: 4px; padding: 6px; min-height: 2em; max-height: 140px; overflow: auto; font-size: 0.75rem; }
+.markdown-preview :first-child { margin-top: 0; }
+.markdown-preview :last-child { margin-bottom: 0; }
+.markdown-preview pre { white-space: pre-wrap; overflow-wrap: anywhere; }
 .status { min-height: 1.2em; font-size: 0.75rem; }
 .actions { display: flex; gap: 8px; align-items: center; }
 .import-label { cursor: pointer; }

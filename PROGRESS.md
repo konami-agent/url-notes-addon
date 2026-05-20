@@ -616,3 +616,17 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #31 with `status:completed` after recording verification evidence.
 - Final board state: #1–#31 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` will be run again after this addendum; no blockers observed.
+
+## 2026-05-20T10:39:16+09:00 — scheduled tick added local markdown preview
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, recent commits, full `project:manager` board, the markdown preview sanitizer policy, and current popup/source structure. Concrete finding: #31 defined the markdown preview sanitizer boundary, but no local popup preview implementation existed yet.
+- Issues touched: created #32 (`Add local markdown preview`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy comment. Completion/closure are pending commit, push, CI, and final evidence comment after this log entry.
+- Issue trust/autonomy decision: #32 is autonomous local-only product work aligned with the existing repository policy, privacy-preserving, small, and verifiable; it does not add sync/login/external services/store publishing or major architecture churn, so implementation proceeded without additional owner approval.
+- TDD evidence for #32: added `test/markdownPreview.test.js` and `test/popup.test.js` coverage before implementation; observed RED via `node --test test/markdownPreview.test.js test/popup.test.js` (`ERR_MODULE_NOT_FOUND` for `src/markdownPreview.js` and empty popup preview); implemented a minimal internal renderer plus popup URL/domain preview UI; observed GREEN. Added a README documentation invariant to `test/scaffold.test.js`, observed RED for missing `Markdown preview`, then updated `README.md` and observed GREEN.
+- Files changed: `src/markdownPreview.js`, `src/popup.js`, `popup/popup.html`, `popup/popup.css`, `test/markdownPreview.test.js`, `test/popup.test.js`, `test/scaffold.test.js`, `README.md`, `PROGRESS.md`.
+- Verification: `node --test test/markdownPreview.test.js test/popup.test.js` passed (20 focused tests); `node --test test/scaffold.test.js` passed after README update; `npm test` passed (54 tests); `npm run lint` passed; `npm run validate:extension` passed; `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI, and final #32 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #32, continue review-gate triage; likely next work should be a focused security/usability hardening issue discovered by reviewing the markdown renderer behavior rather than expanding the markdown subset prematurely.

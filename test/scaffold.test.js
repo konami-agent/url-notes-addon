@@ -37,6 +37,8 @@ test('readme documents Firefox and Edge loading with a manual smoke checklist', 
   assert.match(readme, /separate from the URL note/);
   assert.match(readme, /backs up both URL notes and domain notes/);
   assert.match(readme, /saved-notes list shows URL notes and domain notes/i);
+  assert.match(readme, /Markdown preview/);
+  assert.match(readme, /raw HTML as text/);
 });
 
 test('ci workflow uses action versions that have migrated off Node.js 20 runtime', async () => {

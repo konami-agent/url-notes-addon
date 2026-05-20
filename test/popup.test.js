@@ -28,10 +28,12 @@ class FakeElement {
 
   append(...children) {
     this.children.push(...children);
+    this.textContent += children.map((child) => child.textContent ?? '').join('');
   }
 
   replaceChildren(...children) {
     this.children = children;
+    this.textContent = children.map((child) => child.textContent ?? '').join('');
   }
 
   dispatch(type, event = { target: this }) {
@@ -55,6 +57,8 @@ function createPopupDocument() {
     '#ignore-query': new FakeElement(),
     '#domain-key': new FakeElement(),
     '#domain-note': new FakeElement(),
+    '#note-preview': new FakeElement(),
+    '#domain-preview': new FakeElement(),
   };
   return {
     elements,
@@ -422,6 +426,51 @@ test('popup disables domain notes for active URLs without a host', async () => {
   document.elements['#domain-note'].dispatch('input');
   assert.equal(document.elements['#status'].textContent, 'Domain notes are unavailable for this URL.');
   assert.equal(savedDomainNotes.length, 0);
+});
+
+test('popup renders local markdown previews for URL and domain notes without unsafe links', async () => {
+  const document = createPopupDocument();
+  const timer = createManualTimer();
+  const urlStore = {
+    async loadNote() { return '# Page note\n[ok](https://example.com) [bad](javascript:alert(1)) <script>alert(1)</script>'; },
+    async saveNote() {},
+    async exportNotes() { return { schemaVersion: 1, notes: {} }; },
+    async importNotes() { return 0; },
+    async listNotes() { return []; },
+  };
+  const domainStore = {
+    async loadNote() { return '**Domain** note'; },
+    async saveNote() {},
+    async listNotes() { return []; },
+  };
+
+  await initializePopup({
+    document,
+    adapter: createAdapter('https://example.com/page'),
+    createStore: () => urlStore,
+    createDomainStore: () => domainStore,
+    debounceMs: 250,
+    setTimeout: timer.setTimeout,
+    clearTimeout: timer.clearTimeout,
+  });
+
+  assert.equal(document.elements['#note-preview'].children[0].tagName, 'h1');
+  assert.equal(document.elements['#note-preview'].children[0].textContent, 'Page note');
+  const pageParagraph = document.elements['#note-preview'].children[1];
+  const safeLink = pageParagraph.children.find((child) => child.tagName === 'a');
+  assert.equal(safeLink.attributes.get('href'), 'https://example.com');
+  assert.equal(safeLink.attributes.get('rel'), 'noopener noreferrer');
+  assert.equal(pageParagraph.children.some((child) => child.textContent === 'bad' && child.attributes.get('href') === undefined), true);
+  assert.equal(pageParagraph.textContent.includes('<script>alert(1)</script>'), true);
+  assert.equal(document.elements['#domain-preview'].children[0].children[0].tagName, 'strong');
+  assert.equal(document.elements['#domain-preview'].children[0].children[0].textContent, 'Domain');
+
+  document.elements['#note'].value = 'Updated `code`';
+  document.elements['#note'].dispatch('input');
+  await timer.runPending();
+
+  assert.equal(document.elements['#note-preview'].children[0].children[1].tagName, 'code');
+  assert.equal(document.elements['#note-preview'].children[0].children[1].textContent, 'code');
 });
 
 test('popup treats blank edits as deleted notes', async () => {
