@@ -79,6 +79,7 @@ export async function initializePopup({
   note.addEventListener('input', () => {
     if (saveTimer) cancelSchedule(saveTimer);
     status.textContent = 'Saving…';
+    renderCurrentPreviews();
     saveTimer = schedule(async () => {
       try {
         await store.saveNote(activeUrl, note.value);
@@ -99,6 +100,7 @@ export async function initializePopup({
     }
     if (domainSaveTimer) cancelSchedule(domainSaveTimer);
     status.textContent = 'Saving domain note…';
+    renderCurrentPreviews();
     domainSaveTimer = schedule(async () => {
       try {
         await domainStore.saveNote(activeUrl, domainNote.value);

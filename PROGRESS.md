@@ -660,3 +660,18 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #33 with `status:completed` after recording verification evidence.
 - Final board state: #1–#33 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+
+## 2026-05-20T18:51:36+09:00 — scheduled tick updated markdown preview while typing
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, recent commits, full `project:manager` board, popup input handling, and markdown preview behavior. Concrete finding: markdown preview refreshed only after debounced save completion, leaving the preview stale while typing and if storage save failed.
+- Issues touched: created #34 (`Update markdown preview immediately while typing`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy comment. Completion/closure are pending commit, push, CI, and final evidence comment after this log entry.
+- Issue trust/autonomy decision: #34 is auto-implementable local UX/test hardening, privacy-preserving, small, and verifiable; it does not add sync/login/external services/store publishing or major architecture churn, so implementation proceeded without additional owner approval.
+- TDD evidence for #34: added `test/popup.test.js` coverage requiring URL-note and domain-note markdown previews to update immediately on input before the debounce timer runs; observed RED via `node --test test/popup.test.js` because preview containers stayed empty until save; implemented minimal `renderCurrentPreviews()` calls in URL-note and domain-note input handlers; observed GREEN.
+- Files changed: `src/popup.js`, `test/popup.test.js`, `PROGRESS.md`.
+- Verification: `node --test test/popup.test.js` passed (20 tests); `npm test` passed (57 tests); `npm run lint` passed; `npm run validate:extension` passed; `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI, and final #34 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #34, continue review-gate triage with emphasis on markdown preview security/usability hardening and release-readiness checks, not expanding the markdown subset without tests.

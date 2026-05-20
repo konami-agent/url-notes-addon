@@ -246,6 +246,41 @@ test('popup persists ignore-query changes and reloads the current note with the 
   assert.equal(document.elements['#status'].textContent, 'Loaded with query strings ignored.');
 });
 
+test('popup updates URL note markdown preview immediately while save remains debounced', async () => {
+  const document = createPopupDocument();
+  const timer = createManualTimer();
+  const saved = [];
+  const store = {
+    async loadNote() { return ''; },
+    async saveNote(url, noteText) { saved.push([url, noteText]); },
+    async exportNotes() { return { schemaVersion: 1, notes: {} }; },
+    async importNotes() { return 0; },
+    async listNotes() { return []; },
+  };
+  await initializePopup({
+    document,
+    adapter: createAdapter(),
+    createStore: () => store,
+    debounceMs: 250,
+    setTimeout: timer.setTimeout,
+    clearTimeout: timer.clearTimeout,
+  });
+
+  document.elements['#note'].value = '# Draft\n\nImmediate **preview**';
+  document.elements['#note'].dispatch('input');
+
+  assert.equal(document.elements['#status'].textContent, 'Saving…');
+  assert.deepEqual(saved, []);
+  assert.equal(document.elements['#note-preview'].children[0].tagName, 'h1');
+  assert.equal(document.elements['#note-preview'].children[0].textContent, 'Draft');
+  assert.equal(document.elements['#note-preview'].children[1].textContent, 'Immediate preview');
+
+  await timer.runPending();
+
+  assert.deepEqual(saved, [['https://example.com/page', '# Draft\n\nImmediate **preview**']]);
+  assert.equal(document.elements['#status'].textContent, 'Saved.');
+});
+
 test('popup debounces note edits and reports saved status', async () => {
   const document = createPopupDocument();
   const timer = createManualTimer();
@@ -273,6 +308,45 @@ test('popup debounces note edits and reports saved status', async () => {
 
   assert.deepEqual(saved, [['https://example.com/page', 'draft note']]);
   assert.equal(document.elements['#status'].textContent, 'Saved.');
+});
+
+test('popup updates domain-note markdown preview immediately while save remains debounced', async () => {
+  const document = createPopupDocument();
+  const timer = createManualTimer();
+  const saved = [];
+  const urlStore = {
+    async loadNote() { return ''; },
+    async saveNote() {},
+    async exportNotes() { return { schemaVersion: 1, notes: {} }; },
+    async importNotes() { return 0; },
+    async listNotes() { return []; },
+  };
+  const domainStore = {
+    async loadNote() { return ''; },
+    async saveNote(url, noteText) { saved.push([url, noteText]); },
+  };
+
+  await initializePopup({
+    document,
+    adapter: createAdapter('https://example.com/page'),
+    createStore: () => urlStore,
+    createDomainStore: () => domainStore,
+    debounceMs: 250,
+    setTimeout: timer.setTimeout,
+    clearTimeout: timer.clearTimeout,
+  });
+
+  document.elements['#domain-note'].value = 'Domain **draft**';
+  document.elements['#domain-note'].dispatch('input');
+
+  assert.equal(document.elements['#status'].textContent, 'Saving domain note…');
+  assert.deepEqual(saved, []);
+  assert.equal(document.elements['#domain-preview'].children[0].textContent, 'Domain draft');
+
+  await timer.runPending();
+
+  assert.deepEqual(saved, [['https://example.com/page', 'Domain **draft**']]);
+  assert.equal(document.elements['#status'].textContent, 'Domain note saved.');
 });
 
 test('popup debounces domain note edits and reports saved status', async () => {
