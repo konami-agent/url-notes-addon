@@ -675,3 +675,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: pending commit/push, CI, and final #34 evidence comment/closure after this log entry.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #34, continue review-gate triage with emphasis on markdown preview security/usability hardening and release-readiness checks, not expanding the markdown subset without tests.
+
+
+### 2026-05-20T18:53:05+09:00 — final board refresh addendum
+
+- Pushed commit `1abc9c2` (`fix: update markdown preview while typing`) to `origin/main`.
+- GitHub Actions CI run `26154990270` completed successfully for commit `1abc9c2bcfe9143eadcbc95c2bfaa428b1c54658`; the validate job succeeded.
+- Commented on and closed #34 with `status:completed` after recording verification evidence.
+- Final board state: #1–#34 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
