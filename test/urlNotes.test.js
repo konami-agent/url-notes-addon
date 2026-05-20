@@ -49,6 +49,11 @@ test('normalizeUrlForNoteKey can ignore query strings when explicitly requested'
   );
 });
 
+test('normalizeUrlForNoteKey rejects credential-bearing web URLs', () => {
+  assert.throws(() => normalizeUrlForNoteKey('https://user@example.com/hidden'), /URL notes do not support credential-bearing URLs/);
+  assert.throws(() => normalizeUrlForNoteKey('https://user:password@example.com/hidden'), /URL notes do not support credential-bearing URLs/);
+});
+
 test('normalizeUrlForDomainNoteKey extracts a lowercase host without URL path or query', () => {
   assert.equal(
     normalizeUrlForDomainNoteKey('HTTPS://Example.COM/path/?b=2&a=1#section'),
@@ -68,6 +73,20 @@ test('URL note store saves and loads notes by normalized URL key', async () => {
 
   assert.equal(await store.loadNote('https://EXAMPLE.com/path#two'), 'first note');
   assert.equal(await store.loadNote('https://example.com/path?query=1'), '');
+});
+
+test('URL note store refuses to save credential-bearing active URL keys', async () => {
+  const storage = new MemoryStorageArea();
+  const store = createUrlNoteStore(storage);
+
+  await assert.rejects(
+    () => store.saveNote('https://user@example.com/hidden', 'credential note'),
+    /URL notes do not support credential-bearing URLs/,
+  );
+
+  assert.deepEqual(storage.data, {});
+  await store.saveNote('https://example.com/safe', 'safe note');
+  assert.equal(await store.loadNote('https://example.com/safe'), 'safe note');
 });
 
 test('URL note store can save and load notes with query strings ignored', async () => {

@@ -4,6 +4,9 @@ const SCHEMA_VERSION = 1;
 
 export function normalizeUrlForNoteKey(rawUrl, { ignoreQuery = false } = {}) {
   const url = new URL(rawUrl);
+  if ((url.protocol === 'http:' || url.protocol === 'https:') && (url.username !== '' || url.password !== '')) {
+    throw new Error('URL notes do not support credential-bearing URLs');
+  }
   url.hash = '';
   if (ignoreQuery) url.search = '';
   url.protocol = url.protocol.toLowerCase();
