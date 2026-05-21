@@ -15,6 +15,12 @@
 - The popup lists saved URL notes and domain notes, then filters them locally by key or note text.
 - No account, remote sync, or external service.
 
+## Supported active tabs
+
+URL notes and domain notes are available on normal http:// and https:// pages. The extension intentionally does not create note keys for about:, data:, file:, extension, and other non-web tabs, and it also rejects credential-bearing web URLs such as `https://user@example.com/`.
+
+When the current tab is unsupported, the popup reports that URL notes are unavailable and the editing, import, export, and search controls are disabled. Existing notes remain in local browser storage and can still be used from supported web pages.
+
 ## Export/import JSON
 
 Use **Export JSON** in the popup to download a schema-versioned backup file. The backup backs up both URL notes and domain notes:
@@ -84,6 +90,7 @@ After loading the extension in Firefox or Edge:
 12. Use **Export JSON** and confirm a schema-versioned `.json` file downloads.
 13. Use **Import JSON** with a valid backup and confirm the current note reloads from imported data.
 14. Try an invalid JSON import and confirm the popup reports an error without losing existing notes.
+15. Open an unsupported tab such as `about:debugging`, `edge://extensions`, or a local `file:` page, then confirm the popup says URL notes are unavailable and the editing, import, export, and search controls are disabled.
 
 ## Privacy
 

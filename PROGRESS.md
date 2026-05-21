@@ -823,3 +823,18 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #40 with `status:completed` after recording verification evidence.
 - Final board state: #1–#40 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+
+## 2026-05-21T23:34:42+09:00 — scheduled tick documented unsupported active tab behavior
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, recent commits, the full `project:manager` board, current README/manual smoke docs, and recent unsupported/unsafe active-tab hardening. Concrete finding: behavior was tested for unsupported tabs, but README did not document which active tabs are supported or what disabled-control state testers should expect.
+- Issues touched: created #41 (`Document unsupported active tab behavior`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy comment. Completion/closure are pending commit, push, CI, and final evidence comment after this log entry.
+- Issue trust/autonomy decision: #41 is auto-implementable documentation/release-readiness maintenance, local-only, privacy-preserving, small, and verifiable; it does not add sync/login/external services/store publishing or major architecture churn, so implementation proceeded without additional owner approval.
+- TDD evidence for #41: added `test/scaffold.test.js` README invariant coverage requiring supported `http://`/`https://` wording, unsupported non-web/credential URL wording, and disabled-control manual smoke guidance; observed RED via `node --test test/scaffold.test.js` because README lacked those phrases; updated README minimally; observed GREEN.
+- Files changed: `README.md`, `test/scaffold.test.js`, `PROGRESS.md`.
+- Verification: `node --test test/scaffold.test.js` passed (7 tests); `npm test` passed (65 tests); `npm run lint` passed; `npm run validate:extension` passed; `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI, and final #41 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #41, continue review-gate triage with emphasis on release-readiness, privacy/security invariants, and any remaining documentation gaps before expanding product scope.
