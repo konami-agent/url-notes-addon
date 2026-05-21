@@ -72,6 +72,16 @@ export async function initializePopup({
     activeUrl = activeTab.url;
     await reloadCurrentNote('Loaded.');
   } catch (error) {
+    disableUnavailablePopupControls({
+      urlKey,
+      note,
+      domainKey,
+      domainNote,
+      ignoreQuery,
+      exportButton,
+      importInput,
+      notesSearch,
+    });
     status.textContent = `Error: ${error.message}`;
     return;
   }
@@ -254,6 +264,17 @@ function isValidDomainOverviewKey(domain) {
   } catch {
     return false;
   }
+}
+
+function disableUnavailablePopupControls({ urlKey, note, domainKey, domainNote, ignoreQuery, exportButton, importInput, notesSearch }) {
+  urlKey.textContent = 'URL notes unavailable for this tab.';
+  domainKey.textContent = 'Domain notes unavailable for this URL.';
+  note.disabled = true;
+  domainNote.disabled = true;
+  ignoreQuery.disabled = true;
+  exportButton.disabled = true;
+  importInput.disabled = true;
+  notesSearch.disabled = true;
 }
 
 function requiredElement(document, selector) {

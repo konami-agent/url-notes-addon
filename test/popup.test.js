@@ -8,6 +8,7 @@ class FakeElement {
     this.value = value;
     this.textContent = textContent;
     this.checked = false;
+    this.disabled = false;
     this.listeners = new Map();
     this.attributes = new Map();
     this.clicked = false;
@@ -858,7 +859,7 @@ test('popup lists URL and domain notes and filters by key or note text', async (
   assert.equal(document.elements['#notes-empty'].textContent, 'No matching notes.');
 });
 
-test('popup reports errors without throwing during initialization', async () => {
+test('popup disables controls and shows a clear key message when initialization fails', async () => {
   const document = createPopupDocument();
 
   await initializePopup({
@@ -868,5 +869,12 @@ test('popup reports errors without throwing during initialization', async () => 
     debounceMs: 250,
   });
 
+  assert.equal(document.elements['#url-key'].textContent, 'URL notes unavailable for this tab.');
   assert.equal(document.elements['#status'].textContent, 'Error: Active tab has no URL.');
+  assert.equal(document.elements['#note'].disabled, true);
+  assert.equal(document.elements['#domain-note'].disabled, true);
+  assert.equal(document.elements['#ignore-query'].disabled, true);
+  assert.equal(document.elements['#export-notes'].disabled, true);
+  assert.equal(document.elements['#import-notes'].disabled, true);
+  assert.equal(document.elements['#notes-search'].disabled, true);
 });
