@@ -769,3 +769,11 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: pending commit/push, CI, and final #38 evidence comment/closure after this log entry.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #38, continue review-gate triage with emphasis on release-readiness and small security/privacy/usability invariants.
+
+### 2026-05-21T11:17:02+09:00 — final board refresh addendum
+
+- Pushed commit `5f4f855` (`fix: disable popup controls on init failure`) to `origin/main`.
+- GitHub Actions CI run `26201461181` completed successfully for commit `5f4f8554847bcd8f2e419675e5c1b4fa0622d8ec`; the validate job succeeded.
+- Commented on and closed #38 with `status:completed` after recording verification evidence.
+- Final board state: #1–#38 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
