@@ -38,6 +38,7 @@ async function copyProjectFixture() {
     cp(new URL('../src/browserApi.js', import.meta.url), join(projectRoot, 'src', 'browserApi.js')),
     cp(new URL('../src/urlNotes.js', import.meta.url), join(projectRoot, 'src', 'urlNotes.js')),
     cp(new URL('../src/popup.js', import.meta.url), join(projectRoot, 'src', 'popup.js')),
+    cp(new URL('../src/markdownPreview.js', import.meta.url), join(projectRoot, 'src', 'markdownPreview.js')),
     cp(new URL('../icons/icon.svg', import.meta.url), join(projectRoot, 'icons', 'icon.svg')),
   ]);
   return projectRoot;
@@ -78,6 +79,21 @@ test('validateExtension rejects remote URLs in packaged extension files', async 
     await assert.rejects(
       validateExtension(projectRoot),
       /remote URL found in packaged extension file/u,
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
+test('validateExtension rejects remote URLs in the packaged markdown preview module', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    await writeFile(join(projectRoot, 'src', 'markdownPreview.js'), 'const remoteHelp = "https://example.com/help";\n');
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /remote URL found in packaged extension file: src\/markdownPreview\.js/u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });

@@ -10,6 +10,7 @@ const requiredFiles = [
   'src/browserApi.js',
   'src/urlNotes.js',
   'src/popup.js',
+  'src/markdownPreview.js',
   'icons/icon.svg',
 ];
 
@@ -20,6 +21,7 @@ const packagedCodeFiles = [
   'src/browserApi.js',
   'src/urlNotes.js',
   'src/popup.js',
+  'src/markdownPreview.js',
 ];
 
 export async function validateExtension(projectRoot = new URL('..', import.meta.url)) {

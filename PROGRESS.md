@@ -870,3 +870,18 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #42 with `status:completed` after recording verification evidence.
 - Final board state: #1–#42 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+
+## 2026-05-22T07:46:53+09:00 — scheduled tick scanned markdown preview in extension validation
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, recent commits, full `project:manager` board, build packaging, extension validation, and validation tests. Concrete finding: `npm run build:zip` packages the whole `src/` directory, but `scripts/validate-extension.js` scanned only `browserApi.js`, `urlNotes.js`, and `popup.js`, leaving `src/markdownPreview.js` outside the remote-URL privacy validation boundary.
+- Issues touched: created #43 (`Scan markdown preview module in extension validation`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy comment. Completion/closure are pending commit, push, CI, and final evidence comment after this log entry.
+- Issue trust/autonomy decision: #43 is auto-implementable maintenance/security validation hardening, local-only, privacy-preserving, small, and verifiable; it does not add sync/login/external services/store publishing or major architecture churn, so implementation proceeded without additional owner approval.
+- TDD evidence for #43: added `test/buildScripts.test.js` coverage requiring `validateExtension` to reject a literal remote URL in `src/markdownPreview.js`; observed RED via `node --test test/buildScripts.test.js` because validation did not scan that module; implemented minimal inclusion of `src/markdownPreview.js` in the required-file and packaged-code scan lists; observed GREEN.
+- Files changed: `scripts/validate-extension.js`, `test/buildScripts.test.js`, `PROGRESS.md`.
+- Verification: `node --test test/buildScripts.test.js` passed (5 tests); `npm test` passed (68 tests); `npm run lint` passed; `npm run validate:extension` passed and now reports 8 checked files; `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI, and final #43 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #43, continue review-gate triage with emphasis on keeping validation/packaging boundaries aligned and small privacy/security/release-readiness invariants.
