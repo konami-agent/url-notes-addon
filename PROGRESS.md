@@ -885,3 +885,11 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: pending commit/push, CI, and final #43 evidence comment/closure after this log entry.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #43, continue review-gate triage with emphasis on keeping validation/packaging boundaries aligned and small privacy/security/release-readiness invariants.
+
+### 2026-05-22T07:48:14+09:00 — final board refresh addendum
+
+- Pushed commit `f679bbb` (`test: scan markdown preview in extension validation`) to `origin/main`.
+- GitHub Actions CI run `26257563435` completed successfully for commit `f679bbbb0820904bbf5c2a4292e1cf3170b0bfe8`; the validate job succeeded.
+- Commented on and closed #43 with `status:completed` after recording verification evidence.
+- Final board state: #1–#43 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
