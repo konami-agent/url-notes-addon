@@ -815,3 +815,11 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: pending commit/push, CI, and final #40 evidence comment/closure after this log entry.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #40, continue review-gate triage with emphasis on release-readiness and small privacy/security/usability invariants.
+
+### 2026-05-21T19:30:26+09:00 — final board refresh addendum
+
+- Pushed commit `b9fa137` (`fix: reject unsafe active domain note keys`) to `origin/main`.
+- GitHub Actions CI run `26220496648` completed successfully for commit `b9fa1378f339d26d3215c7bd0987570056d15c8e`; the validate job succeeded.
+- Commented on and closed #40 with `status:completed` after recording verification evidence.
+- Final board state: #1–#40 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
