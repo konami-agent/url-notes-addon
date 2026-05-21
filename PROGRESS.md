@@ -838,3 +838,11 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: pending commit/push, CI, and final #41 evidence comment/closure after this log entry.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #41, continue review-gate triage with emphasis on release-readiness, privacy/security invariants, and any remaining documentation gaps before expanding product scope.
+
+### 2026-05-21T23:36:48+09:00 — final board refresh addendum
+
+- Pushed commit `9e7c5ac` (`docs: document unsupported active tabs`) to `origin/main`.
+- GitHub Actions CI run `26232780863` completed successfully for commit `9e7c5ac62661f25af7408c8193f7c306055e512b`; the validate job succeeded.
+- Commented on and closed #41 with `status:completed` after recording verification evidence.
+- Final board state: #1–#41 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
