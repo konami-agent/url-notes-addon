@@ -21,8 +21,15 @@ export function normalizeUrlForNoteKey(rawUrl, { ignoreQuery = false } = {}) {
 }
 
 export function normalizeUrlForDomainNoteKey(rawUrl) {
-  const hostname = new URL(rawUrl).hostname.toLowerCase();
+  const url = new URL(rawUrl);
+  const hostname = url.hostname.toLowerCase();
   if (hostname === '') throw new Error('Domain notes require a URL host');
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+    throw new Error('Domain notes support only HTTP and HTTPS URLs');
+  }
+  if (url.username !== '' || url.password !== '') {
+    throw new Error('Domain notes do not support credential-bearing URLs');
+  }
   return hostname;
 }
 

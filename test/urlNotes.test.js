@@ -72,6 +72,12 @@ test('normalizeUrlForDomainNoteKey rejects URLs without a host', () => {
   assert.throws(() => normalizeUrlForDomainNoteKey('file:///tmp/example.txt'), /Domain notes require a URL host/);
 });
 
+test('normalizeUrlForDomainNoteKey rejects unsafe active URL schemes and credentials', () => {
+  assert.throws(() => normalizeUrlForDomainNoteKey('ftp://example.com/private'), /Domain notes support only HTTP and HTTPS URLs/);
+  assert.throws(() => normalizeUrlForDomainNoteKey('https://user@example.com/hidden'), /Domain notes do not support credential-bearing URLs/);
+  assert.throws(() => normalizeUrlForDomainNoteKey('https://user:***@example.com/hidden'), /Domain notes do not support credential-bearing URLs/);
+});
+
 test('URL note store saves and loads notes by normalized URL key', async () => {
   const store = createUrlNoteStore(new MemoryStorageArea());
 
@@ -318,6 +324,26 @@ test('domain note store rejects hostless URLs without using an empty domain key'
   await assert.rejects(() => domainStore.loadNote('file:///tmp/example.txt'), /Domain notes require a URL host/);
 
   assert.equal(storage.data['urlNotes.domainNotes.'], undefined);
+});
+
+test('domain note store refuses unsafe active URL keys without writing storage', async () => {
+  const storage = new MemoryStorageArea();
+  const domainStore = createDomainNoteStore(storage);
+
+  await assert.rejects(
+    () => domainStore.saveNote('ftp://example.com/private', 'ftp note'),
+    /Domain notes support only HTTP and HTTPS URLs/,
+  );
+  await assert.rejects(
+    () => domainStore.saveNote('https://user@example.com/hidden', 'credential note'),
+    /Domain notes do not support credential-bearing URLs/,
+  );
+
+  assert.deepEqual(storage.data, {});
+  await domainStore.saveNote('http://example.org/page', 'http domain note');
+  await domainStore.saveNote('https://example.com/page', 'https domain note');
+  assert.equal(await domainStore.loadNote('http://example.org/other'), 'http domain note');
+  assert.equal(await domainStore.loadNote('https://example.com/other'), 'https domain note');
 });
 
 test('domain note store exports and imports schema-versioned domain notes', async () => {

@@ -800,3 +800,18 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #39 with `status:completed` after recording verification evidence.
 - Final board state: #1–#39 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+
+## 2026-05-21T19:28:42+09:00 — scheduled tick rejected unsafe active domain note keys
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, recent commits, the full `project:manager` board, current URL/domain active-key validation, and recent unsupported/credential-bearing URL hardening. Concrete finding: URL-note active keys reject non-web and credential-bearing URLs, but the domain-note store API itself still accepted hosted non-web URLs such as `ftp://example.com/` and credential-bearing web URLs as active domain keys.
+- Issues touched: created #40 (`Reject unsafe active domain note keys`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy comment. Completion/closure are pending commit, push, CI, and final evidence comment after this log entry.
+- Issue trust/autonomy decision: #40 is auto-implementable local privacy/data-integrity hardening, small, and verifiable; it does not add sync/login/external services/store publishing or major architecture churn, so implementation proceeded without additional owner approval.
+- TDD evidence for #40: added `test/urlNotes.test.js` coverage requiring `normalizeUrlForDomainNoteKey` and `createDomainNoteStore.saveNote` to reject non-web hosted URLs and credential-bearing HTTP(S) URLs without writing storage while preserving safe `http:`/`https:` domain notes; observed RED via `node --test test/urlNotes.test.js` because the unsafe active domain URLs were accepted; implemented minimal scheme and userinfo validation in `normalizeUrlForDomainNoteKey`; observed GREEN.
+- Files changed: `src/urlNotes.js`, `test/urlNotes.test.js`, `PROGRESS.md`.
+- Verification: `node --test test/urlNotes.test.js` passed (28 tests); `npm test` passed (65 tests); `npm run lint` passed; `npm run validate:extension` passed; `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI, and final #40 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #40, continue review-gate triage with emphasis on release-readiness and small privacy/security/usability invariants.
