@@ -13,6 +13,15 @@ const requiredFiles = [
   'icons/icon.svg',
 ];
 
+const packagedCodeFiles = [
+  'manifest.json',
+  'popup/popup.html',
+  'popup/popup.css',
+  'src/browserApi.js',
+  'src/urlNotes.js',
+  'src/popup.js',
+];
+
 export async function validateExtension(projectRoot = new URL('..', import.meta.url)) {
   const root = projectRoot instanceof URL ? fileURLToPath(projectRoot) : projectRoot;
 
@@ -30,10 +39,23 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
   if (!manifest.permissions?.includes('storage')) {
     throw new Error('manifest permissions must include storage');
   }
+  if (Array.isArray(manifest.host_permissions) && manifest.host_permissions.length > 0) {
+    throw new Error('manifest host_permissions must stay empty for local-only v0.1');
+  }
+  if (Array.isArray(manifest.content_scripts) && manifest.content_scripts.length > 0) {
+    throw new Error('manifest content_scripts must stay empty for popup-only v0.1');
+  }
 
   const popupHtml = await readFile(resolve(root, 'popup/popup.html'), 'utf8');
   if (!popupHtml.includes('<script type="module" src="../src/popup.js"></script>')) {
     throw new Error('popup must load ../src/popup.js as its module script');
+  }
+
+  for (const file of packagedCodeFiles) {
+    const contents = await readFile(resolve(root, file), 'utf8');
+    if (/https?:\/\/(?!\$\{)/iu.test(contents)) {
+      throw new Error(`remote URL found in packaged extension file: ${file}`);
+    }
   }
 
   return {
