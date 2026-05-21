@@ -465,42 +465,31 @@ test('popup refreshes overview after deleting a domain note', async () => {
   assert.equal(document.elements['#notes-empty'].textContent, 'No saved notes yet.');
 });
 
-test('popup disables domain notes for active URLs without a host', async () => {
+test('popup disables controls for non-web active URLs before loading notes', async () => {
   const document = createPopupDocument();
-  const timer = createManualTimer();
-  const savedDomainNotes = [];
   const urlStore = {
-    async loadNote() { return 'hostless page note'; },
-    async saveNote() {},
+    async loadNote() { throw new Error('URL note should not load for non-web URLs'); },
+    async saveNote() { throw new Error('URL note should not save for non-web URLs'); },
     async exportNotes() { return { schemaVersion: 1, notes: {} }; },
     async importNotes() { return 0; },
-    async listNotes() { return []; },
-  };
-  const domainStore = {
-    async loadNote() { throw new Error('domain note should not load for hostless URLs'); },
-    async saveNote(url, noteText) { savedDomainNotes.push([url, noteText]); },
     async listNotes() { return []; },
   };
 
   await initializePopup({
     document,
-    adapter: createAdapter('about:blank'),
+    adapter: createAdapter('file:///tmp/private.txt'),
     createStore: () => urlStore,
-    createDomainStore: () => domainStore,
     debounceMs: 250,
-    setTimeout: timer.setTimeout,
-    clearTimeout: timer.clearTimeout,
   });
 
-  assert.equal(document.elements['#url-key'].textContent, 'about:blank');
-  assert.equal(document.elements['#note'].value, 'hostless page note');
-  assert.equal(document.elements['#domain-key'].textContent, 'Domain notes unavailable for this URL.');
+  assert.equal(document.elements['#url-key'].textContent, 'URL notes unavailable for this tab.');
+  assert.equal(document.elements['#status'].textContent, 'Error: URL notes support only HTTP and HTTPS URLs');
+  assert.equal(document.elements['#note'].disabled, true);
   assert.equal(document.elements['#domain-note'].disabled, true);
-
-  document.elements['#domain-note'].value = 'should not save';
-  document.elements['#domain-note'].dispatch('input');
-  assert.equal(document.elements['#status'].textContent, 'Domain notes are unavailable for this URL.');
-  assert.equal(savedDomainNotes.length, 0);
+  assert.equal(document.elements['#ignore-query'].disabled, true);
+  assert.equal(document.elements['#export-notes'].disabled, true);
+  assert.equal(document.elements['#import-notes'].disabled, true);
+  assert.equal(document.elements['#notes-search'].disabled, true);
 });
 
 test('popup renders local markdown previews for URL and domain notes without unsafe links', async () => {
@@ -711,9 +700,9 @@ test('popup does not import domain notes when combined JSON import has invalid U
   assert.equal(document.elements['#status'].textContent, 'Error: Unsupported URL notes export format');
 });
 
-test('popup imports URL notes on hostless active tabs without reloading unavailable domain notes', async () => {
+test('popup keeps JSON import usable on supported active tabs', async () => {
   const document = createPopupDocument();
-  const adapter = createAdapter('about:blank');
+  const adapter = createAdapter('https://current.example/page');
   await initializePopup({ document, adapter });
 
   await document.elements['#import-notes'].dispatch('change', {
@@ -730,8 +719,7 @@ test('popup imports URL notes on hostless active tabs without reloading unavaila
 
   assert.equal(adapter.storage.local.data['urlNotes.notes.https://example.com/page'], 'imported page note');
   assert.equal(adapter.storage.local.data['urlNotes.domainNotes.example.com'], 'imported domain note');
-  assert.equal(document.elements['#domain-note'].disabled, true);
-  assert.equal(document.elements['#domain-note'].value, '');
+  assert.equal(document.elements['#domain-note'].disabled, false);
   assert.equal(document.elements['#status'].textContent, 'Imported 2 notes.');
 });
 

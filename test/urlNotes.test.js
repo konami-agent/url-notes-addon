@@ -51,7 +51,13 @@ test('normalizeUrlForNoteKey can ignore query strings when explicitly requested'
 
 test('normalizeUrlForNoteKey rejects credential-bearing web URLs', () => {
   assert.throws(() => normalizeUrlForNoteKey('https://user@example.com/hidden'), /URL notes do not support credential-bearing URLs/);
-  assert.throws(() => normalizeUrlForNoteKey('https://user:password@example.com/hidden'), /URL notes do not support credential-bearing URLs/);
+  assert.throws(() => normalizeUrlForNoteKey('https://user:***@example.com/hidden'), /URL notes do not support credential-bearing URLs/);
+});
+
+test('normalizeUrlForNoteKey rejects non-web URL schemes', () => {
+  assert.throws(() => normalizeUrlForNoteKey('about:blank'), /URL notes support only HTTP and HTTPS URLs/);
+  assert.throws(() => normalizeUrlForNoteKey('file:///tmp/private.txt'), /URL notes support only HTTP and HTTPS URLs/);
+  assert.throws(() => normalizeUrlForNoteKey('data:text/html,<h1>unsafe<\/h1>'), /URL notes support only HTTP and HTTPS URLs/);
 });
 
 test('normalizeUrlForDomainNoteKey extracts a lowercase host without URL path or query', () => {
@@ -87,6 +93,26 @@ test('URL note store refuses to save credential-bearing active URL keys', async 
   assert.deepEqual(storage.data, {});
   await store.saveNote('https://example.com/safe', 'safe note');
   assert.equal(await store.loadNote('https://example.com/safe'), 'safe note');
+});
+
+test('URL note store refuses to save non-web active URL keys', async () => {
+  const storage = new MemoryStorageArea();
+  const store = createUrlNoteStore(storage);
+
+  await assert.rejects(
+    () => store.saveNote('file:///tmp/private.txt', 'local path note'),
+    /URL notes support only HTTP and HTTPS URLs/,
+  );
+  await assert.rejects(
+    () => store.saveNote('about:blank', 'hostless note'),
+    /URL notes support only HTTP and HTTPS URLs/,
+  );
+
+  assert.deepEqual(storage.data, {});
+  await store.saveNote('http://example.org/safe', 'http note');
+  await store.saveNote('https://example.com/safe', 'https note');
+  assert.equal(await store.loadNote('http://example.org/safe'), 'http note');
+  assert.equal(await store.loadNote('https://example.com/safe'), 'https note');
 });
 
 test('URL note store can save and load notes with query strings ignored', async () => {
