@@ -129,6 +129,24 @@ test('validateExtension reports newly packaged source modules in checkedFiles', 
   }
 });
 
+test('validateExtension rejects inline event handlers in packaged HTML', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    await writeFile(
+      join(projectRoot, 'popup', 'popup.html'),
+      '<!doctype html><button type="button" onclick="alert(1)">Unsafe</button><script type="module" src="../src/popup.js"></script>\n',
+    );
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /inline event handler found in packaged HTML file: popup\/popup\.html/u,
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
 test('buildExtensionZip creates a distributable archive with extension files', async () => {
   const outputDir = await mkdtemp(join(tmpdir(), 'url-notes-addon-'));
 

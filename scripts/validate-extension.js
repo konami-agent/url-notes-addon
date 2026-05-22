@@ -84,6 +84,9 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
     if (/https?:\/\/(?!\$\{)/iu.test(contents)) {
       throw new Error(`remote URL found in packaged extension file: ${file}`);
     }
+    if (file.endsWith('.html') && /<[^>]+\son[a-z][\w:-]*\s*=/iu.test(contents)) {
+      throw new Error(`inline event handler found in packaged HTML file: ${file}`);
+    }
   }
 
   return {
