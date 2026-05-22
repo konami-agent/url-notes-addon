@@ -963,3 +963,18 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #46 with `status:completed` after recording verification evidence.
 - Final board state: #1–#46 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+
+## 2026-05-23T00:12:46+09:00 — scheduled tick reported dynamic extension validation coverage
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, recent commits, the full `project:manager` board, extension validation, and build-script tests. Concrete finding: extension validation recursively scanned packaged code roots, but `validateExtension()` still returned only the static required-file list as `checkedFiles`, making the CLI count and downstream coverage evidence misleading.
+- Issues touched: created #47 (`Report dynamically scanned extension files`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy comment. Completion/closure are pending commit, push, CI, and final evidence comment after this log entry.
+- Issue trust/autonomy decision: #47 is auto-implementable maintenance/testing hardening, local-only, privacy-preserving, small, and verifiable; it does not add sync/login/external services/store publishing or major architecture churn, so implementation proceeded without additional owner approval.
+- TDD evidence for #47: added `test/buildScripts.test.js` coverage requiring a newly present packaged `src/futureModule.js` to appear in `validateExtension()`'s `checkedFiles`; observed RED via `node --test test/buildScripts.test.js` because the result only contained the static required list; implemented minimal reporting of the dynamically discovered packaged-code files in `scripts/validate-extension.js`; observed GREEN.
+- Files changed: `scripts/validate-extension.js`, `test/buildScripts.test.js`, `PROGRESS.md`.
+- Verification: `node --test test/buildScripts.test.js` passed (7 tests); `npm test` passed (73 tests); `npm run lint` passed; `npm run validate:extension` passed and now reports 7 dynamically checked packaged code files; `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI, and final #47 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #47, continue review-gate triage with emphasis on release-readiness, validation evidence accuracy, and small privacy/security invariants before expanding product scope.

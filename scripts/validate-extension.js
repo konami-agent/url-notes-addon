@@ -78,7 +78,8 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
     throw new Error('popup must load ../src/popup.js as its module script');
   }
 
-  for (const file of await packagedCodeFiles(root)) {
+  const checkedFiles = await packagedCodeFiles(root);
+  for (const file of checkedFiles) {
     const contents = await readFile(resolve(root, file), 'utf8');
     if (/https?:\/\/(?!\$\{)/iu.test(contents)) {
       throw new Error(`remote URL found in packaged extension file: ${file}`);
@@ -88,7 +89,7 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
   return {
     manifestVersion: manifest.manifest_version,
     defaultPopup: manifest.action.default_popup,
-    checkedFiles: [...requiredFiles],
+    checkedFiles,
   };
 }
 

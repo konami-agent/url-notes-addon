@@ -115,6 +115,20 @@ test('validateExtension scans newly packaged source modules for remote URLs', as
   }
 });
 
+test('validateExtension reports newly packaged source modules in checkedFiles', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    await writeFile(join(projectRoot, 'src', 'futureModule.js'), 'export const localOnly = true;\n');
+
+    const result = await validateExtension(projectRoot);
+
+    assert.ok(result.checkedFiles.includes('src/futureModule.js'));
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
 test('buildExtensionZip creates a distributable archive with extension files', async () => {
   const outputDir = await mkdtemp(join(tmpdir(), 'url-notes-addon-'));
 
