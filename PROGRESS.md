@@ -916,3 +916,18 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #44 with `status:completed` after recording verification evidence.
 - Final board state: #1–#44 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+
+## 2026-05-22T15:58:49+09:00 — scheduled tick batched namespace imports
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, recent commits, the full `project:manager` board, import validation/store behavior, and recent atomicity hardening. Concrete finding: URL/domain import validators prevalidated entries, but each namespace still wrote imported notes one-by-one, so a storage-layer failure on a later key could leave earlier imported entries partially committed.
+- Issues touched: created #45 (`Commit JSON imports per namespace atomically`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy comment. Completion/closure are pending commit, push, CI, and final evidence comment after this log entry.
+- Issue trust/autonomy decision: #45 is auto-implementable maintenance/data-integrity hardening, local-only, privacy-preserving, small, and verifiable; it does not add sync/login/external services/store publishing or major architecture churn, so implementation proceeded without additional owner approval.
+- TDD evidence for #45: added `test/urlNotes.test.js` coverage requiring URL-note and domain-note imports to leave no partial entries when storage rejects a later imported key; observed RED via `node --test test/urlNotes.test.js` because earlier entries remained in storage; implemented minimal batched `storageArea.set()` writes per namespace in `src/urlNotes.js`; observed GREEN.
+- Files changed: `src/urlNotes.js`, `test/urlNotes.test.js`, `PROGRESS.md`.
+- Verification: `node --test test/urlNotes.test.js` passed (30 tests); `npm test` passed (71 tests); `npm run lint` passed; `npm run validate:extension` passed; `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI, and final #45 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #45, continue review-gate triage with emphasis on remaining import/export atomicity boundaries, packaging/validation alignment, and small release-readiness invariants.

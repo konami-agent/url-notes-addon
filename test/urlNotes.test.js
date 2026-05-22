@@ -35,6 +35,20 @@ class MemoryStorageArea {
   }
 }
 
+class RejectingStorageArea extends MemoryStorageArea {
+  constructor(rejectedKey) {
+    super();
+    this.rejectedKey = rejectedKey;
+  }
+
+  async set(items) {
+    if (Object.hasOwn(items, this.rejectedKey)) {
+      throw new Error(`storage write rejected for ${this.rejectedKey}`);
+    }
+    await super.set(items);
+  }
+}
+
 test('normalizeUrlForNoteKey removes hash, preserves query, lowercases scheme and host, and trims safe trailing slash', () => {
   assert.equal(
     normalizeUrlForNoteKey('HTTPS://Example.COM/path/?b=2&a=1#section'),
@@ -171,6 +185,25 @@ test('URL note store exports and imports schema-versioned notes', async () => {
   assert.equal(await target.loadNote('https://example.com/a'), 'new alpha');
   assert.equal(await target.loadNote('https://example.com/c#ignored'), 'charlie');
   assert.equal(await target.loadNote('https://example.com/blank'), '');
+});
+
+test('URL note store leaves no partial import entries when storage rejects a later key', async () => {
+  const rejectedKey = 'urlNotes.notes.https://example.com/b';
+  const storage = new RejectingStorageArea(rejectedKey);
+  const store = createUrlNoteStore(storage);
+
+  await assert.rejects(
+    () => store.importNotes({
+      schemaVersion: 1,
+      notes: {
+        'https://example.com/a': 'alpha',
+        'https://example.com/b': 'bravo',
+      },
+    }),
+    /storage write rejected/u,
+  );
+
+  assert.deepEqual(storage.data, {});
 });
 
 test('URL note store lists saved notes sorted by URL key', async () => {
@@ -373,6 +406,25 @@ test('domain note store exports and imports schema-versioned domain notes', asyn
   assert.equal(await target.loadNote('https://example.com/page'), 'new example note');
   assert.equal(await target.loadNote('https://example.net/page'), 'net note');
   assert.equal(await target.loadNote('https://blank.example/page'), '');
+});
+
+test('domain note store leaves no partial import entries when storage rejects a later key', async () => {
+  const rejectedKey = 'urlNotes.domainNotes.example.net';
+  const storage = new RejectingStorageArea(rejectedKey);
+  const domainStore = createDomainNoteStore(storage);
+
+  await assert.rejects(
+    () => domainStore.importNotes({
+      schemaVersion: 1,
+      domainNotes: {
+        'example.com': 'example note',
+        'example.net': 'net note',
+      },
+    }),
+    /storage write rejected/u,
+  );
+
+  assert.deepEqual(storage.data, {});
 });
 
 test('domain note store lists saved domain notes sorted by domain key', async () => {

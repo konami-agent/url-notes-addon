@@ -81,9 +81,10 @@ export function createUrlNoteStore(storageArea, keyOptions = {}) {
 
     async importNotes(payload) {
       const notesToImport = this.validateImport(payload);
-      for (const [normalizedUrl, noteText] of notesToImport) {
-        await this.saveNote(normalizedUrl, noteText);
-      }
+      const items = Object.fromEntries(
+        notesToImport.map(([normalizedUrl, noteText]) => [`${NOTE_KEY_PREFIX}${normalizedUrl}`, noteText]),
+      );
+      if (notesToImport.length > 0) await storageArea.set(items);
       return notesToImport.length;
     },
   };
@@ -132,9 +133,10 @@ export function createDomainNoteStore(storageArea) {
 
     async importNotes(payload) {
       const domainNotesToImport = this.validateImport(payload);
-      for (const [domain, noteText] of domainNotesToImport) {
-        await storageArea.set({ [`${DOMAIN_NOTE_KEY_PREFIX}${domain}`]: noteText });
-      }
+      const items = Object.fromEntries(
+        domainNotesToImport.map(([domain, noteText]) => [`${DOMAIN_NOTE_KEY_PREFIX}${domain}`, noteText]),
+      );
+      if (domainNotesToImport.length > 0) await storageArea.set(items);
       return domainNotesToImport.length;
     },
   };
