@@ -986,3 +986,18 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #47 with `status:completed` after recording verification evidence.
 - Final board state: #1–#47 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+## 2026-05-23T04:18:33+09:00 — scheduled tick rejected conflicting duplicate import keys
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, recent commits, full `project:manager` board, and URL/domain import normalization behavior. Concrete finding: JSON imports could contain multiple raw URL/domain keys that normalize to the same storage key with different note text; the import planning path silently kept the later value, risking backup/restore data loss.
+- Issues touched: created #48 (`Reject conflicting duplicate import keys`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy comment. Completion/closure are pending commit, push, CI, and final evidence comment after this log entry.
+- Issue trust/autonomy decision: #48 is auto-implementable maintenance/data-integrity hardening, local-only, privacy-preserving, small, and verifiable; it does not add sync/login/external services/store publishing or major architecture churn, so implementation proceeded without additional owner approval.
+- TDD evidence for #48: added `test/urlNotes.test.js` coverage requiring URL-note and domain-note imports to reject conflicting duplicate normalized keys atomically while accepting identical duplicate note text once; observed RED via `node --test test/urlNotes.test.js` because conflicting duplicates did not reject; implemented minimal duplicate-conflict detection in `src/urlNotes.js`; observed GREEN.
+- Files changed: `src/urlNotes.js`, `test/urlNotes.test.js`, `PROGRESS.md`.
+- Verification: `node --test test/urlNotes.test.js` passed (34 tests); `npm test` passed (77 tests); `npm run lint` passed; `npm run validate:extension` passed; `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI, and final #48 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #48, continue review-gate triage with emphasis on release-readiness and remaining backup/import edge cases before broadening product scope.
+

@@ -171,18 +171,18 @@ function collectUrlNotesForImport(payload, keyOptions) {
     throw new Error('Unsupported URL notes export format');
   }
 
-  const notesToImport = [];
+  const notesToImport = new Map();
   try {
     for (const [rawUrl, noteText] of Object.entries(payload.notes)) {
       if (String(noteText ?? '').trim() === '') continue;
       const normalizedUrl = normalizeUrlForNoteKey(rawUrl, keyOptions);
       if (!isSafeWebUrl(normalizedUrl)) throw new Error('Invalid URL scheme');
-      notesToImport.push([normalizedUrl, String(noteText)]);
+      addNormalizedImportNote(notesToImport, normalizedUrl, String(noteText));
     }
   } catch {
     throw new Error('Unsupported URL notes export format');
   }
-  return notesToImport;
+  return [...notesToImport.entries()];
 }
 
 function isSafeWebUrl(rawUrl) {
@@ -207,16 +207,23 @@ function collectDomainNotesForImport(payload) {
     throw new Error('Unsupported URL notes export format');
   }
 
-  const domainNotesToImport = [];
+  const domainNotesToImport = new Map();
   try {
     for (const [rawDomain, noteText] of Object.entries(payload.domainNotes)) {
       if (String(noteText ?? '').trim() === '') continue;
-      domainNotesToImport.push([normalizeDomainForImport(rawDomain), String(noteText)]);
+      addNormalizedImportNote(domainNotesToImport, normalizeDomainForImport(rawDomain), String(noteText));
     }
   } catch {
     throw new Error('Unsupported URL notes export format');
   }
-  return domainNotesToImport;
+  return [...domainNotesToImport.entries()];
+}
+
+function addNormalizedImportNote(notesByKey, normalizedKey, noteText) {
+  if (notesByKey.has(normalizedKey) && notesByKey.get(normalizedKey) !== noteText) {
+    throw new Error('Conflicting duplicate note key');
+  }
+  notesByKey.set(normalizedKey, noteText);
 }
 
 function normalizeDomainForImport(rawDomain) {

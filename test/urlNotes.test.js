@@ -290,6 +290,42 @@ test('URL note store rejects invalid imports without changing existing notes', a
   assert.equal(await store.loadNote('https://example.com/new'), '');
 });
 
+test('URL note store rejects conflicting duplicate normalized import keys atomically', async () => {
+  const storage = new MemoryStorageArea();
+  const store = createUrlNoteStore(storage, { ignoreQuery: true });
+
+  await assert.rejects(
+    () => store.importNotes({
+      schemaVersion: 1,
+      notes: {
+        'https://example.com/page?utm_source=one#first': 'alpha',
+        'https://EXAMPLE.com/page/?utm_source=two#second': 'bravo',
+      },
+    }),
+    /Unsupported URL notes export format/,
+  );
+
+  assert.deepEqual(storage.data, {});
+});
+
+test('URL note store accepts duplicate normalized import keys with identical note text once', async () => {
+  const storage = new MemoryStorageArea();
+  const store = createUrlNoteStore(storage, { ignoreQuery: true });
+
+  assert.equal(await store.importNotes({
+    schemaVersion: 1,
+    notes: {
+      'https://example.com/page?utm_source=one#first': 'same note',
+      'https://EXAMPLE.com/page/?utm_source=two#second': 'same note',
+    },
+  }), 1);
+
+  assert.deepEqual(await store.exportNotes(), {
+    schemaVersion: 1,
+    notes: { 'https://example.com/page': 'same note' },
+  });
+});
+
 test('URL note store rejects unsafe non-web import URL schemes atomically', async () => {
   const storage = new MemoryStorageArea();
   const store = createUrlNoteStore(storage);
@@ -483,6 +519,42 @@ test('domain note store rejects invalid imports without changing existing domain
 
   assert.equal(await domainStore.loadNote('https://example.com/anything'), 'keep me');
   assert.equal(await domainStore.loadNote('https://example.net/anything'), '');
+});
+
+test('domain note store rejects conflicting duplicate normalized import keys atomically', async () => {
+  const storage = new MemoryStorageArea();
+  const domainStore = createDomainNoteStore(storage);
+
+  await assert.rejects(
+    () => domainStore.importNotes({
+      schemaVersion: 1,
+      domainNotes: {
+        'Example.COM': 'alpha',
+        'example.com': 'bravo',
+      },
+    }),
+    /Unsupported URL notes export format/,
+  );
+
+  assert.deepEqual(storage.data, {});
+});
+
+test('domain note store accepts duplicate normalized import keys with identical note text once', async () => {
+  const storage = new MemoryStorageArea();
+  const domainStore = createDomainNoteStore(storage);
+
+  assert.equal(await domainStore.importNotes({
+    schemaVersion: 1,
+    domainNotes: {
+      'Example.COM': 'same note',
+      'example.com': 'same note',
+    },
+  }), 1);
+
+  assert.deepEqual(await domainStore.exportNotes(), {
+    schemaVersion: 1,
+    domainNotes: { 'example.com': 'same note' },
+  });
 });
 
 test('domain note store rejects URL-like import keys atomically', async () => {
