@@ -150,8 +150,12 @@ export async function initializePopup({
       const payload = JSON.parse(await file.text());
       if (typeof domainStore.validateImport === 'function') domainStore.validateImport(payload);
       if (typeof store.validateImport === 'function') store.validateImport(payload);
-      const importedDomainCount = await domainStore.importNotes(payload);
-      const importedUrlCount = await store.importNotes(payload);
+      const { importedUrlCount, importedDomainCount } = await importCombinedNotes({
+        payload,
+        store,
+        domainStore,
+        storageArea: adapter.storage.local,
+      });
       note.value = await store.loadNote(activeUrl);
       domainNote.value = activeDomainAvailable ? await domainStore.loadNote(activeUrl) : '';
       renderCurrentPreviews();
@@ -211,6 +215,23 @@ function renderNoteOverview({ document, notesList, notesEmpty, notes, query }) {
   } else {
     notesEmpty.textContent = 'No matching notes.';
   }
+}
+
+async function importCombinedNotes({ payload, store, domainStore, storageArea }) {
+  if (typeof store.getImportItems === 'function' && typeof domainStore.getImportItems === 'function') {
+    const domainItems = domainStore.getImportItems(payload);
+    const urlItems = store.getImportItems(payload);
+    const items = { ...domainItems, ...urlItems };
+    if (Object.keys(items).length > 0) await storageArea.set(items);
+    return {
+      importedUrlCount: Object.keys(urlItems).length,
+      importedDomainCount: Object.keys(domainItems).length,
+    };
+  }
+
+  const importedDomainCount = await domainStore.importNotes(payload);
+  const importedUrlCount = await store.importNotes(payload);
+  return { importedUrlCount, importedDomainCount };
 }
 
 async function listOverviewEntries(store, domainStore) {

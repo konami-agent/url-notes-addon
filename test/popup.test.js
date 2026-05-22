@@ -723,6 +723,37 @@ test('popup keeps JSON import usable on supported active tabs', async () => {
   assert.equal(document.elements['#status'].textContent, 'Imported 2 notes.');
 });
 
+test('popup leaves no partial combined JSON import when shared storage rejects a URL note key', async () => {
+  const document = createPopupDocument();
+  const adapter = createAdapter('https://current.example/page');
+  const originalSet = adapter.storage.local.set;
+  adapter.storage.local.set = async (items) => {
+    if (Object.hasOwn(items, 'urlNotes.notes.https://example.com/page')) {
+      throw new Error('storage write rejected for URL note');
+    }
+    await originalSet.call(adapter.storage.local, items);
+  };
+  await initializePopup({ document, adapter });
+
+  const importInput = document.elements['#import-notes'];
+  importInput.value = 'C:\\fakepath\\backup.json';
+  importInput.files = [{
+    text: async () => JSON.stringify({
+      schemaVersion: 1,
+      domainNotes: { 'example.com': 'should not be imported' },
+      notes: { 'https://example.com/page': 'should not be imported' },
+    }),
+  }];
+  await importInput.dispatch('change');
+
+  assert.equal(adapter.storage.local.data['urlNotes.domainNotes.example.com'], undefined);
+  assert.equal(adapter.storage.local.data['urlNotes.notes.https://example.com/page'], undefined);
+  assert.equal(document.elements['#domain-note'].value, '');
+  assert.equal(document.elements['#note'].value, '');
+  assert.equal(importInput.value, '');
+  assert.equal(document.elements['#status'].textContent, 'Error: storage write rejected for URL note');
+});
+
 test('popup renders stale credential-bearing URL note overview keys as non-clickable text', async () => {
   const document = createPopupDocument();
   const store = {

@@ -939,3 +939,18 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #45 with `status:completed` after recording verification evidence.
 - Final board state: #1–#45 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+
+## 2026-05-22T20:06:44+09:00 — scheduled tick batched combined popup imports
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, recent commits, the full `project:manager` board, popup import orchestration, and recent per-namespace atomicity hardening. Concrete finding: popup JSON import still committed domain notes and URL notes through separate namespace writes, so a shared storage-layer failure on the later URL-note write could leave an earlier domain-note write partially imported.
+- Issues touched: created #46 (`Commit combined popup JSON imports atomically`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy comment. Completion/closure are pending commit, push, CI, and final evidence comment after this log entry.
+- Issue trust/autonomy decision: #46 is auto-implementable maintenance/data-integrity hardening, local-only, privacy-preserving, small, and verifiable; it does not add sync/login/external services/store publishing or major architecture churn, so implementation proceeded without additional owner approval.
+- TDD evidence for #46: added `test/popup.test.js` coverage requiring a combined URL/domain JSON import to leave no URL-note or domain-note entries when the shared storage write rejects a URL-note key; observed RED via `node --test test/popup.test.js` because the domain note was written before the URL-note rejection; implemented minimal import-item planning on the default stores and a single combined popup `storage.local.set()` path with fallback for custom stores; observed GREEN.
+- Files changed: `src/urlNotes.js`, `src/popup.js`, `test/popup.test.js`, `PROGRESS.md`.
+- Verification: `node --test test/popup.test.js` passed (22 tests); `npm test` passed (72 tests); `npm run lint` passed; `npm run validate:extension` passed; `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI, and final #46 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #46, continue review-gate triage with emphasis on remaining import/export atomicity boundaries, release-readiness checks, and small privacy/security invariants.

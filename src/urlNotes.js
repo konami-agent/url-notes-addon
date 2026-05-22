@@ -79,13 +79,14 @@ export function createUrlNoteStore(storageArea, keyOptions = {}) {
       return collectUrlNotesForImport(payload, keyOptions);
     },
 
+    getImportItems(payload) {
+      return urlNoteImportItems(payload, keyOptions);
+    },
+
     async importNotes(payload) {
-      const notesToImport = this.validateImport(payload);
-      const items = Object.fromEntries(
-        notesToImport.map(([normalizedUrl, noteText]) => [`${NOTE_KEY_PREFIX}${normalizedUrl}`, noteText]),
-      );
-      if (notesToImport.length > 0) await storageArea.set(items);
-      return notesToImport.length;
+      const items = this.getImportItems(payload);
+      if (Object.keys(items).length > 0) await storageArea.set(items);
+      return Object.keys(items).length;
     },
   };
 }
@@ -131,15 +132,30 @@ export function createDomainNoteStore(storageArea) {
       return collectDomainNotesForImport(payload);
     },
 
+    getImportItems(payload) {
+      return domainNoteImportItems(payload);
+    },
+
     async importNotes(payload) {
-      const domainNotesToImport = this.validateImport(payload);
-      const items = Object.fromEntries(
-        domainNotesToImport.map(([domain, noteText]) => [`${DOMAIN_NOTE_KEY_PREFIX}${domain}`, noteText]),
-      );
-      if (domainNotesToImport.length > 0) await storageArea.set(items);
-      return domainNotesToImport.length;
+      const items = this.getImportItems(payload);
+      if (Object.keys(items).length > 0) await storageArea.set(items);
+      return Object.keys(items).length;
     },
   };
+}
+
+function urlNoteImportItems(payload, keyOptions) {
+  return Object.fromEntries(
+    collectUrlNotesForImport(payload, keyOptions)
+      .map(([normalizedUrl, noteText]) => [`${NOTE_KEY_PREFIX}${normalizedUrl}`, noteText]),
+  );
+}
+
+function domainNoteImportItems(payload) {
+  return Object.fromEntries(
+    collectDomainNotesForImport(payload)
+      .map(([domain, noteText]) => [`${DOMAIN_NOTE_KEY_PREFIX}${domain}`, noteText]),
+  );
 }
 
 function noteStorageKey(rawUrl, keyOptions) {
