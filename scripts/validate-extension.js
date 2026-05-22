@@ -1,7 +1,7 @@
-import { access, readFile } from 'node:fs/promises';
+import { access, readFile, readdir } from 'node:fs/promises';
 import { constants } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { resolve } from 'node:path';
+import { join, resolve, sep } from 'node:path';
 
 const requiredFiles = [
   'manifest.json',
@@ -14,15 +14,40 @@ const requiredFiles = [
   'icons/icon.svg',
 ];
 
-const packagedCodeFiles = [
-  'manifest.json',
-  'popup/popup.html',
-  'popup/popup.css',
-  'src/browserApi.js',
-  'src/urlNotes.js',
-  'src/popup.js',
-  'src/markdownPreview.js',
-];
+const packagedCodeRoots = ['manifest.json', 'popup', 'src'];
+const packagedCodeExtensions = new Set(['.css', '.html', '.js', '.json']);
+
+function hasPackagedCodeExtension(file) {
+  return [...packagedCodeExtensions].some((extension) => file.endsWith(extension));
+}
+
+async function collectPackagedCodeFiles(root, entry) {
+  const absolute = resolve(root, entry);
+  const listing = await readdir(absolute, { withFileTypes: true }).catch(async () => null);
+
+  if (listing === null) {
+    return hasPackagedCodeExtension(entry) ? [entry] : [];
+  }
+
+  const files = [];
+  for (const dirent of listing) {
+    const child = join(entry, dirent.name);
+    if (dirent.isDirectory()) {
+      files.push(...await collectPackagedCodeFiles(root, child));
+    } else if (dirent.isFile() && hasPackagedCodeExtension(child)) {
+      files.push(child.split(sep).join('/'));
+    }
+  }
+  return files;
+}
+
+async function packagedCodeFiles(root) {
+  const files = [];
+  for (const entry of packagedCodeRoots) {
+    files.push(...await collectPackagedCodeFiles(root, entry));
+  }
+  return files.sort();
+}
 
 export async function validateExtension(projectRoot = new URL('..', import.meta.url)) {
   const root = projectRoot instanceof URL ? fileURLToPath(projectRoot) : projectRoot;
@@ -53,7 +78,7 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
     throw new Error('popup must load ../src/popup.js as its module script');
   }
 
-  for (const file of packagedCodeFiles) {
+  for (const file of await packagedCodeFiles(root)) {
     const contents = await readFile(resolve(root, file), 'utf8');
     if (/https?:\/\/(?!\$\{)/iu.test(contents)) {
       throw new Error(`remote URL found in packaged extension file: ${file}`);

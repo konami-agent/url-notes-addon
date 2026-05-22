@@ -100,6 +100,21 @@ test('validateExtension rejects remote URLs in the packaged markdown preview mod
   }
 });
 
+test('validateExtension scans newly packaged source modules for remote URLs', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    await writeFile(join(projectRoot, 'src', 'futureModule.js'), 'const remoteHelp = "https://example.com/help";\n');
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /remote URL found in packaged extension file: src\/futureModule\.js/u,
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
 test('buildExtensionZip creates a distributable archive with extension files', async () => {
   const outputDir = await mkdtemp(join(tmpdir(), 'url-notes-addon-'));
 
