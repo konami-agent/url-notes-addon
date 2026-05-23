@@ -87,6 +87,9 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
     if (file.endsWith('.html') && /<[^>]+\son[a-z][\w:-]*\s*=/iu.test(contents)) {
       throw new Error(`inline event handler found in packaged HTML file: ${file}`);
     }
+    if (file.endsWith('.html') && /<script\b(?![^>]*\bsrc\s*=)[^>]*>/iu.test(contents)) {
+      throw new Error(`inline script block found in packaged HTML file: ${file}`);
+    }
   }
 
   return {
