@@ -118,6 +118,21 @@ test('validateExtension rejects protocol-relative remote URLs in packaged extens
   }
 });
 
+test('validateExtension rejects remote URLs in packaged SVG icons', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    await writeFile(join(projectRoot, 'icons', 'icon.svg'), '<svg><image href="https://example.com/icon.png" /></svg>\n');
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /remote URL found in packaged extension file: icons\/icon\.svg/u,
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
 test('validateExtension rejects remote URLs in the packaged markdown preview module', async () => {
   const projectRoot = await copyProjectFixture();
 

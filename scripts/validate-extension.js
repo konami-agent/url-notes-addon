@@ -14,8 +14,8 @@ const requiredFiles = [
   'icons/icon.svg',
 ];
 
-const packagedCodeRoots = ['manifest.json', 'popup', 'src'];
-const packagedCodeExtensions = new Set(['.css', '.html', '.js', '.json']);
+const packagedCodeRoots = ['manifest.json', 'popup', 'src', 'icons'];
+const packagedCodeExtensions = new Set(['.css', '.html', '.js', '.json', '.svg']);
 const allowedPermissions = new Set(['activeTab', 'storage']);
 
 function hasPackagedCodeExtension(file) {
@@ -111,7 +111,7 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
 }
 
 function hasRemoteUrl(contents) {
-  return /https?:\/\/(?!\$\{)/iu.test(contents)
+  return /https?:\/\/(?!\$\{|www\.w3\.org\/2000\/svg\b)/iu.test(contents)
     || /(?:^|[^:])\/\/[a-z0-9.-]+\.[a-z]{2,}(?:[/:?#)]|$)/iu.test(contents);
 }
 
