@@ -98,6 +98,9 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
     if (file.endsWith('.html') && /<script\b(?![^>]*\bsrc\s*=)[^>]*>/iu.test(contents)) {
       throw new Error(`inline script block found in packaged HTML file: ${file}`);
     }
+    if (file.endsWith('.html') && hasUnexpectedScriptSource(contents)) {
+      throw new Error(`unexpected script source found in packaged HTML file: ${file}`);
+    }
   }
 
   return {
@@ -105,6 +108,18 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
     defaultPopup: manifest.action.default_popup,
     checkedFiles,
   };
+}
+
+function hasUnexpectedScriptSource(html) {
+  const scriptTagsWithSources = html.matchAll(/<script\b[^>]*\bsrc\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))[^>]*>/giu);
+  for (const match of scriptTagsWithSources) {
+    const tag = match[0];
+    const src = match[1] ?? match[2] ?? match[3] ?? '';
+    if (src !== '../src/popup.js' || !/\btype\s*=\s*(?:"module"|'module'|module)(?:\s|>|\/)/iu.test(tag)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

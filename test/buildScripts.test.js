@@ -183,6 +183,24 @@ test('validateExtension rejects inline script blocks in packaged HTML', async ()
   }
 });
 
+test('validateExtension rejects unexpected script sources in packaged HTML', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    await writeFile(
+      join(projectRoot, 'popup', 'popup.html'),
+      '<!doctype html><script src="../src/extra.js"></script><script type="module" src="../src/popup.js"></script>\n',
+    );
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /unexpected script source found in packaged HTML file: popup\/popup\.html/u,
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
 test('buildExtensionZip creates a distributable archive with extension files', async () => {
   const outputDir = await mkdtemp(join(tmpdir(), 'url-notes-addon-'));
 
