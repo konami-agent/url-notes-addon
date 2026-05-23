@@ -103,6 +103,21 @@ test('validateExtension rejects remote URLs in packaged extension files', async 
   }
 });
 
+test('validateExtension rejects protocol-relative remote URLs in packaged extension files', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    await writeFile(join(projectRoot, 'popup', 'popup.css'), '.remote { background-image: url("//example.com/pixel.png"); }\n');
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /remote URL found in packaged extension file: popup\/popup\.css/u,
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
 test('validateExtension rejects remote URLs in the packaged markdown preview module', async () => {
   const projectRoot = await copyProjectFixture();
 

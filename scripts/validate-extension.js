@@ -89,7 +89,7 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
   const checkedFiles = await packagedCodeFiles(root);
   for (const file of checkedFiles) {
     const contents = await readFile(resolve(root, file), 'utf8');
-    if (/https?:\/\/(?!\$\{)/iu.test(contents)) {
+    if (hasRemoteUrl(contents)) {
       throw new Error(`remote URL found in packaged extension file: ${file}`);
     }
     if (file.endsWith('.html') && /<[^>]+\son[a-z][\w:-]*\s*=/iu.test(contents)) {
@@ -108,6 +108,11 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
     defaultPopup: manifest.action.default_popup,
     checkedFiles,
   };
+}
+
+function hasRemoteUrl(contents) {
+  return /https?:\/\/(?!\$\{)/iu.test(contents)
+    || /(?:^|[^:])\/\/[a-z0-9.-]+\.[a-z]{2,}(?:[/:?#)]|$)/iu.test(contents);
 }
 
 function hasUnexpectedScriptSource(html) {
