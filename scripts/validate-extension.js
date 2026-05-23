@@ -16,6 +16,7 @@ const requiredFiles = [
 
 const packagedCodeRoots = ['manifest.json', 'popup', 'src'];
 const packagedCodeExtensions = new Set(['.css', '.html', '.js', '.json']);
+const allowedPermissions = new Set(['activeTab', 'storage']);
 
 function hasPackagedCodeExtension(file) {
   return [...packagedCodeExtensions].some((extension) => file.endsWith(extension));
@@ -65,6 +66,13 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
   }
   if (!manifest.permissions?.includes('storage')) {
     throw new Error('manifest permissions must include storage');
+  }
+  const permissions = Array.isArray(manifest.permissions) ? manifest.permissions : [];
+  if (permissions.some((permission) => !allowedPermissions.has(permission))) {
+    throw new Error('manifest permissions must stay limited to storage and activeTab');
+  }
+  if (!permissions.includes('activeTab')) {
+    throw new Error('manifest permissions must include activeTab');
   }
   if (Array.isArray(manifest.host_permissions) && manifest.host_permissions.length > 0) {
     throw new Error('manifest host_permissions must stay empty for local-only v0.1');
