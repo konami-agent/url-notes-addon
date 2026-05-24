@@ -33,6 +33,7 @@ async function copyProjectFixture() {
   await mkdir(join(projectRoot, 'icons'), { recursive: true });
   await Promise.all([
     cp(new URL('../manifest.json', import.meta.url), join(projectRoot, 'manifest.json')),
+    cp(new URL('../package.json', import.meta.url), join(projectRoot, 'package.json')),
     cp(new URL('../popup/popup.html', import.meta.url), join(projectRoot, 'popup', 'popup.html')),
     cp(new URL('../popup/popup.css', import.meta.url), join(projectRoot, 'popup', 'popup.css')),
     cp(new URL('../src/browserApi.js', import.meta.url), join(projectRoot, 'src', 'browserApi.js')),
@@ -50,6 +51,24 @@ test('validateExtension accepts the checked-in extension package', async () => {
   assert.equal(result.manifestVersion, 3);
   assert.equal(result.defaultPopup, 'popup/popup.html');
   assert.ok(result.checkedFiles.includes('src/popup.js'));
+});
+
+test('validateExtension rejects package and manifest version mismatches', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    const packageJsonPath = join(projectRoot, 'package.json');
+    const packageJson = JSON.parse(await readFile(packageJsonPath, 'utf8'));
+    packageJson.version = '0.2.0';
+    await writeFile(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`);
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /package\.json version must match manifest version/u,
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
 });
 
 test('validateExtension rejects broad host permissions', async () => {

@@ -70,6 +70,10 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
   }
 
   const manifest = JSON.parse(await readFile(resolve(root, 'manifest.json'), 'utf8'));
+  const packageJson = JSON.parse(await readFile(resolve(root, 'package.json'), 'utf8'));
+  if (packageJson.version !== manifest.version) {
+    throw new Error('package.json version must match manifest version');
+  }
   if (manifest.manifest_version !== 3) {
     throw new Error('manifest_version must be 3');
   }

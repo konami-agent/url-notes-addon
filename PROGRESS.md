@@ -1260,3 +1260,17 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #59 with `status:completed` after recording verification evidence.
 - Final board state: #1–#59 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+## 2026-05-25T06:49:35+09:00 — scheduled tick required package/manifest version match
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, recent commits, full `project:manager` board, `manifest.json`, `package.json`, `scripts/validate-extension.js`, `scripts/build-zip.js`, and build-script tests. Concrete finding: release zip naming uses `package.json.version` while the installed extension exposes `manifest.json.version`, but validation did not assert those version fields stay synchronized.
+- Issues touched: created #60 (`Require package and manifest versions to match`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy comment. Completion/closure are pending commit, push, CI, and final evidence comment after this log entry.
+- Issue trust/autonomy decision: #60 is auto-implementable maintenance/release-readiness validation hardening, local-only, privacy-preserving, small, and verifiable; it does not add sync/login/external services/store publishing or major architecture churn, so implementation proceeded without additional owner approval.
+- TDD evidence for #60: added `test/buildScripts.test.js` coverage requiring `validateExtension()` to reject mismatched `package.json.version` and `manifest.json.version`; observed RED via `node --test --test-name-pattern "validateExtension rejects package and manifest version mismatches" test/buildScripts.test.js` with `Missing expected rejection`; implemented minimal version comparison in `scripts/validate-extension.js`; observed GREEN via the same focused test rerun.
+- Files changed: `scripts/validate-extension.js`, `test/buildScripts.test.js`, `PROGRESS.md`.
+- Verification: `node --test test/buildScripts.test.js` passed (22 tests); `npm test` passed (92 tests); `npm run lint` passed; `npm run validate:extension` passed (`8 files checked`); `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI, and final #60 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #60, continue small release-readiness validation review; likely next area is checking that manifest identity/icon/action metadata remain complete and consistent before broader product scope.
