@@ -17,6 +17,7 @@ const requiredFiles = [
 const packagedCodeRoots = ['manifest.json', 'popup', 'src', 'icons'];
 const packagedCodeExtensions = new Set(['.css', '.html', '.js', '.json', '.svg']);
 const allowedPermissions = new Set(['activeTab', 'storage']);
+const nonPopupManifestEntryKeys = ['background', 'options_ui', 'options_page'];
 
 function hasPackagedCodeExtension(file) {
   return [...packagedCodeExtensions].some((extension) => file.endsWith(extension));
@@ -79,6 +80,11 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
   }
   if (Array.isArray(manifest.content_scripts) && manifest.content_scripts.length > 0) {
     throw new Error('manifest content_scripts must stay empty for popup-only v0.1');
+  }
+  for (const key of nonPopupManifestEntryKeys) {
+    if (manifest[key] !== undefined) {
+      throw new Error('manifest must remain popup-only for v0.1');
+    }
   }
 
   const popupHtml = await readFile(resolve(root, 'popup/popup.html'), 'utf8');
