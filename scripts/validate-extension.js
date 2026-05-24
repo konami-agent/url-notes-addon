@@ -17,7 +17,17 @@ const requiredFiles = [
 const packagedCodeRoots = ['manifest.json', 'popup', 'src', 'icons'];
 const packagedCodeExtensions = new Set(['.css', '.html', '.js', '.json', '.svg']);
 const allowedPermissions = new Set(['activeTab', 'storage']);
-const nonPopupManifestEntryKeys = ['background', 'options_ui', 'options_page'];
+const nonPopupManifestEntryKeys = [
+  'background',
+  'options_ui',
+  'options_page',
+  'sidebar_action',
+  'side_panel',
+  'devtools_page',
+  'chrome_url_overrides',
+  'commands',
+  'externally_connectable',
+];
 
 function hasPackagedCodeExtension(file) {
   return [...packagedCodeExtensions].some((extension) => file.endsWith(extension));

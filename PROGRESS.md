@@ -1192,3 +1192,17 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #56 with `status:completed` after recording verification evidence.
 - Final board state: #1–#56 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+## 2026-05-24T17:59:37+09:00 — scheduled tick rejected additional non-popup manifest surfaces
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, recent commits, full `project:manager` board, `manifest.json`, `scripts/validate-extension.js`, and build-script tests. Concrete finding: v0.1 is intentionally popup-only; validation rejected `background`, `options_ui`, `options_page`, and `content_scripts`, but still accepted other manifest surfaces such as `sidebar_action`, `side_panel`, `devtools_page`, `chrome_url_overrides`, `commands`, and `externally_connectable`.
+- Issues touched: created #57 (`Reject additional non-popup manifest surfaces`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy comment. Completion/closure are pending commit, push, CI, and final evidence comment after this log entry.
+- Issue trust/autonomy decision: #57 is auto-implementable maintenance/security validation hardening, local-only, privacy-preserving, small, and verifiable; it does not add sync/login/external services/store publishing or major architecture churn, so implementation proceeded without additional owner approval.
+- TDD evidence for #57: added `test/buildScripts.test.js` coverage requiring `validateExtension()` to reject `manifest.sidebar_action`; observed RED via `node --test test/buildScripts.test.js` with `Missing expected rejection`; implemented minimal sidebar rejection and observed GREEN. Added `side_panel` coverage; observed RED; implemented minimal side-panel rejection and observed GREEN. Added coverage for `devtools_page`, `chrome_url_overrides`, `commands`, and `externally_connectable`; observed RED; extended the popup-only manifest key deny-list and observed GREEN.
+- Files changed: `scripts/validate-extension.js`, `test/buildScripts.test.js`, `PROGRESS.md`.
+- Verification: `node --test test/buildScripts.test.js` passed (19 tests); `npm test` passed (89 tests); `npm run lint` passed; `npm run validate:extension` passed (`8 files checked`); `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI, and final #57 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #57, continue small release-readiness/security validation review; likely next area is checking whether manifest value types and release/package evidence have any remaining executable invariants before broader product scope.

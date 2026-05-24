@@ -124,6 +124,69 @@ test('validateExtension rejects options pages', async () => {
   }
 });
 
+test('validateExtension rejects sidebar actions', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    const manifestPath = join(projectRoot, 'manifest.json');
+    const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+    manifest.sidebar_action = { default_panel: 'sidebar/sidebar.html' };
+    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /manifest must remain popup-only for v0\.1/u,
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
+test('validateExtension rejects side panels', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    const manifestPath = join(projectRoot, 'manifest.json');
+    const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+    manifest.side_panel = { default_path: 'side-panel/panel.html' };
+    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /manifest must remain popup-only for v0\.1/u,
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
+test('validateExtension rejects other non-popup manifest surfaces', async () => {
+  const nonPopupSurfaces = [
+    ['devtools_page', 'devtools/devtools.html'],
+    ['chrome_url_overrides', { newtab: 'newtab/newtab.html' }],
+    ['commands', { open: { suggested_key: { default: 'Ctrl+Shift+Y' } } }],
+    ['externally_connectable', { matches: ['https://example.com/*'] }],
+  ];
+
+  for (const [key, value] of nonPopupSurfaces) {
+    const projectRoot = await copyProjectFixture();
+
+    try {
+      const manifestPath = join(projectRoot, 'manifest.json');
+      const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+      manifest[key] = value;
+      await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+
+      await assert.rejects(
+        validateExtension(projectRoot),
+        /manifest must remain popup-only for v0\.1/u,
+      );
+    } finally {
+      await rm(projectRoot, { recursive: true, force: true });
+    }
+  }
+});
+
 test('validateExtension rejects remote URLs in packaged extension files', async () => {
   const projectRoot = await copyProjectFixture();
 
