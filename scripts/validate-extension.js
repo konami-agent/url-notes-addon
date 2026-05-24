@@ -92,6 +92,9 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
   if (Array.isArray(manifest.content_scripts) && manifest.content_scripts.length > 0) {
     throw new Error('manifest content_scripts must stay empty for popup-only v0.1');
   }
+  if (manifest.content_security_policy !== undefined) {
+    throw new Error('manifest must not define a custom content_security_policy for local-only v0.1');
+  }
   for (const key of nonPopupManifestEntryKeys) {
     if (manifest[key] !== undefined) {
       throw new Error('manifest must remain popup-only for v0.1');

@@ -205,6 +205,26 @@ test('validateExtension rejects web-accessible resources', async () => {
   }
 });
 
+test('validateExtension rejects custom content security policies', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    const manifestPath = join(projectRoot, 'manifest.json');
+    const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+    manifest.content_security_policy = {
+      extension_pages: "script-src 'self'; object-src 'self'; connect-src *",
+    };
+    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /manifest must not define a custom content_security_policy for local-only v0\.1/u,
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
 test('validateExtension rejects remote URLs in packaged extension files', async () => {
   const projectRoot = await copyProjectFixture();
 
