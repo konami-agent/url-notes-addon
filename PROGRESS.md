@@ -1214,3 +1214,17 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #57 with `status:completed` after recording verification evidence.
 - Final board state: #1–#57 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+## 2026-05-24T22:11:41+09:00 — scheduled tick rejected web-accessible manifest resources
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, recent commits, full `project:manager` board, `manifest.json`, `scripts/validate-extension.js`, and build-script tests. Concrete finding: v0.1 is intentionally popup-only/local-only; validation rejected many non-popup manifest surfaces but still accepted `web_accessible_resources`, which could expose packaged extension resources to web pages.
+- Issues touched: created #58 (`Reject web-accessible manifest resources`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy comment. Completion/closure are pending commit, push, CI, and final evidence comment after this log entry.
+- Issue trust/autonomy decision: #58 is auto-implementable maintenance/security validation hardening, local-only, privacy-preserving, small, and verifiable; it does not add sync/login/external services/store publishing or major architecture churn, so implementation proceeded without additional owner approval.
+- TDD evidence for #58: added `test/buildScripts.test.js` coverage requiring `validateExtension()` to reject manifest `web_accessible_resources`; first RED attempt failed for the wrong reason because the fixture used a remote `https://` match and existing remote-URL validation caught `manifest.json`, so the fixture was corrected to use `<all_urls>`; observed expected RED via `node --test test/buildScripts.test.js` with `Missing expected rejection`; implemented minimal manifest popup-only deny-list coverage in `scripts/validate-extension.js`; observed GREEN.
+- Files changed: `scripts/validate-extension.js`, `test/buildScripts.test.js`, `PROGRESS.md`.
+- Verification: `node --test test/buildScripts.test.js` passed (20 tests); `npm test` passed (90 tests); `npm run lint` passed; `npm run validate:extension` passed (`8 files checked`); `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI, and final #58 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #58, continue small release-readiness/security validation review; likely next area is checking remaining manifest keys or release/package evidence assumptions before broader product scope.

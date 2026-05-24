@@ -27,6 +27,7 @@ const nonPopupManifestEntryKeys = [
   'chrome_url_overrides',
   'commands',
   'externally_connectable',
+  'web_accessible_resources',
 ];
 
 function hasPackagedCodeExtension(file) {
