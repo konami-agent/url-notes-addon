@@ -16,6 +16,7 @@ const requiredFiles = [
 
 const packagedCodeRoots = ['manifest.json', 'popup', 'src', 'icons'];
 const packagedCodeExtensions = new Set(['.css', '.html', '.js', '.json', '.svg']);
+const ignoredPackagedNames = new Set(['.git', '.gitkeep', 'node_modules', 'dist']);
 const allowedPermissions = new Set(['activeTab', 'storage']);
 const nonPopupManifestEntryKeys = [
   'background',
@@ -44,11 +45,14 @@ async function collectPackagedCodeFiles(root, entry) {
 
   const files = [];
   for (const dirent of listing) {
+    if (ignoredPackagedNames.has(dirent.name)) continue;
     const child = join(entry, dirent.name);
     if (dirent.isDirectory()) {
       files.push(...await collectPackagedCodeFiles(root, child));
     } else if (dirent.isFile() && hasPackagedCodeExtension(child)) {
       files.push(child.split(sep).join('/'));
+    } else if (dirent.isFile()) {
+      throw new Error(`unsupported packaged file type: ${child.split(sep).join('/')}`);
     }
   }
   return files;

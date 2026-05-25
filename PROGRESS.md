@@ -1349,3 +1349,17 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Final board state: #1–#63 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
 
+
+## 2026-05-25T23:35:47+09:00 — scheduled tick rejected unsupported packaged file types
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, the full `project:manager` board, recent commits, `scripts/build-zip.js`, `scripts/validate-extension.js`, and build-script tests. Concrete finding: zip packaging recursively included every file under `popup/`, `src/`, and `icons/`, while validation scanned only known code/resource extensions; an unsupported stray file under a packaged root could be included in the distributable without validation evidence.
+- Issues touched: created #64 (`Reject unsupported packaged file types`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy/trust comment. Completion/closure are pending commit, push, CI, and final evidence comment after this log entry.
+- Issue trust/autonomy decision: #64 is auto-implementable maintenance/release-readiness/privacy packaging hardening, local-only, privacy-preserving, small, and verifiable; it does not add sync/login/external services/store publishing or major architecture churn, so implementation proceeded without additional owner approval.
+- TDD evidence for #64: added `test/buildScripts.test.js` coverage requiring `buildExtensionZip()` to reject `src/debug.log` and leave no zip behind; observed expected RED via `node --test --test-name-pattern "buildExtensionZip refuses unsupported files under packaged roots" test/buildScripts.test.js` with `Missing expected rejection`; implemented minimal unsupported packaged-file rejection in `scripts/validate-extension.js`; first full test run exposed a regression because checked-in `.gitkeep` files are intentionally excluded from zips, so validation was aligned with the build-script excluded names and the focused/full suites then passed.
+- Files changed: `scripts/validate-extension.js`, `test/buildScripts.test.js`, `PROGRESS.md`.
+- Verification: `node --test test/buildScripts.test.js` passed (27 tests); `npm test` passed (97 tests); `npm run lint` passed; `npm run validate:extension` passed (`8 files checked`); `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI, and final #64 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #64, continue release-readiness validation review; likely next area is asserting the zip entry list remains exactly the intended package boundary rather than only spot-checking representative entries.

@@ -485,6 +485,27 @@ test('buildExtensionZip refuses to create an archive when extension validation f
   }
 });
 
+test('buildExtensionZip refuses unsupported files under packaged roots', async () => {
+  const projectRoot = await copyProjectFixture();
+  const outputDir = await mkdtemp(join(tmpdir(), 'url-notes-addon-unsupported-build-'));
+
+  try {
+    await writeFile(join(projectRoot, 'src', 'debug.log'), 'temporary local debug notes\n');
+
+    await assert.rejects(
+      buildExtensionZip({ projectRoot, outputDir }),
+      /unsupported packaged file type: src\/debug\.log/u,
+    );
+    await assert.rejects(
+      access(join(outputDir, 'url-notes-addon-0.1.0.zip'), constants.F_OK),
+      { code: 'ENOENT' },
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+    await rm(outputDir, { recursive: true, force: true });
+  }
+});
+
 test('buildExtensionZip creates a distributable archive with extension files', async () => {
   const outputDir = await mkdtemp(join(tmpdir(), 'url-notes-addon-'));
 
