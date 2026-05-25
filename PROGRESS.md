@@ -1304,3 +1304,17 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #61 with `status:completed` after recording verification evidence.
 - Final board state: #1–#61 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+## 2026-05-25T15:08:52+09:00 — scheduled tick validated extension before zip builds
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, the full `project:manager` board, recent commits, `scripts/build-zip.js`, `scripts/validate-extension.js`, package/manifest metadata, and build-script tests. Concrete finding: `npm run build:zip` could create a distributable archive without first running the extension validator, even though the release workflow runs validation before packaging.
+- Issues touched: created #62 (`Validate extension before building zip`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy/trust comment. Completion/closure are pending commit, push, CI, and final evidence comment after this log entry.
+- Issue trust/autonomy decision: #62 is auto-implementable maintenance/release-readiness hardening, local-only, privacy-preserving, small, and verifiable; it does not add sync/login/external services/store publishing or major architecture churn, so implementation proceeded without additional owner approval.
+- TDD evidence for #62: added `test/buildScripts.test.js` coverage requiring `buildExtensionZip()` to reject an invalid package and leave no zip behind. First RED failed for the wrong reason because the fixture omitted `LICENSE`/`README.md`; fixed the test fixture, then observed expected RED via `node --test --test-name-pattern "buildExtensionZip refuses" test/buildScripts.test.js` with `Missing expected rejection`. Implemented the minimal build-script validation call and observed GREEN with the same focused command.
+- Files changed: `scripts/build-zip.js`, `test/buildScripts.test.js`, `PROGRESS.md`.
+- Verification: `npm test` passed (95 tests); `npm run lint` passed; `npm run validate:extension` passed (`8 files checked`); `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI, and final #62 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #62, continue small release-readiness validation review; likely next area is checking whether the generated zip's entry list is aligned with validator-scanned packaged files and metadata expectations.

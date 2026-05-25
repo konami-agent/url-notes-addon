@@ -1,6 +1,7 @@
 import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { basename, join, relative, resolve, sep } from 'node:path';
+import { validateExtension } from './validate-extension.js';
 
 const includedRoots = ['manifest.json', 'popup', 'src', 'icons', 'LICENSE', 'README.md'];
 const excludedNames = new Set(['.git', '.gitkeep', 'node_modules', 'dist']);
@@ -113,6 +114,7 @@ export async function buildExtensionZip({
   outputDir = 'dist',
 } = {}) {
   const root = projectRoot instanceof URL ? fileURLToPath(projectRoot) : projectRoot;
+  await validateExtension(root);
   const packageJson = JSON.parse(await readFile(resolve(root, 'package.json'), 'utf8'));
   const fileName = `${packageJson.name}-${packageJson.version}.zip`;
   const outDir = resolve(root, outputDir);

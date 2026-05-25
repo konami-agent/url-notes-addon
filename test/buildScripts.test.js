@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { access, cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { constants } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { buildExtensionZip } from '../scripts/build-zip.js';
@@ -41,6 +42,8 @@ async function copyProjectFixture() {
     cp(new URL('../src/popup.js', import.meta.url), join(projectRoot, 'src', 'popup.js')),
     cp(new URL('../src/markdownPreview.js', import.meta.url), join(projectRoot, 'src', 'markdownPreview.js')),
     cp(new URL('../icons/icon.svg', import.meta.url), join(projectRoot, 'icons', 'icon.svg')),
+    cp(new URL('../LICENSE', import.meta.url), join(projectRoot, 'LICENSE')),
+    cp(new URL('../README.md', import.meta.url), join(projectRoot, 'README.md')),
   ]);
   return projectRoot;
 }
@@ -437,6 +440,30 @@ test('validateExtension rejects unexpected script sources in packaged HTML', asy
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
+test('buildExtensionZip refuses to create an archive when extension validation fails', async () => {
+  const projectRoot = await copyProjectFixture();
+  const outputDir = await mkdtemp(join(tmpdir(), 'url-notes-addon-invalid-build-'));
+
+  try {
+    const manifestPath = join(projectRoot, 'manifest.json');
+    const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+    manifest.version = '0.2.0';
+    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+
+    await assert.rejects(
+      buildExtensionZip({ projectRoot, outputDir }),
+      /package\.json version must match manifest version/u,
+    );
+    await assert.rejects(
+      access(join(outputDir, 'url-notes-addon-0.1.0.zip'), constants.F_OK),
+      { code: 'ENOENT' },
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+    await rm(outputDir, { recursive: true, force: true });
   }
 });
 
