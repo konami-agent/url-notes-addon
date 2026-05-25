@@ -27,6 +27,30 @@ function listZipEntries(buffer) {
   return entries;
 }
 
+function listZipEntryTimestamps(buffer) {
+  const timestamps = [];
+  let offset = 0;
+
+  while (offset < buffer.length - 4) {
+    const signature = buffer.readUInt32LE(offset);
+    if (signature !== 0x04034b50) break;
+
+    const compressedSize = buffer.readUInt32LE(offset + 18);
+    const fileNameLength = buffer.readUInt16LE(offset + 26);
+    const extraFieldLength = buffer.readUInt16LE(offset + 28);
+    const fileNameStart = offset + 30;
+    const fileNameEnd = fileNameStart + fileNameLength;
+    timestamps.push({
+      name: buffer.subarray(fileNameStart, fileNameEnd).toString('utf8'),
+      time: buffer.readUInt16LE(offset + 10),
+      day: buffer.readUInt16LE(offset + 12),
+    });
+    offset = fileNameEnd + extraFieldLength + compressedSize;
+  }
+
+  return timestamps;
+}
+
 async function copyProjectFixture() {
   const projectRoot = await mkdtemp(join(tmpdir(), 'url-notes-addon-validate-'));
   await mkdir(join(projectRoot, 'popup'), { recursive: true });
@@ -517,6 +541,7 @@ test('buildExtensionZip creates a distributable archive with the exact v0.1 pack
 
     const archive = await readFile(result.outputPath);
     const entries = listZipEntries(archive);
+    const timestamps = listZipEntryTimestamps(archive);
     const expectedEntries = [
       'LICENSE',
       'README.md',
@@ -533,6 +558,10 @@ test('buildExtensionZip creates a distributable archive with the exact v0.1 pack
     assert.equal(result.fileName, 'url-notes-addon-0.1.0.zip');
     assert.deepEqual(result.entries, expectedEntries);
     assert.deepEqual(entries, expectedEntries);
+    assert.deepEqual(
+      timestamps,
+      expectedEntries.map((name) => ({ name, time: 0, day: 33 })),
+    );
   } finally {
     await rm(outputDir, { recursive: true, force: true });
   }

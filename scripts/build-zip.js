@@ -5,6 +5,7 @@ import { validateExtension } from './validate-extension.js';
 
 const includedRoots = ['manifest.json', 'popup', 'src', 'icons', 'LICENSE', 'README.md'];
 const excludedNames = new Set(['.git', '.gitkeep', 'node_modules', 'dist']);
+const deterministicZipDate = new Date(1980, 0, 1, 0, 0, 0);
 
 const crcTable = new Uint32Array(256).map((_, index) => {
   let crc = index;
@@ -119,7 +120,7 @@ export async function buildExtensionZip({
   const fileName = `${packageJson.name}-${packageJson.version}.zip`;
   const outDir = resolve(root, outputDir);
   const outputPath = resolve(outDir, fileName);
-  const timestamp = dosTimestamp();
+  const timestamp = dosTimestamp(deterministicZipDate);
   const localParts = [];
   const centralParts = [];
   let offset = 0;

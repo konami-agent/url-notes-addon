@@ -1394,3 +1394,17 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #65 with `status:completed` after recording verification evidence.
 - Final board state: #1–#65 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+## 2026-05-26T07:57:58+09:00 — scheduled tick made release zip timestamps deterministic
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, the full `project:manager` board, recent commits, `README.md`, `scripts/build-zip.js`, `scripts/validate-extension.js`, and build-script tests. Concrete finding: release zip entries used the current clock for ZIP DOS timestamps, making otherwise identical release artifacts vary by build time.
+- Issues touched: created #66 (`Make release zip timestamps deterministic`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy/trust comment. Completion/closure are pending commit, push, CI, and final evidence comment after this log entry.
+- Issue trust/autonomy decision: #66 is auto-implementable maintenance/release-readiness hardening, local-only, privacy-preserving, small, and verifiable; it does not add sync/login/external services/store publishing or major architecture churn, so implementation proceeded without additional owner approval.
+- TDD evidence for #66: added `test/buildScripts.test.js` coverage requiring every generated local-file ZIP entry timestamp to be deterministic (`1980-01-01 00:00`, DOS time `0`, day `33`); observed expected RED via `node --test --test-name-pattern "buildExtensionZip creates a distributable archive with the exact v0.1 package entries" test/buildScripts.test.js` with actual current-clock DOS timestamps; implemented the minimal fixed timestamp in `scripts/build-zip.js`; observed GREEN with the same focused command.
+- Files changed: `scripts/build-zip.js`, `test/buildScripts.test.js`, `PROGRESS.md`.
+- Verification: `node --test test/buildScripts.test.js` passed (27 tests); `npm test` passed (97 tests); `npm run lint` passed; `npm run validate:extension` passed (`8 files checked`); `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip` with 10 files; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI, and final #66 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #66, continue release-readiness review; likely next area is documenting or validating release checksum evidence/manual release verification before broader product scope.
