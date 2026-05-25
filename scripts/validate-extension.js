@@ -93,6 +93,9 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
     if (typeof iconPath !== 'string' || iconPath.trim() === '') {
       throw new Error('manifest icons must include readable 48 and 128 icon files');
     }
+    if (!/^icons\/[\w.-]+\.svg$/u.test(iconPath)) {
+      throw new Error('manifest icons must point to packaged SVG icon assets under icons/');
+    }
     try {
       await access(resolve(root, iconPath), constants.R_OK);
     } catch {

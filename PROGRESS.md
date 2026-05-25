@@ -1326,3 +1326,18 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #62 with `status:completed` after recording verification evidence.
 - Final board state: #1–#62 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+## 2026-05-25T19:25:12+09:00 — scheduled tick required packaged icon manifest assets
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, the full `project:manager` board, recent commits, `manifest.json`, `scripts/validate-extension.js`, `scripts/build-zip.js`, README/package metadata, and build-script tests. Concrete finding: validation required manifest icon paths to be readable, but did not require those paths to remain packaged SVG icon assets under `icons/`; a readable non-icon file such as `README.md` could pass as a manifest icon.
+- Issues touched: created #63 (`Require manifest icons to be packaged icon assets`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy/trust comment. Completion/closure are pending commit, push, CI, and final evidence comment after this log entry.
+- Issue trust/autonomy decision: #63 is auto-implementable maintenance/release-readiness validation hardening, local-only, privacy-preserving, small, and verifiable; it does not add sync/login/external services/store publishing or major architecture churn, so implementation proceeded without additional owner approval.
+- TDD evidence for #63: added `test/buildScripts.test.js` coverage requiring `validateExtension()` to reject required manifest icon paths outside packaged icon assets; observed RED via `node --test --test-name-pattern "validateExtension rejects required manifest icons outside packaged icon assets" test/buildScripts.test.js` with `Missing expected rejection`; implemented the minimal `icons/*.svg` validator guard in `scripts/validate-extension.js`; observed GREEN with the same focused command.
+- Files changed: `scripts/validate-extension.js`, `test/buildScripts.test.js`, `PROGRESS.md`.
+- Verification: `npm test` passed (96 tests); `npm run lint` passed; `npm run validate:extension` passed (`8 files checked`); `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI, and final #63 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #63, continue release-readiness validation review; likely next area is checking zip entry list alignment with validator-scanned packaged files and user-facing release evidence.
+
