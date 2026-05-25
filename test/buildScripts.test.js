@@ -71,6 +71,44 @@ test('validateExtension rejects package and manifest version mismatches', async 
   }
 });
 
+test('validateExtension rejects incomplete manifest identity metadata', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    const manifestPath = join(projectRoot, 'manifest.json');
+    const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+    manifest.name = 'Private Page Notes';
+    manifest.description = '';
+    delete manifest.action.default_title;
+    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /manifest identity metadata must include URL Notes name, description, and action title/u,
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
+test('validateExtension rejects missing required manifest icon files', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    const manifestPath = join(projectRoot, 'manifest.json');
+    const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+    manifest.icons['128'] = 'icons/missing.svg';
+    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /manifest icons must include readable 48 and 128 icon files/u,
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
 test('validateExtension rejects broad host permissions', async () => {
   const projectRoot = await copyProjectFixture();
 

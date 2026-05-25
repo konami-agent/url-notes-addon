@@ -77,8 +77,27 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
   if (manifest.manifest_version !== 3) {
     throw new Error('manifest_version must be 3');
   }
+  if (
+    manifest.name !== 'URL Notes'
+    || typeof manifest.description !== 'string'
+    || manifest.description.trim() === ''
+    || manifest.action?.default_title !== 'URL Notes'
+  ) {
+    throw new Error('manifest identity metadata must include URL Notes name, description, and action title');
+  }
   if (manifest.action?.default_popup !== 'popup/popup.html') {
     throw new Error('manifest action.default_popup must be popup/popup.html');
+  }
+  for (const size of ['48', '128']) {
+    const iconPath = manifest.icons?.[size];
+    if (typeof iconPath !== 'string' || iconPath.trim() === '') {
+      throw new Error('manifest icons must include readable 48 and 128 icon files');
+    }
+    try {
+      await access(resolve(root, iconPath), constants.R_OK);
+    } catch {
+      throw new Error('manifest icons must include readable 48 and 128 icon files');
+    }
   }
   if (!manifest.permissions?.includes('storage')) {
     throw new Error('manifest permissions must include storage');

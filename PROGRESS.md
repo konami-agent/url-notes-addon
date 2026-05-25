@@ -1282,3 +1282,17 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #60 with `status:completed` after recording verification evidence.
 - Final board state: #1–#60 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+## 2026-05-25T10:59:21+09:00 — scheduled tick validated manifest identity metadata
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, recent commits, full `project:manager` board, `manifest.json`, `package.json`, `scripts/validate-extension.js`, and build-script tests. Concrete finding: release/package validation did not yet encode required manifest identity metadata, so a package could drop the user-facing name/description/action title or point required icon sizes at missing files while still passing validation.
+- Issues touched: created #61 (`Validate manifest identity metadata`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy comment. Completion/closure are pending commit, push, CI, and final evidence comment after this log entry.
+- Issue trust/autonomy decision: #61 is auto-implementable maintenance/release-readiness hardening, local-only, privacy-preserving, small, and verifiable; it does not add sync/login/external services/store publishing or major architecture churn, so implementation proceeded without additional owner approval.
+- TDD evidence for #61: added `test/buildScripts.test.js` coverage requiring `validateExtension()` to reject incomplete manifest identity metadata and missing required icon files; observed RED via `node --test --test-name-pattern "validateExtension rejects incomplete manifest identity metadata|validateExtension rejects missing required manifest icon files" test/buildScripts.test.js` with `Missing expected rejection` for both tests; implemented minimal metadata and icon readability checks in `scripts/validate-extension.js`; observed GREEN via the same focused test rerun.
+- Files changed: `scripts/validate-extension.js`, `test/buildScripts.test.js`, `PROGRESS.md`.
+- Verification: `node --test test/buildScripts.test.js` passed (24 tests); `npm test` passed (94 tests); `npm run lint` passed; `npm run validate:extension` passed (`8 files checked`); `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI, and final #61 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #61, continue small release-readiness validation review; likely next area is checking README/release evidence and any remaining manual-smoke or packaging assumptions before broader product scope.
