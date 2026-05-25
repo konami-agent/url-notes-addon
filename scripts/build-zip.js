@@ -124,7 +124,8 @@ export async function buildExtensionZip({
   const centralParts = [];
   let offset = 0;
 
-  for (const file of await extensionFiles(root)) {
+  const entries = await extensionFiles(root);
+  for (const file of entries) {
     const archiveName = relative(root, resolve(root, file)).split(sep).join('/');
     const nameBuffer = Buffer.from(archiveName, 'utf8');
     const content = await readFile(resolve(root, file));
@@ -146,13 +147,13 @@ export async function buildExtensionZip({
   await mkdir(outDir, { recursive: true });
   await writeFile(outputPath, archive);
 
-  return { outputPath, fileName, entries: centralParts.length };
+  return { outputPath, fileName, entries };
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   buildExtensionZip()
     .then((result) => {
-      console.log(`Created ${result.outputPath} (${result.entries} files)`);
+      console.log(`Created ${result.outputPath} (${result.entries.length} files)`);
     })
     .catch((error) => {
       console.error(error.message);

@@ -506,7 +506,7 @@ test('buildExtensionZip refuses unsupported files under packaged roots', async (
   }
 });
 
-test('buildExtensionZip creates a distributable archive with extension files', async () => {
+test('buildExtensionZip creates a distributable archive with the exact v0.1 package entries', async () => {
   const outputDir = await mkdtemp(join(tmpdir(), 'url-notes-addon-'));
 
   try {
@@ -517,13 +517,22 @@ test('buildExtensionZip creates a distributable archive with extension files', a
 
     const archive = await readFile(result.outputPath);
     const entries = listZipEntries(archive);
+    const expectedEntries = [
+      'LICENSE',
+      'README.md',
+      'icons/icon.svg',
+      'manifest.json',
+      'popup/popup.css',
+      'popup/popup.html',
+      'src/browserApi.js',
+      'src/markdownPreview.js',
+      'src/popup.js',
+      'src/urlNotes.js',
+    ];
 
     assert.equal(result.fileName, 'url-notes-addon-0.1.0.zip');
-    assert.ok(entries.includes('manifest.json'));
-    assert.ok(entries.includes('popup/popup.html'));
-    assert.ok(entries.includes('src/popup.js'));
-    assert.ok(!entries.some((entry) => entry.startsWith('.git/')));
-    assert.ok(!entries.some((entry) => entry.endsWith('/.gitkeep')));
+    assert.deepEqual(result.entries, expectedEntries);
+    assert.deepEqual(entries, expectedEntries);
   } finally {
     await rm(outputDir, { recursive: true, force: true });
   }
