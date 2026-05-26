@@ -1499,3 +1499,13 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: pending commit/push, CI observation or manual dispatch, and final #70/#69 evidence comments after this log entry.
 - Blockers: push-triggered CI for #69 did not appear in the previous tick; #70 is intended to provide a verified fallback path.
 - Next recommended issue: after #70 enables/uses manual CI dispatch and #69 receives CI evidence, close both if verification succeeds; then continue release-readiness review around manual smoke/release evidence expectations.
+
+
+### 2026-05-27T01:06:54+09:00 — final board refresh addendum
+
+- Pushed commit `125c3ed` (`test: allow manual ci dispatch`) to `origin/main`.
+- GitHub Actions CI run `26459731101` completed successfully for commit `125c3ed9e3eb82b9bf55a5b77fad8b9ded7685e0`; the `validate` job succeeded.
+- Commented on and closed #70 with `status:completed` after recording RED/GREEN, local verification, and CI evidence.
+- Commented on and closed #69 with `status:completed`; the successful CI run on `125c3ed9e3eb82b9bf55a5b77fad8b9ded7685e0` includes the #69 release tag/package-version guard and resolves the previous CI no-run blocker.
+- Final board state: #1–#70 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
