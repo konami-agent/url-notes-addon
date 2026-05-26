@@ -1476,3 +1476,11 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: pending commit/push, CI, and final #69 evidence comment/closure after this log entry.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #69, continue release-readiness review; likely next area is documenting or validating manual release/smoke evidence expectations before broader product scope.
+
+### 2026-05-26T20:51:49+09:00 — CI wait blocker addendum
+
+- Pushed commit `ef9f052` (`test: validate release tag version`) to `origin/main`.
+- CI evidence blocker: no GitHub Actions run appeared for commit `ef9f0526c45c0ef040babfa0753581f9a6464260` via `gh run list --commit` or the commit check-suites API during this tick. A verification fallback attempt with `gh workflow run CI --ref main` failed because the CI workflow does not define `workflow_dispatch` (`HTTP 422`).
+- Commented local verification and the CI no-run blocker on #69. The issue remains open with `status:in-progress` rather than being closed without CI evidence.
+- Final board state this tick: #69 is open/in progress; #1–#68 are closed with `status:completed`.
+- Final validation: `python3 scripts/validate_project_state.py` passed after the issue update; no local source blockers remain.
