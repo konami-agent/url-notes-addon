@@ -45,9 +45,10 @@ test('readme documents Firefox and Edge loading with a manual smoke checklist', 
   assert.match(readme, /editing, import, export, and search controls are disabled/i);
 });
 
-test('ci workflow uses action versions that have migrated off Node.js 20 runtime', async () => {
+test('ci workflow supports manual dispatch and migrated action versions', async () => {
   const workflow = await readFile(new URL('../.github/workflows/ci.yml', import.meta.url), 'utf8');
 
+  assert.match(workflow, /workflow_dispatch:/);
   assert.match(workflow, /uses: actions\/checkout@v6/);
   assert.match(workflow, /uses: actions\/setup-node@v6/);
   assert.match(workflow, /uses: actions\/upload-artifact@v7/);

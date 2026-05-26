@@ -1484,3 +1484,18 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented local verification and the CI no-run blocker on #69. The issue remains open with `status:in-progress` rather than being closed without CI evidence.
 - Final board state this tick: #69 is open/in progress; #1–#68 are closed with `status:completed`.
 - Final validation: `python3 scripts/validate_project_state.py` passed after the issue update; no local source blockers remain.
+
+
+## 2026-05-27T01:00:10+09:00 — scheduled tick enabled manual CI dispatch
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, the full `project:manager` board, recent commits, #69, CI run history, `.github/workflows/ci.yml`, `.github/workflows/release.yml`, and scaffold tests. Concrete finding: #69 was blocked because no push-triggered CI run appeared and the fallback `gh workflow run CI --ref main` failed since CI lacked `workflow_dispatch`.
+- Issues touched: created #70 (`Allow manual CI dispatch for verification recovery`) from the scheduled review gate with provenance and `source:scheduled`; moved #70 to `status:in-progress` and added a scheduled-job autonomy/trust comment. Reviewed #69 and left it open pending CI evidence for the already-pushed release tag/version guard.
+- Issue trust/autonomy decision: #70 is auto-implementable repository-maintenance/release-readiness CI hardening, local/repository-only, privacy-preserving, small, and verifiable; it does not add sync/login/external services/store publishing or runtime behavior, so implementation proceeded without additional owner approval. #69 remains an already-implemented maintenance issue awaiting CI evidence rather than new product decision.
+- TDD evidence for #70: added `test/scaffold.test.js` coverage requiring the CI workflow to expose `workflow_dispatch`; observed expected RED via `node --test --test-name-pattern "ci workflow supports manual dispatch" test/scaffold.test.js` with missing `/workflow_dispatch:/`; implemented the minimal `.github/workflows/ci.yml` trigger; observed GREEN with the same focused command.
+- Files changed: `.github/workflows/ci.yml`, `test/scaffold.test.js`, `PROGRESS.md`.
+- Verification: `npm test` passed (98 tests); `npm run lint` passed; `npm run validate:extension` passed (`8 files checked`); `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `npm run build:release` created the zip and `dist/SHA256SUMS`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI observation or manual dispatch, and final #70/#69 evidence comments after this log entry.
+- Blockers: push-triggered CI for #69 did not appear in the previous tick; #70 is intended to provide a verified fallback path.
+- Next recommended issue: after #70 enables/uses manual CI dispatch and #69 receives CI evidence, close both if verification succeeds; then continue release-readiness review around manual smoke/release evidence expectations.
