@@ -30,8 +30,13 @@ jobs:
       - name: Build distributable zip
         run: npm run build:zip
 
+      - name: Build local release artifacts
+        run: npm run build:release
+
       - name: Upload extension artifact
         uses: actions/upload-artifact@v7
         with:
           name: url-notes-addon
-          path: dist/*.zip
+          path: |
+            dist/*.zip
+            dist/SHA256SUMS

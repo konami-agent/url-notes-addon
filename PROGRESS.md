@@ -1509,3 +1509,18 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #69 with `status:completed`; the successful CI run on `125c3ed9e3eb82b9bf55a5b77fad8b9ded7685e0` includes the #69 release tag/package-version guard and resolves the previous CI no-run blocker.
 - Final board state: #1–#70 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+
+## 2026-05-27T05:10:05+09:00 — scheduled tick verified local release artifacts in CI
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, the full `project:manager` board, recent commits, CI/release workflows, README release instructions, and scaffold/build tests. Concrete finding: `npm run build:release` now creates the deterministic zip plus `SHA256SUMS` locally, but CI still only ran `npm run build:zip` and uploaded `dist/*.zip`, so routine CI evidence did not verify the local checksum artifact path.
+- Issues touched: created #71 (`Verify local release artifacts in CI`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy/trust comment. Completion/closure are pending commit, push, CI, and final #71 evidence comment after this log entry.
+- Issue trust/autonomy decision: #71 is auto-implementable repository-maintenance/release-readiness work, local/repository-only, privacy-preserving, small, and verifiable; it does not add sync/login/external services/store publishing or runtime behavior changes, so implementation proceeded without additional owner approval.
+- TDD evidence for #71: tightened `test/scaffold.test.js` CI workflow coverage to require `npm run build:release` and artifact upload of both `dist/*.zip` and `dist/SHA256SUMS`; observed expected RED via `node --test --test-name-pattern "ci workflow verifies local release artifacts" test/scaffold.test.js` because CI lacked `npm run build:release`; implemented the minimal `.github/workflows/ci.yml` change; observed GREEN with the same focused command.
+- Files changed: `.github/workflows/ci.yml`, `test/scaffold.test.js`, `PROGRESS.md`.
+- Verification: focused CI workflow test passed; `npm test` passed (98 tests); `npm run lint` passed; `npm run validate:extension` passed (`8 files checked`); `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `npm run build:release` created the zip and `dist/SHA256SUMS`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI observation, and final #71 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #71, continue release-readiness review; likely next area is manual release/smoke evidence traceability before broader product scope.
