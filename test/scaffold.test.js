@@ -69,6 +69,7 @@ test('release workflow builds and publishes downloadable extension zip assets', 
   assert.match(workflow, /sha256sum dist\/\*\.zip > dist\/SHA256SUMS/);
   assert.match(workflow, /gh release create/);
   assert.match(workflow, /dist\/\*\.zip dist\/SHA256SUMS/);
+  assert.match(readme, /npm run build:release/);
   assert.match(readme, /GitHub Release/i);
   assert.match(readme, /url-notes-addon-0\.1\.0\.zip/);
   assert.match(readme, /SHA-256 checksum/i);

@@ -46,9 +46,10 @@ npm test
 npm run lint
 npm run validate:extension
 npm run build:zip
+npm run build:release
 ```
 
-`npm run build:zip` writes the distributable extension archive to `dist/`.
+`npm run build:zip` writes the distributable extension archive to `dist/`. `npm run build:release` writes the same deterministic zip plus `dist/SHA256SUMS` for local release review.
 
 ## Download a release build
 

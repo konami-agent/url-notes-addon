@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { access, cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { constants } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { buildExtensionZip } from '../scripts/build-zip.js';
@@ -562,6 +563,28 @@ test('buildExtensionZip creates a distributable archive with the exact v0.1 pack
       timestamps,
       expectedEntries.map((name) => ({ name, time: 0, day: 33 })),
     );
+  } finally {
+    await rm(outputDir, { recursive: true, force: true });
+  }
+});
+
+test('buildReleaseArtifacts creates a zip and SHA256SUMS for local release review', async () => {
+  const outputDir = await mkdtemp(join(tmpdir(), 'url-notes-addon-release-'));
+
+  try {
+    const { buildReleaseArtifacts } = await import('../scripts/build-release.js');
+    const result = await buildReleaseArtifacts({
+      projectRoot: new URL('..', import.meta.url),
+      outputDir,
+    });
+
+    const archive = await readFile(result.zipPath);
+    const checksumFile = await readFile(result.checksumPath, 'utf8');
+    const digest = createHash('sha256').update(archive).digest('hex');
+
+    assert.equal(result.zipFileName, 'url-notes-addon-0.1.0.zip');
+    assert.equal(result.checksumFileName, 'SHA256SUMS');
+    assert.equal(checksumFile, `${digest}  url-notes-addon-0.1.0.zip\n`);
   } finally {
     await rm(outputDir, { recursive: true, force: true });
   }

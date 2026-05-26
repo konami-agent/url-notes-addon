@@ -8,7 +8,8 @@
     "test": "node --test",
     "lint": "node scripts/lint.js",
     "validate:extension": "node scripts/validate-extension.js",
-    "build:zip": "node scripts/build-zip.js"
+    "build:zip": "node scripts/build-zip.js",
+    "build:release": "node scripts/build-release.js"
   },
   "engines": {
     "node": ">=20"
