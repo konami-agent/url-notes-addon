@@ -54,7 +54,7 @@ npm run build:zip
 
 Tagged releases are built automatically by GitHub Actions. Open the project's GitHub Release page, choose the desired version, and download the extension asset such as `url-notes-addon-0.1.0.zip` from the release assets.
 
-The release workflow runs tests, lint, extension validation, and `npm run build:zip` before publishing the zip asset.
+The release workflow runs tests, lint, extension validation, and `npm run build:zip` before publishing the zip asset. It also publishes a `SHA256SUMS` asset so reviewers can compare the downloaded zip with the SHA-256 checksum produced by CI.
 
 ## Load unpacked during development
 

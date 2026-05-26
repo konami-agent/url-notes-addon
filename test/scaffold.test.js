@@ -66,10 +66,12 @@ test('release workflow builds and publishes downloadable extension zip assets', 
   assert.match(workflow, /npm run lint/);
   assert.match(workflow, /npm run validate:extension/);
   assert.match(workflow, /npm run build:zip/);
+  assert.match(workflow, /sha256sum dist\/\*\.zip > dist\/SHA256SUMS/);
   assert.match(workflow, /gh release create/);
-  assert.match(workflow, /dist\/\*\.zip/);
+  assert.match(workflow, /dist\/\*\.zip dist\/SHA256SUMS/);
   assert.match(readme, /GitHub Release/i);
   assert.match(readme, /url-notes-addon-0\.1\.0\.zip/);
+  assert.match(readme, /SHA-256 checksum/i);
 });
 
 test('v0.1 review reports summarize delivered behavior limitations and next-phase options', async () => {

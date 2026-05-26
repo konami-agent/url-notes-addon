@@ -1416,3 +1416,18 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #66 with `status:completed` after recording verification evidence.
 - Final board state: #1–#66 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+
+## 2026-05-26T12:07:36+09:00 — scheduled tick published release checksum evidence
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, the full `project:manager` board, recent commits, `README.md`, `.github/workflows/release.yml`, and release/build tests. Concrete finding: the release workflow publishes a deterministic zip but did not publish a checksum asset or document checksum verification evidence for reviewers.
+- Issues touched: created #67 (`Publish release zip checksum evidence`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy/trust comment. Completion/closure are pending commit, push, CI, and final evidence comment after this log entry.
+- Issue trust/autonomy decision: #67 is auto-implementable maintenance/release-readiness workflow and documentation hardening, local-only, privacy-preserving, small, and verifiable; it does not add sync/login/external services/store publishing or runtime behavior, so implementation proceeded without additional owner approval.
+- TDD evidence for #67: tightened `test/scaffold.test.js` release-workflow documentation coverage to require a `sha256sum dist/*.zip > dist/SHA256SUMS` step, uploading `dist/*.zip dist/SHA256SUMS`, and README checksum guidance; observed expected RED via `node --test --test-name-pattern "release workflow builds and publishes downloadable extension zip assets" test/scaffold.test.js` with a missing checksum assertion; implemented the minimal release workflow and README changes; observed GREEN with the same focused command.
+- Files changed: `.github/workflows/release.yml`, `README.md`, `test/scaffold.test.js`, `PROGRESS.md`.
+- Verification: focused release workflow test passed; `npm test` passed (97 tests); `npm run lint` passed; `npm run validate:extension` passed (`8 files checked`); `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip` with 10 files; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI, and final #67 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #67, continue release-readiness review; likely next area is making local release checksum generation reproducible/easy for manual reviewers or checking release workflow tag/version consistency before broader product scope.

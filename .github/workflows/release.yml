@@ -55,6 +55,9 @@ jobs:
       - name: Build distributable zip
         run: npm run build:zip
 
+      - name: Write release checksum
+        run: sha256sum dist/*.zip > dist/SHA256SUMS
+
       - name: Write release notes
         shell: bash
         run: |
@@ -64,7 +67,7 @@ jobs:
 
           Download the extension zip from the assets below and load it as an unpacked/temporary WebExtension during development or review.
 
-          This release asset is built automatically from the tagged source by GitHub Actions after running tests, lint, extension validation, and packaging.
+          This release asset is built automatically from the tagged source by GitHub Actions after running tests, lint, extension validation, and packaging. Compare the downloaded zip with the SHA-256 checksum asset before manual review.
           EOF
 
       - name: Publish GitHub Release
@@ -74,7 +77,7 @@ jobs:
         run: |
           tag="${{ steps.release_tag.outputs.tag }}"
           if gh release view "$tag" >/dev/null 2>&1; then
-            gh release upload "$tag" dist/*.zip --clobber
+            gh release upload "$tag" dist/*.zip dist/SHA256SUMS --clobber
           else
-            gh release create "$tag" dist/*.zip --title "$tag" --notes-file release-notes.md
+            gh release create "$tag" dist/*.zip dist/SHA256SUMS --title "$tag" --notes-file release-notes.md
           fi
