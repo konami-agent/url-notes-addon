@@ -66,6 +66,9 @@ test('release workflow builds and publishes downloadable extension zip assets', 
   assert.match(workflow, /npm run lint/);
   assert.match(workflow, /npm run validate:extension/);
   assert.match(workflow, /npm run build:zip/);
+  assert.match(workflow, /Verify release tag matches package version/);
+  assert.match(workflow, /expected_tag="v\$\(node -p "require\('\.\/package\.json'\)\.version"\)"/);
+  assert.match(workflow, /Release tag must match package\.json version/);
   assert.match(workflow, /sha256sum dist\/\*\.zip > dist\/SHA256SUMS/);
   assert.match(workflow, /gh release create/);
   assert.match(workflow, /dist\/\*\.zip dist\/SHA256SUMS/);

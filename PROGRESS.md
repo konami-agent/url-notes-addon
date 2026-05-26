@@ -1462,3 +1462,17 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #68 with `status:completed` after recording verification evidence.
 - Final board state: #1–#68 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+## 2026-05-26T20:49:08+09:00 — scheduled tick validated release tag/version consistency
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, the full `project:manager` board, recent commits, `.github/workflows/release.yml`, `package.json`, and release/scaffold tests. Concrete finding: release tags were shape-validated but not compared with checked-out package/manifest version metadata, so a manually supplied or pushed tag could publish release notes and assets whose tag disagreed with the extension's actual version.
+- Issues touched: created #69 (`Validate release tag matches package version`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy/trust comment. Completion/closure are pending commit, push, CI, and final #69 evidence comment after this log entry.
+- Issue trust/autonomy decision: #69 is auto-implementable release-readiness workflow hardening, local-only/repository-only, privacy-preserving, small, and verifiable; it does not add sync/login/external services/store publishing or runtime behavior changes, so implementation proceeded without additional owner approval.
+- TDD evidence for #69: added `test/scaffold.test.js` assertions requiring the release workflow to include a `Verify release tag matches package version` guard, derive `expected_tag` from `package.json.version`, and reject mismatches with a clear error; observed expected RED via `node --test --test-name-pattern "release workflow builds and publishes downloadable extension zip assets" test/scaffold.test.js` because the workflow lacked the guard; implemented the minimal workflow step before tests/build/publish; observed GREEN with the same focused command.
+- Files changed: `.github/workflows/release.yml`, `test/scaffold.test.js`, `PROGRESS.md`.
+- Verification: focused release workflow test passed; `npm test` passed (98 tests); `npm run lint` passed; `npm run validate:extension` passed (`8 files checked`); `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip` with 10 files; `npm run build:release` created the zip and `dist/SHA256SUMS`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI, and final #69 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #69, continue release-readiness review; likely next area is documenting or validating manual release/smoke evidence expectations before broader product scope.

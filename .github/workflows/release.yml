@@ -43,6 +43,16 @@ jobs:
 
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
 
+      - name: Verify release tag matches package version
+        shell: bash
+        run: |
+          tag="${{ steps.release_tag.outputs.tag }}"
+          expected_tag="v$(node -p "require('./package.json').version")"
+          if [ "$tag" != "$expected_tag" ]; then
+            echo "Release tag must match package.json version: expected $expected_tag, got $tag" >&2
+            exit 1
+          fi
+
       - name: Run tests
         run: npm test
 
