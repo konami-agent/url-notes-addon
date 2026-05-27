@@ -81,6 +81,33 @@ test('release workflow builds and publishes downloadable extension zip assets', 
   assert.match(readme, /SHA-256 checksum/i);
 });
 
+test('manual smoke evidence template records browser release verification without private data', async () => {
+  const readme = await readFile(new URL('../README.md', import.meta.url), 'utf8');
+  const template = await readFile(new URL('../reports/manual-smoke-evidence-template.md', import.meta.url), 'utf8');
+
+  assert.match(readme, /manual smoke evidence template/i);
+  assert.match(readme, /reports\/manual-smoke-evidence-template\.md/);
+
+  for (const requiredPhrase of [
+    /Release or build version/i,
+    /Build artifact/i,
+    /SHA-256 checksum/i,
+    /Browser and version/i,
+    /Operating system/i,
+    /Pass\/Fail/i,
+    /Notes\/Evidence/i,
+    /Do not paste secrets/i,
+    /personal note contents/i,
+    /Firefox/i,
+    /Microsoft Edge/i,
+    /unsupported tab/i,
+    /Export JSON/i,
+    /Import JSON/i,
+  ]) {
+    assert.match(template, requiredPhrase);
+  }
+});
+
 test('v0.1 review reports summarize delivered behavior limitations and next-phase options', async () => {
   const review = await readFile(new URL('../reports/v0.1-review.md', import.meta.url), 'utf8');
   const options = await readFile(new URL('../reports/next-phase-options.md', import.meta.url), 'utf8');

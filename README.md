@@ -93,6 +93,8 @@ After loading the extension in Firefox or Edge:
 14. Try an invalid JSON import and confirm the popup reports an error without losing existing notes.
 15. Open an unsupported tab such as `about:debugging`, `edge://extensions`, or a local `file:` page, then confirm the popup says URL notes are unavailable and the editing, import, export, and search controls are disabled.
 
+For release or cross-browser review, copy `reports/manual-smoke-evidence-template.md` as a manual smoke evidence template and record only synthetic/redacted notes, browser versions, artifact checksums, pass/fail results, and follow-up issue links.
+
 ## Privacy
 
 Notes are stored in local browser extension storage. The extension does not send notes to a server.
