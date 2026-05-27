@@ -126,14 +126,18 @@ test('v0.1 review reports summarize delivered behavior limitations and next-phas
   assert.doesNotMatch(review, /Notes are plain text\. There is no markdown preview/i);
   assert.doesNotMatch(review, /Domain-level notes are not supported/i);
 
-  for (const nextPhaseTopic of [
-    /search/i,
-    /domain notes/i,
-    /ignore-query/i,
-    /markdown preview/i,
-    /floating note/i,
+  assert.match(options, /Implemented since original proposal/i);
+  assert.match(options, /Remaining proposal/i);
+  assert.match(options, /floating note/i);
+  assert.match(options, /permission\/security review/i);
+
+  for (const deliveredFutureHeading of [
+    /^## Option A — Search and note overview$/m,
+    /^## Option B — Domain notes$/m,
+    /^## Option C — Ignore-query setting$/m,
+    /^## Option D — Markdown preview$/m,
   ]) {
-    assert.match(options, nextPhaseTopic);
+    assert.doesNotMatch(options, deliveredFutureHeading);
   }
 });
 

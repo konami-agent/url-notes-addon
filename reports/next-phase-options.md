@@ -1,56 +1,30 @@
 # Next-phase Options
 
-These are possible next steps after the v0.1 popup-only release. They are intentionally scoped as options, not commitments.
+These are possible next steps after the v0.1 popup-only release. They are intentionally scoped as options, not commitments. This report now separates ideas that were already delivered from remaining future proposals so scheduled work does not re-plan completed features.
 
-## Option A — Search and note overview
+## Implemented since original proposal
 
-Add a popup or extension page that lists saved notes and supports search by note text and URL key.
+The following options from the original next-phase list have been implemented in the local-only popup scope and are summarized in `reports/v0.1-review.md`:
 
-- User value: makes the extension useful after a user has accumulated more than a few notes.
-- Suggested scope: local-only search over `browser.storage.local`, no external indexing service.
-- Risks: larger UI surface and pagination/empty-state decisions.
-- Good first acceptance criteria: user can open a note list, search for text, and jump back to a matching URL key.
+- Search and note overview: the popup lists saved URL notes and domain notes and supports local search by key and note text.
+- Domain notes: the popup stores site-level notes in a separate domain-note namespace for the active HTTP(S) host.
+- Ignore-query setting: a local opt-in setting can ignore query strings for future URL-note lookups while preserving query strings by default.
+- Markdown preview: URL notes and domain notes can render a small local safe Markdown subset, with raw HTML treated as text and no remote rendering service.
 
-## Option B — Domain notes
+These delivered features remain subject to normal maintenance, bug fixes, and release verification, but they should not be selected as new product-direction options without a more specific follow-up issue.
 
-Support notes attached to a domain such as `example.com`, separate from full normalized URL notes.
-
-- User value: captures site-level reminders that apply across many pages.
-- Suggested scope: keep domain notes as a separate storage namespace from URL notes.
-- Risks: must clearly show whether the user is editing the domain note or the page-specific note.
-- Good first acceptance criteria: popup can display and edit one domain note for the active tab host.
-
-## Option C — Ignore-query setting
-
-Add an optional setting that lets users ignore query strings when deriving note keys.
-
-- User value: reduces duplicate notes caused by tracking parameters or search/session query strings.
-- Suggested scope: a local setting with a clear warning that changing it changes future note-key lookup behavior.
-- Risks: migration and collision behavior need careful design because v0.1 preserves query strings.
-- Good first acceptance criteria: tests prove the default still preserves query strings, while the opt-in setting drops them.
-
-## Option D — Markdown preview
-
-Add a preview mode for notes written in markdown.
-
-- User value: improves readability for structured notes, checklists, and links.
-- Suggested scope: render a safe subset locally; avoid remote rendering services.
-- Risks: HTML sanitization and dependency choice matter for extension security.
-- Good first acceptance criteria: preview renders headings, lists, emphasis, and links without executing scripts or inline event handlers.
-
-## Option E — Floating note
+## Remaining proposal — Floating note
 
 Add an optional content-script floating note panel on the current page.
 
 - User value: lets users read and edit notes without opening the toolbar popup repeatedly.
 - Suggested scope: explicit user toggle, local storage only, and minimal host-page interference.
-- Risks: content-script permissions and CSS isolation are more complex than popup-only v0.1.
-- Good first acceptance criteria: user can open a floating panel on the active page, edit the same normalized URL note, and close it without changing page layout permanently.
+- Risks: content-script permissions, CSS isolation, host-page interaction, keyboard focus behavior, and cross-browser MV3 behavior are more complex than popup-only v0.1.
+- Required gate before implementation: separate permission/security review, because this would expand the extension beyond the current popup-only execution surface.
+- Good first acceptance criteria after approval/splitting: user can open a floating panel on the active HTTP(S) page, edit the same normalized URL note, and close it without changing page layout permanently.
 
 ## Suggested ordering
 
-1. Search and note overview, because it improves usability without changing key semantics.
-2. Ignore-query setting, but only after writing migration/collision acceptance tests.
-3. Domain notes, because it introduces a second note scope and needs clear UI language.
-4. Markdown preview, after deciding the sanitizer/dependency policy.
-5. Floating note, last among these options because it expands permissions and runtime surface area.
+1. Keep the already-delivered popup features stable through bug fixes, import/export hardening, packaging checks, and manual browser smoke evidence.
+2. If a larger UX increment is desired, split the floating note proposal into a design/security issue first, then implementation issues only after the permission/security review is accepted.
+3. Avoid remote sync, account login, store publishing, or additional execution surfaces unless explicitly approved in project files or a future owner decision.

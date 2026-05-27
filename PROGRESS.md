@@ -1580,3 +1580,18 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #73 with `status:completed` after recording RED/GREEN, local verification, and CI evidence.
 - Final board state: #1–#73 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+
+## 2026-05-28T05:32:58+09:00 — scheduled tick refreshed next-phase options
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, the full `project:manager` board, recent commits, `reports/v0.1-review.md`, `reports/next-phase-options.md`, and scaffold documentation tests. Concrete finding: `reports/next-phase-options.md` still listed search/overview, domain notes, ignore-query, and Markdown preview as future options even though those features are now implemented.
+- Issues touched: created #74 (`Refresh next-phase options after delivered features`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy/trust comment. Completion/closure are pending commit, push, CI observation, and final #74 evidence comment after this log entry.
+- Issue trust/autonomy decision: #74 is auto-implementable documentation/release-readiness maintenance, local-only, privacy-preserving, small, and verifiable; it does not add sync/login/external services/store publishing/runtime behavior changes, so implementation proceeded without additional owner approval.
+- TDD evidence for #74: tightened `test/scaffold.test.js` documentation coverage to require `reports/next-phase-options.md` to separate `Implemented since original proposal` from a `Remaining proposal`, require the floating-note proposal to mention permission/security review, and reject stale future-option headings for already-delivered search, domain notes, ignore-query, and Markdown preview. Observed expected RED via `node --test --test-name-pattern "v0.1 review reports summarize delivered behavior limitations and next-phase options" test/scaffold.test.js`; refreshed `reports/next-phase-options.md`; observed GREEN with the same focused command.
+- Files changed: `reports/next-phase-options.md`, `test/scaffold.test.js`, `PROGRESS.md`; temporary `.tmp-*` GitHub body/comment files are local scratch and will be removed before commit.
+- Verification: focused documentation test passed; `npm test` passed (99 tests); `npm run lint` passed; `npm run validate:extension` passed (`8 files checked`); `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `npm run build:release` created the zip and `dist/SHA256SUMS`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI observation, and final #74 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #74, continue release-readiness/product review; likely next area is either manual browser smoke execution evidence or a split design/security proposal for the optional floating-note content-script surface.
