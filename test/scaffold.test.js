@@ -118,6 +118,13 @@ test('v0.1 review reports summarize delivered behavior limitations and next-phas
   assert.match(review, /local browser storage/i);
   assert.match(review, /hash fragments are ignored/i);
   assert.match(review, /query strings are preserved/i);
+  assert.match(review, /Domain notes store site-level/i);
+  assert.match(review, /search/i);
+  assert.match(review, /Markdown preview/i);
+  assert.match(review, /manual smoke evidence template/i);
+  assert.doesNotMatch(review, /There is no search/i);
+  assert.doesNotMatch(review, /Notes are plain text\. There is no markdown preview/i);
+  assert.doesNotMatch(review, /Domain-level notes are not supported/i);
 
   for (const nextPhaseTopic of [
     /search/i,
