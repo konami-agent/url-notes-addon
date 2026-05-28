@@ -37,7 +37,7 @@ Use **Export JSON** in the popup to download a schema-versioned backup file. The
 }
 ```
 
-Use **Import JSON** to merge a backup into local extension storage. Imported URL notes are normalized with the same URL-key rules as saved notes. Imported domain notes are normalized to lowercase host keys. If an imported URL or domain normalizes to an existing note key, the imported note overwrites the existing note for that key. Blank imported notes are ignored. Invalid files are rejected before saving, so existing notes are not partially corrupted.
+Use **Import JSON** to merge a backup into local extension storage. Imported URL notes are normalized with the same URL-key rules as saved notes. Imported domain notes are normalized to lowercase host keys. If an imported URL or domain normalizes to an existing note key, the imported note overwrites the existing note for that key. Blank imported notes are ignored. Invalid files and conflicting duplicate normalized URL or domain keys are rejected before saving, so existing notes are not partially corrupted. Duplicate raw keys with identical note text may be collapsed and imported once.
 
 ## Development
 

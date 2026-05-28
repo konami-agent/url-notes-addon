@@ -1604,3 +1604,18 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #74 with `status:completed` after recording RED/GREEN, local verification, and CI evidence.
 - Final board state: #1–#74 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+
+## 2026-05-28T09:38:00+09:00 — scheduled tick documented duplicate import collisions
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, the full `project:manager` board, recent commits, README export/import documentation, and existing duplicate-collision import tests. Concrete finding: implementation/tests reject conflicting raw URL/domain keys that normalize to the same key and accept identical duplicate text once, but README did not document this backup/restore safety rule.
+- Issues touched: created #75 (`Document duplicate import collision behavior`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy/trust comment. Completion/closure are pending commit, push, CI observation, and final #75 evidence comment after this log entry.
+- Issue trust/autonomy decision: #75 is auto-implementable documentation/release-readiness maintenance, local-only, privacy-preserving, small, and verifiable; it does not add sync/login/external services/store publishing/runtime behavior changes, so implementation proceeded without additional owner approval.
+- TDD evidence for #75: tightened `test/scaffold.test.js` README coverage to require documentation of conflicting duplicate normalized URL/domain key rejection and identical duplicate raw-key import-once behavior; observed expected RED via `node --test --test-name-pattern "readme documents Firefox and Edge loading with a manual smoke checklist" test/scaffold.test.js` because README lacked the duplicate-collision phrases; updated `README.md`; observed GREEN with the same focused command.
+- Files changed: `README.md`, `test/scaffold.test.js`, `PROGRESS.md`; temporary `.tmp-issue-75-*` GitHub body/comment files are local scratch and will be removed before commit.
+- Verification: focused documentation test passed; `npm test` passed (99 tests); `npm run lint` passed; `npm run validate:extension` passed (`8 files checked`); `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `npm run build:release` created the zip and `dist/SHA256SUMS`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI observation, and final #75 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #75, continue release-readiness/product review; likely next area is manual browser smoke execution evidence or a split pending proposal for the optional floating-note content-script surface.

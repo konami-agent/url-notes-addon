@@ -36,6 +36,10 @@ test('readme documents Firefox and Edge loading with a manual smoke checklist', 
   assert.match(readme, /Domain note/);
   assert.match(readme, /separate from the URL note/);
   assert.match(readme, /backs up both URL notes and domain notes/);
+  assert.match(readme, /conflicting duplicate normalized URL or domain keys/i);
+  assert.match(readme, /rejected before saving/i);
+  assert.match(readme, /duplicate raw keys with identical note text/i);
+  assert.match(readme, /imported once/i);
   assert.match(readme, /saved-notes list shows URL notes and domain notes/i);
   assert.match(readme, /Markdown preview/);
   assert.match(readme, /raw HTML as text/);
