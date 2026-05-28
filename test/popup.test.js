@@ -700,6 +700,30 @@ test('popup does not import domain notes when combined JSON import has invalid U
   assert.equal(document.elements['#status'].textContent, 'Error: Unsupported URL notes export format');
 });
 
+test('popup rejects array-shaped domain-note imports before committing URL notes', async () => {
+  const document = createPopupDocument();
+  const adapter = createAdapter('https://example.com/current');
+  await initializePopup({ document, adapter });
+
+  await document.elements['#import-notes'].dispatch('change', {
+    target: {
+      files: [{
+        text: async () => JSON.stringify({
+          schemaVersion: 1,
+          notes: { 'https://example.com/page': 'should not be imported' },
+          domainNotes: ['array note should not become a numeric host'],
+        }),
+      }],
+    },
+  });
+
+  assert.equal(adapter.storage.local.data['urlNotes.notes.https://example.com/page'], undefined);
+  assert.equal(adapter.storage.local.data['urlNotes.domainNotes.0.0.0.0'], undefined);
+  assert.equal(document.elements['#note'].value, '');
+  assert.equal(document.elements['#domain-note'].value, '');
+  assert.equal(document.elements['#status'].textContent, 'Error: Unsupported URL notes export format');
+});
+
 test('popup keeps JSON import usable on supported active tabs', async () => {
   const document = createPopupDocument();
   const adapter = createAdapter('https://current.example/page');

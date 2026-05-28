@@ -203,7 +203,7 @@ function collectDomainNotesForImport(payload) {
     throw new Error('Unsupported URL notes export format');
   }
   if (payload.domainNotes == null) return [];
-  if (typeof payload.domainNotes !== 'object') {
+  if (typeof payload.domainNotes !== 'object' || Array.isArray(payload.domainNotes)) {
     throw new Error('Unsupported URL notes export format');
   }
 

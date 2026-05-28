@@ -1675,3 +1675,18 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #77 with `status:completed` after recording RED/GREEN, local verification, and CI evidence.
 - Final board state: #1–#77 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+
+## 2026-05-28T21:57:51+09:00 — scheduled tick rejected array-shaped domain-note imports
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, the full `project:manager` board, recent commits, import/export hardening tests, popup combined-import behavior, and `src/urlNotes.js`. Concrete finding: `domainNotes` import validation accepted arrays because arrays are objects, allowing malformed backups to treat array indexes as domain keys instead of rejecting the backup shape.
+- Issues touched: created #78 (`Reject array-shaped domain-note imports`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy/trust comment. Completion/closure are pending commit, push, CI observation, and final #78 evidence comment after this log entry.
+- Issue trust/autonomy decision: #78 is auto-implementable maintenance/security-hardening work, local-only, privacy-preserving, small, and verifiable. It does not add sync/login/external services/store publishing/runtime product scope, so implementation proceeded without additional owner approval.
+- TDD evidence for #78: added focused tests requiring domain-note stores to reject array-shaped `domainNotes` without writing numeric host keys and requiring popup combined import to reject the same malformed shape before committing URL notes. Observed expected RED via `node --test --test-name-pattern "array-shaped" test/urlNotes.test.js test/popup.test.js` because the malformed import was accepted and a URL note was partially committed. Added the minimal `Array.isArray(payload.domainNotes)` validator check; observed GREEN with the same focused command.
+- Files changed: `src/urlNotes.js`, `test/urlNotes.test.js`, `test/popup.test.js`, `PROGRESS.md`; temporary `.tmp-issue-78-*` files are local scratch and will be removed before commit.
+- Verification: focused array-shaped import tests passed; `npm test` passed (103 tests); `npm run lint` passed; `npm run validate:extension` passed (`8 files checked`); `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `npm run build:release` created the zip and `dist/SHA256SUMS`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI observation, and final #78 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #78, continue import-shape review; likely next area is explicitly rejecting array-shaped top-level `notes` for schema clarity or deciding whether IPv6 domain-note host behavior should be supported or intentionally rejected/export-quarantined.

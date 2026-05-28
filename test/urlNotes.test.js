@@ -521,6 +521,23 @@ test('domain note store rejects invalid imports without changing existing domain
   assert.equal(await domainStore.loadNote('https://example.net/anything'), '');
 });
 
+test('domain note store rejects array-shaped imports without writing numeric domain keys', async () => {
+  const storage = new MemoryStorageArea();
+  const domainStore = createDomainNoteStore(storage);
+  await domainStore.saveNote('https://example.com/existing', 'keep me');
+
+  await assert.rejects(
+    () => domainStore.importNotes({
+      schemaVersion: 1,
+      domainNotes: ['array note should not become a numeric host'],
+    }),
+    /Unsupported URL notes export format/,
+  );
+
+  assert.equal(await domainStore.loadNote('https://example.com/anything'), 'keep me');
+  assert.equal(storage.data['urlNotes.domainNotes.0.0.0.0'], undefined);
+});
+
 test('domain note store rejects conflicting duplicate normalized import keys atomically', async () => {
   const storage = new MemoryStorageArea();
   const domainStore = createDomainNoteStore(storage);
