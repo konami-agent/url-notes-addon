@@ -167,7 +167,7 @@ function domainNoteStorageKey(rawUrl) {
 }
 
 function collectUrlNotesForImport(payload, keyOptions) {
-  if (!payload || payload.schemaVersion !== SCHEMA_VERSION || typeof payload.notes !== 'object' || payload.notes === null) {
+  if (!payload || payload.schemaVersion !== SCHEMA_VERSION || typeof payload.notes !== 'object' || payload.notes === null || Array.isArray(payload.notes)) {
     throw new Error('Unsupported URL notes export format');
   }
 

@@ -290,6 +290,22 @@ test('URL note store rejects invalid imports without changing existing notes', a
   assert.equal(await store.loadNote('https://example.com/new'), '');
 });
 
+test('URL note store rejects array-shaped imports as an invalid notes map', async () => {
+  const storage = new MemoryStorageArea();
+  const store = createUrlNoteStore(storage);
+  await store.saveNote('https://example.com/existing', 'keep me');
+
+  await assert.rejects(
+    () => store.importNotes({
+      schemaVersion: 1,
+      notes: [],
+    }),
+    /Unsupported URL notes export format/,
+  );
+
+  assert.equal(await store.loadNote('https://example.com/existing'), 'keep me');
+});
+
 test('URL note store rejects conflicting duplicate normalized import keys atomically', async () => {
   const storage = new MemoryStorageArea();
   const store = createUrlNoteStore(storage, { ignoreQuery: true });
