@@ -1619,3 +1619,11 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: pending commit/push, CI observation, and final #75 evidence comment/closure after this log entry.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #75, continue release-readiness/product review; likely next area is manual browser smoke execution evidence or a split pending proposal for the optional floating-note content-script surface.
+
+### 2026-05-28T09:40:00+09:00 — final board refresh addendum
+
+- Pushed commit `8f45eba` (`docs: document duplicate import collisions`) to `origin/main`.
+- GitHub Actions CI push run `26547337510` completed successfully for commit `8f45eba80b685b32cf17c7f76b6e2ac807b5cfad`; the `validate` job succeeded, including tests, lint, extension validation, zip build, local release artifact build, and artifact upload.
+- Commented on and closed #75 with `status:completed` after recording RED/GREEN, local verification, and CI evidence.
+- Final board state: #1–#75 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
