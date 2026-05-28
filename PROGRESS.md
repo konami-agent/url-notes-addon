@@ -1714,3 +1714,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: pending commit/push, CI observation, and final #79 evidence comment/closure after this log entry.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #79, continue import-schema review; likely next area is documenting the invalid array-shaped backup rejection in README restore guidance if it is not already sufficiently clear, or deciding whether IPv6/domain-note host behavior should be explicitly supported or rejected/quarantined.
+
+
+### 2026-05-29T02:05:15+09:00 — final board refresh addendum
+
+- Pushed commit `a05c06d` (`fix: reject array-shaped URL note imports`) to `origin/main`.
+- GitHub Actions CI push run `26589726903` completed successfully for commit `a05c06dcc89735ae89d141c07c98cba64087d3da`; the `validate` job succeeded, including tests, lint, extension validation, zip build, local release artifact build, and artifact upload.
+- Commented on and closed #79 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
+- Final board state: #1–#79 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
