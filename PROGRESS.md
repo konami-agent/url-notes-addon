@@ -1738,3 +1738,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: pending commit/push, CI observation, and final #80 evidence comment/closure after this log entry.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #80, continue import/domain-key review; likely next area is deciding whether IPv6 domain-note host behavior should be explicitly supported or intentionally rejected/quarantined, or recording manual Firefox/Edge smoke evidence outside the headless cron context.
+
+
+### 2026-05-29T06:09:20+09:00 — final board refresh addendum
+
+- Pushed commit `caf39e0` (`docs: document array-shaped import rejection`) to `origin/main`.
+- GitHub Actions CI push run `26602389102` completed successfully for commit `caf39e0e393469b2d4725031d11a7dc74c1924e8`; the `validate` job succeeded, including tests, lint, extension validation, zip build, local release artifact build, and artifact upload.
+- Commented on and closed #80 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
+- Final board state: #1–#80 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
