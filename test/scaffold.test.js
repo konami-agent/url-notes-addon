@@ -177,3 +177,26 @@ test('markdown preview policy defines the local sanitizer boundary before implem
   assert.match(policy, /small audited local dependency/i);
   assert.match(policy, /minimal internal renderer/i);
 });
+
+test('floating note proposal has a permission and security design gate before implementation', async () => {
+  const design = await readFile(new URL('../reports/floating-note-security-design.md', import.meta.url), 'utf8');
+
+  for (const requiredPhrase of [
+    /optional/i,
+    /local-only/i,
+    /owner\/design acceptance/i,
+    /before adding content scripts/i,
+    /broader host permissions/i,
+    /HTTP\(S\)-only active pages/i,
+    /credential-bearing URLs/i,
+    /CSS\/DOM isolation/i,
+    /keyboard and focus behavior/i,
+    /no remote service/i,
+    /no raw HTML/i,
+    /script injection/i,
+    /cross-browser MV3/i,
+    /manual smoke evidence/i,
+  ]) {
+    assert.match(design, requiredPhrase);
+  }
+});
