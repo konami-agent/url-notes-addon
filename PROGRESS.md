@@ -1690,3 +1690,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: pending commit/push, CI observation, and final #78 evidence comment/closure after this log entry.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #78, continue import-shape review; likely next area is explicitly rejecting array-shaped top-level `notes` for schema clarity or deciding whether IPv6 domain-note host behavior should be supported or intentionally rejected/export-quarantined.
+
+
+### 2026-05-28T21:59:46+09:00 — final board refresh addendum
+
+- Pushed commit `6075748` (`fix: reject array-shaped domain note imports`) to `origin/main`.
+- GitHub Actions CI push run `26576136134` completed successfully for commit `607574824f6a3fd5959cba57c3731bdb929ac431`; the `validate` job succeeded, including tests, lint, extension validation, zip build, local release artifact build, and artifact upload.
+- Commented on and closed #78 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
+- Final board state: #1–#78 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
