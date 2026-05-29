@@ -1882,3 +1882,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: pending commit/push, CI observation, and final #86 evidence comment/closure after this log entry.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #86, continue release-readiness review; likely next area is actual Firefox/Edge manual smoke evidence outside the headless cron context or auditing whether saved-note overview should hide stale invalid keys instead of only rendering them non-clickable.
+
+
+### 2026-05-30T06:41:31+09:00 — final board refresh addendum
+
+- Pushed commit `4c2b56e` (`docs: document export quarantine`) to `origin/main`.
+- GitHub Actions CI push run `26663629605` completed successfully for commit `4c2b56ee744aa7996bbaf4e25961a74eb799922e`; the `validate` job succeeded, including tests, lint, extension validation, zip build, local release artifact build, and artifact upload.
+- Commented on and closed #86 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
+- Final board state: #1–#86 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
