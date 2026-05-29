@@ -1819,3 +1819,18 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #83 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
 - Final board state: #1–#83 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+
+## 2026-05-29T22:29:10+09:00 — scheduled tick documented IPv4-like domain-note import rejection
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, the full `project:manager` board, recent commits, README restore/import guidance, and the #83 IPv4-like domain-key hardening. Concrete finding: README did not explain that domain-note import keys must be canonical DNS-style hosts or canonical IPv4 literals and that leading-zero, shortened, or parser-coerced IPv4-like keys are rejected before saving.
+- Issues touched: created #84 (`Document IPv4-like domain-note import rejection`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy/trust comment. Completion/closure are pending commit, push, CI observation, and final #84 evidence comment after this log entry.
+- Issue trust/autonomy decision: #84 is auto-implementable documentation/release-readiness maintenance, local-only, privacy-preserving, small, and verifiable. It does not add sync/login/external services/store publishing/runtime product scope, so implementation proceeded without additional owner approval.
+- TDD evidence for #84: added README scaffold assertions requiring documentation that domain-note import keys must be canonical DNS-style hosts or canonical IPv4 literals and that leading-zero, shortened, or parser-coerced IPv4-like keys are rejected before saving. Observed expected RED via `node --test --test-name-pattern "readme documents Firefox and Edge loading with a manual smoke checklist" test/scaffold.test.js`; updated `README.md`; observed GREEN with the same focused command.
+- Files changed: `README.md`, `test/scaffold.test.js`, `PROGRESS.md`; temporary `.tmp-issue-84-*` files are local scratch and will be removed before commit.
+- Verification: focused scaffold test passed; `npm test` passed (108 tests); `npm run lint` passed; `npm run validate:extension` passed (`8 files checked`); `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `npm run build:release` created the zip and `dist/SHA256SUMS`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI observation, and final #84 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #84, continue release-readiness review; likely next area is recording actual Firefox/Edge manual smoke evidence outside the headless cron context or reviewing whether any remaining domain-note restore edge cases need additional user-facing wording.

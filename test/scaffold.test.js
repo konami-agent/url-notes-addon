@@ -40,6 +40,8 @@ test('readme documents Firefox and Edge loading with a manual smoke checklist', 
   assert.match(readme, /notes.*domainNotes.*object maps/i);
   assert.match(readme, /not arrays/i);
   assert.match(readme, /array-shaped/i);
+  assert.match(readme, /canonical DNS-style hosts or canonical IPv4 literals/i);
+  assert.match(readme, /leading-zero, shortened, or parser-coerced IPv4-like/i);
   assert.match(readme, /rejected before saving/i);
   assert.match(readme, /duplicate raw keys with identical note text/i);
   assert.match(readme, /imported once/i);
