@@ -36,6 +36,8 @@ test('readme documents Firefox and Edge loading with a manual smoke checklist', 
   assert.match(readme, /Domain note/);
   assert.match(readme, /separate from the URL note/);
   assert.match(readme, /backs up both URL notes and domain notes/);
+  assert.match(readme, /export omits stale invalid or non-importable stored keys/i);
+  assert.match(readme, /keeps backups accepted by the current restore validation/i);
   assert.match(readme, /conflicting duplicate normalized URL or domain keys/i);
   assert.match(readme, /notes.*domainNotes.*object maps/i);
   assert.match(readme, /not arrays/i);

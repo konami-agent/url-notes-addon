@@ -25,7 +25,7 @@ When the current tab is unsupported, the popup reports that URL notes are unavai
 
 ## Export/import JSON
 
-Use **Export JSON** in the popup to download a schema-versioned backup file. The backup backs up both URL notes and domain notes:
+Use **Export JSON** in the popup to download a schema-versioned backup file. The backup backs up both URL notes and domain notes. Export omits stale invalid or non-importable stored keys, which keeps backups accepted by the current restore validation:
 
 ```json
 {
