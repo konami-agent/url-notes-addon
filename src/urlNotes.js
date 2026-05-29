@@ -117,7 +117,7 @@ export function createDomainNoteStore(storageArea) {
       for (const [key, value] of Object.entries(allItems)) {
         if (key.startsWith(DOMAIN_NOTE_KEY_PREFIX) && typeof value === 'string') {
           const domain = key.slice(DOMAIN_NOTE_KEY_PREFIX.length);
-          if (isValidDomainKeyShape(domain)) domainNotes[domain] = value;
+          if (isImportableDomainKey(domain)) domainNotes[domain] = value;
         }
       }
       return { schemaVersion: SCHEMA_VERSION, domainNotes };
@@ -235,6 +235,14 @@ function normalizeDomainForImport(rawDomain) {
   const normalizedDomain = new URL(`https://${domain}`).hostname.toLowerCase();
   if (normalizedDomain !== domain.toLowerCase()) throw new Error('Invalid domain');
   return normalizedDomain;
+}
+
+function isImportableDomainKey(domain) {
+  try {
+    return normalizeDomainForImport(domain) === String(domain ?? '').toLowerCase();
+  } catch {
+    return false;
+  }
 }
 
 function isValidDomainKeyShape(domain) {

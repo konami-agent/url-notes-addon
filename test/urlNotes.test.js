@@ -520,6 +520,24 @@ test('domain note store export skips malformed stale domain keys', async () => {
   });
 });
 
+test('domain note store export skips stale confusable IPv4-like domain keys', async () => {
+  const storage = new MemoryStorageArea({
+    'urlNotes.domainNotes.example.com': 'valid DNS note',
+    'urlNotes.domainNotes.127.0.0.1': 'valid canonical IPv4 note',
+    'urlNotes.domainNotes.127.000.000.001': 'stale leading-zero IPv4-like note',
+    'urlNotes.domainNotes.1.2.3': 'stale shortened IPv4-like note',
+  });
+  const domainStore = createDomainNoteStore(storage);
+
+  assert.deepEqual(await domainStore.exportNotes(), {
+    schemaVersion: 1,
+    domainNotes: {
+      '127.0.0.1': 'valid canonical IPv4 note',
+      'example.com': 'valid DNS note',
+    },
+  });
+});
+
 test('domain note store accepts old exports without domain notes', async () => {
   const domainStore = createDomainNoteStore(new MemoryStorageArea());
 

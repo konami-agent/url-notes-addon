@@ -1843,3 +1843,18 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #84 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
 - Final board state: #1–#84 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+
+## 2026-05-30T02:34:15+09:00 — scheduled tick quarantined confusable IPv4-like domain keys on export
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, the full `project:manager` board, recent commits, domain-note import/export hardening tests, and `src/urlNotes.js`. Concrete finding: after #83 rejected parser-coerced IPv4-like domain-note import keys, domain-note export still used only the older shape check and could emit stale keys such as `127.000.000.001` or `1.2.3` into a backup that the current importer would reject.
+- Issues touched: created #85 (`Quarantine confusable IPv4-like domain keys on export`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy/trust comment. Completion/closure are pending commit, push, CI observation, and final #85 evidence comment after this log entry.
+- Issue trust/autonomy decision: #85 is auto-implementable maintenance/security-hardening work, local-only, privacy-preserving, small, and verifiable. It does not add sync/login/external services/store publishing/runtime product scope, so implementation proceeded without additional owner approval.
+- TDD evidence for #85: added a focused test requiring domain-note export to skip stale leading-zero and shortened IPv4-like domain keys while preserving canonical `127.0.0.1` and DNS-style keys. Observed expected RED via `node --test --test-name-pattern "stale confusable IPv4-like" test/urlNotes.test.js` because the stale keys were exported. Implemented minimal export-side reuse of the importable domain-key validation; observed GREEN with the same focused command.
+- Files changed: `src/urlNotes.js`, `test/urlNotes.test.js`, `PROGRESS.md`; temporary `.tmp-issue-85-*` files are local scratch and will be removed before commit.
+- Verification: focused confusable IPv4-like export test passed; `npm test` passed (109 tests); `npm run lint` passed; `npm run validate:extension` passed (`8 files checked`); `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `npm run build:release` created the zip and `dist/SHA256SUMS`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI observation, and final #85 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #85, continue release-readiness review; likely next area is actual Firefox/Edge manual smoke evidence outside the headless cron context or any remaining export/import quarantine mismatches.
