@@ -19,6 +19,8 @@
 
 URL notes and domain notes are available on normal http:// and https:// pages. The extension intentionally does not create note keys for about:, data:, file:, extension, and other non-web tabs, and it also rejects credential-bearing web URLs such as `https://user@example.com/`.
 
+URL notes still work on HTTP(S) IPv6 literal pages such as `http://[::1]/`. Domain notes are unavailable for IPv6 literal hosts because domain notes are DNS-style host reminders; the popup keeps the URL note available but disables the domain-note field for that tab.
+
 When the current tab is unsupported, the popup reports that URL notes are unavailable and the editing, import, export, and search controls are disabled. Existing notes remain in local browser storage and can still be used from supported web pages.
 
 ## Export/import JSON
@@ -91,7 +93,8 @@ After loading the extension in Firefox or Edge:
 12. Use **Export JSON** and confirm a schema-versioned `.json` file downloads.
 13. Use **Import JSON** with a valid backup and confirm the current note reloads from imported data.
 14. Try an invalid JSON import and confirm the popup reports an error without losing existing notes.
-15. Open an unsupported tab such as `about:debugging`, `edge://extensions`, or a local `file:` page, then confirm the popup says URL notes are unavailable and the editing, import, export, and search controls are disabled.
+15. Open `http://[::1]/` or another HTTP(S) IPv6 literal page only if one is locally available, then confirm the URL note is available but the domain note is unavailable because domain notes are DNS-style host reminders.
+16. Open an unsupported tab such as `about:debugging`, `edge://extensions`, or a local `file:` page, then confirm the popup says URL notes are unavailable and the editing, import, export, and search controls are disabled.
 
 For release or cross-browser review, copy `reports/manual-smoke-evidence-template.md` as a manual smoke evidence template and record only synthetic/redacted notes, browser versions, artifact checksums, pass/fail results, and follow-up issue links.
 

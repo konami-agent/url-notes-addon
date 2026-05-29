@@ -50,6 +50,11 @@ test('readme documents Firefox and Edge loading with a manual smoke checklist', 
   assert.match(readme, /about:, data:, file:, extension, and other non-web tabs/i);
   assert.match(readme, /credential-bearing web URLs/i);
   assert.match(readme, /editing, import, export, and search controls are disabled/i);
+  assert.match(readme, /URL notes still work on HTTP\(S\) IPv6 literal pages/i);
+  assert.match(readme, /domain notes are unavailable for IPv6 literal hosts/i);
+  assert.match(readme, /DNS-style host reminders/i);
+  assert.match(readme, /http:\/\/\[::1\]\//i);
+  assert.match(readme, /URL note is available but the domain note is unavailable/i);
 });
 
 test('ci workflow verifies local release artifacts and migrated action versions', async () => {
