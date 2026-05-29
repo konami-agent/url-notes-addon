@@ -1810,3 +1810,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: pending commit/push, CI observation, and final #83 evidence comment/closure after this log entry.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #83, continue normalized-key/import review; likely next area is documenting the IPv4-like import canonicalization boundary if user-facing restore guidance is insufficient, or recording actual Firefox/Edge manual smoke evidence outside the headless cron context.
+
+
+### 2026-05-29T18:25:35+09:00 — final board refresh addendum
+
+- Pushed commit `8681d89` (`fix: reject confusable IPv4-like domain imports`) to `origin/main`.
+- GitHub Actions CI push run `26629327093` completed successfully for commit `8681d898ad41ebc0ce1f73eca282c4a1dc7dfe50`; the `validate` job succeeded, including tests, lint, extension validation, zip build, local release artifact build, and artifact upload.
+- Commented on and closed #83 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
+- Final board state: #1–#83 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
