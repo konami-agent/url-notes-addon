@@ -677,3 +677,43 @@ test('domain note store rejects malformed DNS-like import keys atomically', asyn
   }), 1);
   assert.equal(await domainStore.loadNote('https://example.com/page'), 'valid domain note');
 });
+
+test('domain note store rejects confusable IPv4-like import keys atomically', async () => {
+  const storage = new MemoryStorageArea();
+  const domainStore = createDomainNoteStore(storage);
+
+  await assert.rejects(
+    () => domainStore.importNotes({
+      schemaVersion: 1,
+      domainNotes: {
+        'example.net': 'should not be saved',
+        '127.000.000.001': 'would be coerced to 127.0.0.1',
+      },
+    }),
+    /Unsupported URL notes export format/,
+  );
+
+  await assert.rejects(
+    () => domainStore.importNotes({
+      schemaVersion: 1,
+      domainNotes: {
+        '1.2.3': 'would be coerced to 1.2.0.3',
+      },
+    }),
+    /Unsupported URL notes export format/,
+  );
+
+  assert.equal(await domainStore.loadNote('https://example.net/anything'), '');
+  assert.equal(storage.data['urlNotes.domainNotes.127.0.0.1'], undefined);
+  assert.equal(storage.data['urlNotes.domainNotes.1.2.0.3'], undefined);
+
+  assert.equal(await domainStore.importNotes({
+    schemaVersion: 1,
+    domainNotes: {
+      '127.0.0.1': 'canonical IPv4 note',
+      'Example.COM': 'mixed-case DNS note',
+    },
+  }), 2);
+  assert.equal(await domainStore.loadNote('http://127.0.0.1/dashboard'), 'canonical IPv4 note');
+  assert.equal(await domainStore.loadNote('https://example.com/page'), 'mixed-case DNS note');
+});

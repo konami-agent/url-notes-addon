@@ -1795,3 +1795,18 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #82 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
 - Final board state: #1–#82 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+
+## 2026-05-29T18:23:38+09:00 — scheduled tick rejected confusable IPv4-like domain-note imports
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, the full `project:manager` board, recent commits, import/domain-key hardening tests, and `src/urlNotes.js`. Concrete finding: domain-note import validation accepted IPv4-like numeric host strings such as `127.000.000.001` or `1.2.3` and then `new URL()` could silently coerce them to different domain-note keys such as `127.0.0.1` or `1.2.0.3`.
+- Issues touched: created #83 (`Reject confusable IPv4-like domain-note import keys`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy/trust comment. Completion/closure are pending commit, push, CI observation, and final #83 evidence comment after this log entry.
+- Issue trust/autonomy decision: #83 is auto-implementable maintenance/security-hardening work, local-only, privacy-preserving, small, and verifiable. It does not add sync/login/external services/store publishing/runtime product scope, so implementation proceeded without additional owner approval.
+- TDD evidence for #83: added a focused test requiring domain-note imports to reject confusable IPv4-like keys atomically while preserving canonical `127.0.0.1` and mixed-case DNS-name imports. Observed expected RED via `node --test --test-name-pattern "confusable IPv4-like" test/urlNotes.test.js` with `ERR_ASSERTION: Missing expected rejection`. Added the minimal round-trip check in `normalizeDomainForImport()`; observed GREEN with the same focused command.
+- Files changed: `src/urlNotes.js`, `test/urlNotes.test.js`, `PROGRESS.md`; temporary `.tmp-issue-83-*` files are local scratch and will be removed before commit.
+- Verification: focused confusable IPv4-like domain-note import test passed; `npm test` passed (108 tests); `npm run lint` passed; `npm run validate:extension` passed (`8 files checked`); `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `npm run build:release` created the zip and `dist/SHA256SUMS`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI observation, and final #83 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #83, continue normalized-key/import review; likely next area is documenting the IPv4-like import canonicalization boundary if user-facing restore guidance is insufficient, or recording actual Firefox/Edge manual smoke evidence outside the headless cron context.

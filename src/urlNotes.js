@@ -232,7 +232,9 @@ function addNormalizedImportNote(notesByKey, normalizedKey, noteText) {
 function normalizeDomainForImport(rawDomain) {
   const domain = String(rawDomain ?? '').trim();
   if (!isValidDomainKeyShape(domain)) throw new Error('Invalid domain');
-  return new URL(`https://${domain}`).hostname.toLowerCase();
+  const normalizedDomain = new URL(`https://${domain}`).hostname.toLowerCase();
+  if (normalizedDomain !== domain.toLowerCase()) throw new Error('Invalid domain');
+  return normalizedDomain;
 }
 
 function isValidDomainKeyShape(domain) {
