@@ -30,6 +30,9 @@ export function normalizeUrlForDomainNoteKey(rawUrl) {
   if (url.username !== '' || url.password !== '') {
     throw new Error('Domain notes do not support credential-bearing URLs');
   }
+  if (!isValidDomainKeyShape(hostname)) {
+    throw new Error('Domain notes require a DNS-style host key');
+  }
   return hostname;
 }
 

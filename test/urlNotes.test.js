@@ -92,6 +92,15 @@ test('normalizeUrlForDomainNoteKey rejects unsafe active URL schemes and credent
   assert.throws(() => normalizeUrlForDomainNoteKey('https://user:***@example.com/hidden'), /Domain notes do not support credential-bearing URLs/);
 });
 
+test('normalizeUrlForDomainNoteKey rejects IPv6 hosts that cannot round-trip as domain note keys', () => {
+  assert.throws(
+    () => normalizeUrlForDomainNoteKey('https://[::1]/admin'),
+    /Domain notes require a DNS-style host key/,
+  );
+  assert.equal(normalizeUrlForNoteKey('https://[::1]/admin#section'), 'https://[::1]/admin');
+  assert.equal(normalizeUrlForDomainNoteKey('http://127.0.0.1/dashboard'), '127.0.0.1');
+});
+
 test('URL note store saves and loads notes by normalized URL key', async () => {
   const store = createUrlNoteStore(new MemoryStorageArea());
 

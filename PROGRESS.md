@@ -1747,3 +1747,18 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #80 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
 - Final board state: #1–#80 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+
+## 2026-05-29T10:13:08+09:00 — scheduled tick rejected non-round-trippable IPv6 domain-note active keys
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, the full `project:manager` board, recent commits, import/export domain-key validation, popup active-tab behavior, and `src/urlNotes.js`. Concrete finding: active IPv6 HTTP(S) URLs could create `domainNotes` keys such as `[::1]` even though the domain-note import/export/overview boundary only supports DNS-style keys and would not round-trip those keys.
+- Issues touched: created #81 (`Reject non-round-trippable IPv6 domain-note active keys`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy/trust comment. Completion/closure are pending commit, push, CI observation, and final #81 evidence comment after this log entry.
+- Issue trust/autonomy decision: #81 is auto-implementable maintenance/security-hardening work, local-only, privacy-preserving, small, and verifiable. It does not add sync/login/external services/store publishing/runtime product scope, so implementation proceeded without additional owner approval.
+- TDD evidence for #81: added focused tests requiring `normalizeUrlForDomainNoteKey()` to reject IPv6 hosts that cannot round-trip as domain-note keys while URL-note keys and IPv4 hosts remain supported, and requiring the popup to keep URL notes available but disable domain notes on an active IPv6 URL. Observed expected RED via `node --test --test-name-pattern "IPv6" test/urlNotes.test.js test/popup.test.js` because the domain key rendered as `[::1]`. Added the minimal DNS-style host-shape guard for active domain-note keys; observed GREEN with the same focused command.
+- Files changed: `src/urlNotes.js`, `test/urlNotes.test.js`, `test/popup.test.js`, `PROGRESS.md`; temporary `.tmp-issue-81-*` files are local scratch and will be removed before commit.
+- Verification: focused IPv6 tests passed; `npm test` passed (107 tests); `npm run lint` passed; `npm run validate:extension` passed (`8 files checked`); `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `npm run build:release` created the zip and `dist/SHA256SUMS`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI observation, and final #81 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #81, continue domain/import safety review; likely next area is documenting the IPv6/domain-note boundary if README wording is insufficient, or recording actual Firefox/Edge manual smoke evidence outside the headless cron context.

@@ -465,6 +465,40 @@ test('popup refreshes overview after deleting a domain note', async () => {
   assert.equal(document.elements['#notes-empty'].textContent, 'No saved notes yet.');
 });
 
+test('popup keeps URL notes available but disables domain notes for active IPv6 hosts', async () => {
+  const document = createPopupDocument();
+  const domainCalls = [];
+  const urlStore = {
+    async loadNote() { return 'ipv6 page note'; },
+    async saveNote() {},
+    async exportNotes() { return { schemaVersion: 1, notes: {} }; },
+    async importNotes() { return 0; },
+    async listNotes() { return []; },
+  };
+  const domainStore = {
+    async loadNote(url) { domainCalls.push(['load', url]); return 'should not load'; },
+    async saveNote() { throw new Error('domain note should not save for IPv6 hosts'); },
+    async listNotes() { return []; },
+  };
+
+  await initializePopup({
+    document,
+    adapter: createAdapter('https://[::1]/admin#section'),
+    createStore: () => urlStore,
+    createDomainStore: () => domainStore,
+    debounceMs: 250,
+  });
+
+  assert.equal(document.elements['#url-key'].textContent, 'https://[::1]/admin');
+  assert.equal(document.elements['#note'].value, 'ipv6 page note');
+  assert.equal(document.elements['#note'].disabled, false);
+  assert.equal(document.elements['#domain-key'].textContent, 'Domain notes unavailable for this URL.');
+  assert.equal(document.elements['#domain-note'].value, '');
+  assert.equal(document.elements['#domain-note'].disabled, true);
+  assert.deepEqual(domainCalls, []);
+  assert.equal(document.elements['#status'].textContent, 'Loaded.');
+});
+
 test('popup disables controls for non-web active URLs before loading notes', async () => {
   const document = createPopupDocument();
   const urlStore = {
