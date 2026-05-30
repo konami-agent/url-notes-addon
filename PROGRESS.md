@@ -1978,3 +1978,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: pending commit/push, CI observation, and final #90 evidence comment/closure after this log entry.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #90, continue release-readiness review; likely next area is documenting non-canonical URL-key quarantine if README wording is insufficient, or obtaining real Firefox/Edge manual smoke evidence outside headless cron.
+
+
+### 2026-05-30T23:01:06+09:00 — final board refresh addendum
+
+- Pushed commit `3ceb088` (`fix: quarantine noncanonical URL note keys`) to `origin/main`.
+- GitHub Actions CI push run `26685658239` completed successfully for commit `3ceb088ba17b71b13068713c31c73c1612cd892a`; the `validate` job succeeded, including tests, lint, extension validation, zip build, local release artifact build, and artifact upload.
+- Commented on and closed #90 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
+- Final board state: #1–#90 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
