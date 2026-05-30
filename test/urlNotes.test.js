@@ -233,12 +233,28 @@ test('URL note store lists saved notes sorted by URL key and hides stale invalid
   ]);
 });
 
+test('URL note store hides stale non-canonical URL keys from overview', async () => {
+  const storage = new MemoryStorageArea({
+    'urlNotes.notes.http://example.org/page': 'http note',
+    'urlNotes.notes.https://example.com/current': 'current note',
+    'urlNotes.notes.https://example.com/with-hash#section': 'hash note',
+    'urlNotes.notes.https://Example.COM/uppercase-host': 'uppercase host note',
+    'urlNotes.notes.https://example.com/trailing/': 'trailing slash note',
+  });
+  const store = createUrlNoteStore(storage);
+
+  assert.deepEqual(await store.listNotes(), [
+    { url: 'http://example.org/page', noteText: 'http note' },
+    { url: 'https://example.com/current', noteText: 'current note' },
+  ]);
+});
+
 test('URL note store export skips stale invalid URL keys', async () => {
   const storage = new MemoryStorageArea({
     'urlNotes.notes.https://example.com/safe': 'safe note',
     'urlNotes.notes.http://example.org/page': 'http note',
     'urlNotes.notes.https://user@example.com/hidden': 'credential note',
-    'urlNotes.notes.https://user:pass@example.com/hidden': 'password note',
+    'urlNotes.notes.https://user:***@example.com/hidden': 'password note',
     'urlNotes.notes.javascript:alert(1)': 'script note',
     'urlNotes.notes.data:text/html,<h1>unsafe</h1>': 'data note',
     'urlNotes.notes.not a url': 'malformed note',
@@ -250,6 +266,25 @@ test('URL note store export skips stale invalid URL keys', async () => {
     notes: {
       'http://example.org/page': 'http note',
       'https://example.com/safe': 'safe note',
+    },
+  });
+});
+
+test('URL note store export skips stale non-canonical URL keys', async () => {
+  const storage = new MemoryStorageArea({
+    'urlNotes.notes.http://example.org/page': 'http note',
+    'urlNotes.notes.https://example.com/current': 'current note',
+    'urlNotes.notes.https://example.com/with-hash#section': 'hash note',
+    'urlNotes.notes.https://Example.COM/uppercase-host': 'uppercase host note',
+    'urlNotes.notes.https://example.com/trailing/': 'trailing slash note',
+  });
+  const store = createUrlNoteStore(storage);
+
+  assert.deepEqual(await store.exportNotes(), {
+    schemaVersion: 1,
+    notes: {
+      'http://example.org/page': 'http note',
+      'https://example.com/current': 'current note',
     },
   });
 });

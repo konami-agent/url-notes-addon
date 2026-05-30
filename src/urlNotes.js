@@ -197,7 +197,7 @@ function isSafeWebUrl(rawUrl) {
 
 function isSafeStoredUrlKey(rawUrl) {
   try {
-    return isSafeWebUrl(rawUrl);
+    return isSafeWebUrl(rawUrl) && normalizeUrlForNoteKey(rawUrl) === rawUrl;
   } catch {
     return false;
   }

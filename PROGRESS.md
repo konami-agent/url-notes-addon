@@ -1963,3 +1963,18 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #89 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
 - Final board state: #1–#89 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+
+## 2026-05-30T22:58:08+09:00 — scheduled tick quarantined non-canonical stale URL-note keys
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, the full `project:manager` board, recent commits, `src/urlNotes.js`, URL-note export/list tests, and recent stale-key quarantine work. Concrete finding: URL-note export and overview filtered malformed/unsafe stale keys but still accepted stale non-canonical stored URL keys such as keys with hash fragments, uppercase hosts, or redundant trailing slashes, which current import normalization would rewrite to different keys.
+- Issues touched: created #90 (`Quarantine non-canonical stale URL-note keys`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy/trust comment. Completion/closure are pending commit, push, CI observation, and final #90 evidence comment after this log entry.
+- Issue trust/autonomy decision: #90 is auto-implementable maintenance/security-hardening work, local-only, privacy-preserving, small, and verifiable. It does not add sync/login/external services/store publishing/runtime product scope, so implementation proceeded without additional owner approval.
+- TDD evidence for #90: added focused URL-note export and overview tests requiring stale non-canonical stored URL keys to be hidden/omitted while preserving canonical HTTP(S) keys. Observed expected RED via `node --test --test-name-pattern "non-canonical URL keys" test/urlNotes.test.js` because stale hash, uppercase-host, and trailing-slash keys were still listed/exported. Implemented the minimal `isSafeStoredUrlKey()` round-trip check against `normalizeUrlForNoteKey()`; observed GREEN with the same focused command.
+- Files changed: `src/urlNotes.js`, `test/urlNotes.test.js`, `PROGRESS.md`; temporary `.tmp-issue-90-*` files are local scratch and will be removed before commit.
+- Verification: focused non-canonical URL-key tests passed; `npm test` passed (111 tests); `npm run lint` passed; `npm run validate:extension` passed (`8 files checked`); `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `npm run build:release` created the zip and `dist/SHA256SUMS`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI observation, and final #90 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #90, continue release-readiness review; likely next area is documenting non-canonical URL-key quarantine if README wording is insufficient, or obtaining real Firefox/Edge manual smoke evidence outside headless cron.
