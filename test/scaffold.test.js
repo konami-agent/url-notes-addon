@@ -48,6 +48,9 @@ test('readme documents Firefox and Edge loading with a manual smoke checklist', 
   assert.match(readme, /duplicate raw keys with identical note text/i);
   assert.match(readme, /imported once/i);
   assert.match(readme, /saved-notes list shows URL notes and domain notes/i);
+  assert.match(readme, /saved-notes overview hides stale invalid or non-importable stored keys/i);
+  assert.match(readme, /same safety boundary as export quarantine/i);
+  assert.match(readme, /current restore validation/i);
   assert.match(readme, /Markdown preview/);
   assert.match(readme, /raw HTML as text/);
   assert.match(readme, /normal http:\/\/ and https:\/\/ pages/i);

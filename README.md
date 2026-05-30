@@ -13,6 +13,7 @@
 - JSON export/import is available from the popup.
 - Markdown preview renders a small safe local subset and treats raw HTML as text.
 - The popup lists saved URL notes and domain notes, then filters them locally by key or note text.
+- The saved-notes overview hides stale invalid or non-importable stored keys using the same safety boundary as export quarantine and current restore validation.
 - No account, remote sync, or external service.
 
 ## Supported active tabs
