@@ -1987,3 +1987,18 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #90 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
 - Final board state: #1–#90 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+
+## 2026-05-31T07:03:47+09:00 — scheduled tick documented non-canonical URL-key quarantine
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, the full `project:manager` board, recent commits, README guidance, and #90 non-canonical stale URL-key quarantine behavior. Concrete finding: README documented stale invalid/non-importable key quarantine generally, but did not explicitly tell users that stale non-canonical URL-note keys with hash fragments, uppercase scheme/host, or redundant trailing slashes may be omitted from export and hidden from the saved-notes overview.
+- Issues touched: created #91 (`Document non-canonical URL-key quarantine`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy/trust comment. Completion/closure are pending commit, push, CI observation, and final #91 evidence comment after this log entry.
+- Issue trust/autonomy decision: #91 is auto-implementable documentation/release-readiness maintenance, local-only, privacy-preserving, small, and verifiable. It does not add sync/login/external services/store publishing/runtime product scope, so implementation proceeded without additional owner approval.
+- TDD evidence for #91: added README scaffold assertions requiring documentation that stored URL-note keys are expected to be canonical normalized keys and that stale keys with hash fragments, uppercase scheme/host, or redundant trailing slashes may be omitted/hidden. Observed expected RED via `node --test --test-name-pattern "readme documents Firefox and Edge loading with a manual smoke checklist" test/scaffold.test.js`; updated `README.md`; observed GREEN with the same focused command.
+- Files changed: `README.md`, `test/scaffold.test.js`, `PROGRESS.md`; temporary `.tmp-issue-91-*` files are local scratch and will be removed before commit.
+- Verification: focused scaffold test passed; `npm test` passed (111 tests); `npm run lint` passed; `npm run validate:extension` passed (`8 files checked`); `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `npm run build:release` created the zip and `dist/SHA256SUMS`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI observation, and final #91 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #91, continue release-readiness review; likely next area is actual Firefox/Edge manual smoke evidence outside headless cron, or another small verifiable documentation/security guardrail if manual browser execution remains unavailable in cron.

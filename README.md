@@ -14,6 +14,7 @@
 - Markdown preview renders a small safe local subset and treats raw HTML as text.
 - The popup lists saved URL notes and domain notes, then filters them locally by key or note text.
 - The saved-notes overview hides stale invalid or non-importable stored keys using the same safety boundary as export quarantine and current restore validation.
+- Stored URL-note keys are expected to be canonical normalized keys; stale keys with hash fragments, uppercase scheme/host, or redundant trailing slashes may be omitted from export and hidden from the saved-notes overview.
 - No account, remote sync, or external service.
 
 ## Supported active tabs

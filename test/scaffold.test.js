@@ -51,6 +51,9 @@ test('readme documents Firefox and Edge loading with a manual smoke checklist', 
   assert.match(readme, /saved-notes overview hides stale invalid or non-importable stored keys/i);
   assert.match(readme, /same safety boundary as export quarantine/i);
   assert.match(readme, /current restore validation/i);
+  assert.match(readme, /stored URL-note keys are expected to be canonical normalized keys/i);
+  assert.match(readme, /hash fragments, uppercase scheme\/host, or redundant trailing slashes/i);
+  assert.match(readme, /omitted from export and hidden from the saved-notes overview/i);
   assert.match(readme, /Markdown preview/);
   assert.match(readme, /raw HTML as text/);
   assert.match(readme, /normal http:\/\/ and https:\/\/ pages/i);
