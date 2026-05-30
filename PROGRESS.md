@@ -1954,3 +1954,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: pending commit/push, CI observation, and final #89 evidence comment/closure after this log entry.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #89, continue release-readiness review; likely next area is actual Firefox/Edge manual smoke evidence outside the headless cron context, or another small verifiable documentation/security guardrail if manual browser execution remains unavailable in cron.
+
+
+### 2026-05-30T18:55:10+09:00 — final board refresh addendum
+
+- Pushed commit `7c51ff6` (`docs: align smoke evidence IPv6 checklist`) to `origin/main`.
+- GitHub Actions CI push run `26680887480` completed successfully for commit `7c51ff6085166dd647911391da0bd3ca05ebf649`; the `validate` job succeeded, including tests, lint, extension validation, zip build, local release artifact build, and artifact upload.
+- Commented on and closed #89 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
+- Final board state: #1–#89 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
