@@ -215,12 +215,15 @@ test('URL note store leaves no partial import entries when storage rejects a lat
   assert.deepEqual(storage.data, {});
 });
 
-test('URL note store lists saved notes sorted by URL key', async () => {
+test('URL note store lists saved notes sorted by URL key and hides stale invalid keys', async () => {
   const storage = new MemoryStorageArea({
     'unrelated.setting': true,
     'urlNotes.notes.https://example.com/b': 'bravo',
     'urlNotes.notes.https://example.com/a': 'alpha',
     'urlNotes.notes.https://example.com/ignored': 42,
+    'urlNotes.notes.https://user@example.com/hidden': 'credential note',
+    'urlNotes.notes.javascript:alert(1)': 'script note',
+    'urlNotes.notes.not a url': 'malformed note',
   });
   const store = createUrlNoteStore(storage);
 
@@ -488,16 +491,22 @@ test('domain note store leaves no partial import entries when storage rejects a 
   assert.deepEqual(storage.data, {});
 });
 
-test('domain note store lists saved domain notes sorted by domain key', async () => {
+test('domain note store lists saved domain notes sorted by domain key and hides stale invalid keys', async () => {
   const storage = new MemoryStorageArea({
     'urlNotes.notes.https://example.com/page': 'page note',
     'urlNotes.domainNotes.example.org': 'org domain note',
     'urlNotes.domainNotes.example.com': 'example domain note',
+    'urlNotes.domainNotes.127.0.0.1': 'canonical IPv4 note',
     'urlNotes.domainNotes.ignored.example': 42,
+    'urlNotes.domainNotes.bad_domain.example': 'invalid underscore note',
+    'urlNotes.domainNotes.user@example.org': 'credential-like note',
+    'urlNotes.domainNotes.127.000.000.001': 'confusable IPv4 note',
+    'urlNotes.domainNotes.1.2.3': 'shortened IPv4 note',
   });
   const domainStore = createDomainNoteStore(storage);
 
   assert.deepEqual(await domainStore.listNotes(), [
+    { domain: '127.0.0.1', noteText: 'canonical IPv4 note' },
     { domain: 'example.com', noteText: 'example domain note' },
     { domain: 'example.org', noteText: 'org domain note' },
   ]);

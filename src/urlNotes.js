@@ -75,6 +75,7 @@ export function createUrlNoteStore(storageArea, keyOptions = {}) {
       return Object.entries(allItems)
         .filter(([key, value]) => key.startsWith(NOTE_KEY_PREFIX) && typeof value === 'string')
         .map(([key, noteText]) => ({ url: key.slice(NOTE_KEY_PREFIX.length), noteText }))
+        .filter(({ url }) => isSafeStoredUrlKey(url))
         .sort((left, right) => left.url.localeCompare(right.url));
     },
 
@@ -128,6 +129,7 @@ export function createDomainNoteStore(storageArea) {
       return Object.entries(allItems)
         .filter(([key, value]) => key.startsWith(DOMAIN_NOTE_KEY_PREFIX) && typeof value === 'string')
         .map(([key, noteText]) => ({ domain: key.slice(DOMAIN_NOTE_KEY_PREFIX.length), noteText }))
+        .filter(({ domain }) => isImportableDomainKey(domain))
         .sort((left, right) => left.domain.localeCompare(right.domain));
     },
 
