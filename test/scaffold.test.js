@@ -122,6 +122,10 @@ test('manual smoke evidence template records browser release verification withou
     /unsupported tab/i,
     /Export JSON/i,
     /Import JSON/i,
+    /http:\/\/\[::1\]\//i,
+    /URL note is available/i,
+    /domain note is unavailable/i,
+    /DNS-style host reminders/i,
   ]) {
     assert.match(template, requiredPhrase);
   }

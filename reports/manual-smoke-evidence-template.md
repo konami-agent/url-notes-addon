@@ -39,7 +39,8 @@ Do not paste secrets, access tokens, private credentials, browser profile paths,
 | 12 | Use Export JSON and confirm a schema-versioned `.json` file downloads. |  |  |
 | 13 | Use Import JSON with a valid backup and confirm the current note reloads from imported data. |  |  |
 | 14 | Try an invalid JSON import and confirm the popup reports an error without losing existing notes. |  |  |
-| 15 | Open an unsupported tab such as `about:debugging`, `edge://extensions`, or a local `file:` page, then confirm the popup says URL notes are unavailable and the editing, import, export, and search controls are disabled. |  |  |
+| 15 | Open `http://[::1]/` or another HTTP(S) IPv6 literal page only if one is locally available, then confirm the URL note is available but the domain note is unavailable because domain notes are DNS-style host reminders. |  |  |
+| 16 | Open an unsupported tab such as `about:debugging`, `edge://extensions`, or a local `file:` page, then confirm the popup says URL notes are unavailable and the editing, import, export, and search controls are disabled. |  |  |
 
 ## Result summary
 
