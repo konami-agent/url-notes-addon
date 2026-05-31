@@ -22,6 +22,15 @@ test('popup html loads the single source module script', async () => {
   );
 });
 
+test('popup textareas have explicit accessible labels', async () => {
+  const html = await readFile(new URL('../popup/popup.html', import.meta.url), 'utf8');
+
+  assert.match(html, /<label\s+for="note"[^>]*>URL note<\/label>/);
+  assert.match(html, /<textarea[^>]+id="note"[^>]*>/);
+  assert.match(html, /<label\s+for="domain-note"[^>]*>Domain note<\/label>/);
+  assert.match(html, /<textarea[^>]+id="domain-note"[^>]*>/);
+});
+
 test('readme documents Firefox and Edge loading with a manual smoke checklist', async () => {
   const readme = await readFile(new URL('../README.md', import.meta.url), 'utf8');
 
