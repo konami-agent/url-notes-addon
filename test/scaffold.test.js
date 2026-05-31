@@ -31,6 +31,19 @@ test('popup textareas have explicit accessible labels', async () => {
   assert.match(html, /<textarea[^>]+id="domain-note"[^>]*>/);
 });
 
+test('popup JSON import file input remains keyboard accessible', async () => {
+  const html = await readFile(new URL('../popup/popup.html', import.meta.url), 'utf8');
+  const css = await readFile(new URL('../popup/popup.css', import.meta.url), 'utf8');
+
+  assert.match(
+    html,
+    /<input[^>]+id="import-notes"[^>]+type="file"[^>]+class="visually-hidden-file"[^>]*>\s*<label\s+for="import-notes"[^>]+class="import-label"[^>]*>Import JSON<\/label>/,
+  );
+  assert.doesNotMatch(css, /\.import-label\s+input\s*\{[^}]*display\s*:\s*none/i);
+  assert.match(css, /\.visually-hidden-file\s*\{[^}]*position\s*:\s*absolute/i);
+  assert.match(css, /\.visually-hidden-file:focus\s*\+\s*\.import-label\s*\{/);
+});
+
 test('readme documents Firefox and Edge loading with a manual smoke checklist', async () => {
   const readme = await readFile(new URL('../README.md', import.meta.url), 'utf8');
 

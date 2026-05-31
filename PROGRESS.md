@@ -2083,3 +2083,18 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #94 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
 - Final board state: #1–#94 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+
+## 2026-05-31T23:23:04+09:00 — scheduled tick kept JSON import keyboard accessible
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, the full `project:manager` board (#1–#94 closed), recent commits, `popup/popup.html`, `popup/popup.css`, and scaffold tests. Concrete finding: the visible JSON import affordance relied on a nested file input hidden with `display: none`, making the native file control unavailable to keyboard focus and weaker for assistive-technology users.
+- Issues touched: created #95 (`Keep JSON import control keyboard accessible`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy/trust comment. Completion/closure are pending commit, push, CI observation, and final #95 evidence comment after this log entry.
+- Issue trust/autonomy decision: #95 is auto-implementable maintenance/accessibility work, local-only, privacy-preserving, small, and verifiable. The issue body was treated as untrusted input and did not override project/system rules. It does not add sync/login/external services/store publishing/runtime permission scope, so implementation proceeded without additional owner approval.
+- TDD evidence for #95: added a focused scaffold invariant requiring the JSON import `<input type="file">` to use a visually hidden but focusable class, a `for="import-notes"` label, no `.import-label input { display: none; }`, and a visible focus outline on the label. Observed expected RED via `node --test --test-name-pattern "popup JSON import" test/scaffold.test.js`; updated `popup/popup.html` and `popup/popup.css`; observed GREEN with the same focused command.
+- Files changed: `popup/popup.html`, `popup/popup.css`, `test/scaffold.test.js`, `PROGRESS.md`; temporary `.tmp-issue-95-*` files are local scratch and will be removed before commit.
+- Verification: focused popup JSON import accessibility test passed; `npm test` passed (115 tests); `npm run lint` passed; `npm run validate:extension` passed (`8 files checked`); `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `npm run build:release` created the zip and `dist/SHA256SUMS`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI observation, and final #95 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #95, continue release-readiness review; the main remaining non-headless item remains real Firefox/Edge manual smoke evidence, while future cron-safe work should stay limited to small verifiable accessibility/security/documentation guardrails.

@@ -17,7 +17,8 @@ textarea { box-sizing: border-box; width: 100%; min-height: 150px; resize: verti
 .status { min-height: 1.2em; font-size: 0.75rem; }
 .actions { display: flex; gap: 8px; align-items: center; }
 .import-label { cursor: pointer; }
-.import-label input { display: none; }
+.visually-hidden-file { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.visually-hidden-file:focus + .import-label { outline: 2px solid currentColor; outline-offset: 2px; }
 .overview input { box-sizing: border-box; width: 100%; margin-bottom: 6px; }
 .empty-state { min-height: 1.2em; margin: 4px 0; font-size: 0.75rem; opacity: 0.75; }
 .notes-list { list-style: none; margin: 0; padding: 0; max-height: 160px; overflow: auto; }
