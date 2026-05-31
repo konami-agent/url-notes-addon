@@ -52,6 +52,7 @@ function createPopupDocument() {
     '#status': new FakeElement(),
     '#export-notes': new FakeElement(),
     '#import-notes': new FakeElement(),
+    '#import-notes-label': new FakeElement(),
     '#notes-search': new FakeElement(),
     '#notes-list': new FakeElement(),
     '#notes-empty': new FakeElement(),
@@ -523,7 +524,17 @@ test('popup disables controls for non-web active URLs before loading notes', asy
   assert.equal(document.elements['#ignore-query'].disabled, true);
   assert.equal(document.elements['#export-notes'].disabled, true);
   assert.equal(document.elements['#import-notes'].disabled, true);
+  assert.equal(document.elements['#import-notes-label'].attributes.get('aria-disabled'), 'true');
   assert.equal(document.elements['#notes-search'].disabled, true);
+});
+
+test('popup keeps visible import label enabled on supported active tabs', async () => {
+  const document = createPopupDocument();
+
+  await initializePopup({ document, adapter: createAdapter('https://example.com/page'), debounceMs: 250 });
+
+  assert.equal(document.elements['#import-notes'].disabled, false);
+  assert.equal(document.elements['#import-notes-label'].attributes.get('aria-disabled'), undefined);
 });
 
 test('popup renders local markdown previews for URL and domain notes without unsafe links', async () => {
@@ -976,5 +987,6 @@ test('popup disables controls and shows a clear key message when initialization 
   assert.equal(document.elements['#ignore-query'].disabled, true);
   assert.equal(document.elements['#export-notes'].disabled, true);
   assert.equal(document.elements['#import-notes'].disabled, true);
+  assert.equal(document.elements['#import-notes-label'].attributes.get('aria-disabled'), 'true');
   assert.equal(document.elements['#notes-search'].disabled, true);
 });

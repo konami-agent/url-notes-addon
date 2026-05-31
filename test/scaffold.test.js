@@ -37,11 +37,12 @@ test('popup JSON import file input remains keyboard accessible', async () => {
 
   assert.match(
     html,
-    /<input[^>]+id="import-notes"[^>]+type="file"[^>]+class="visually-hidden-file"[^>]*>\s*<label\s+for="import-notes"[^>]+class="import-label"[^>]*>Import JSON<\/label>/,
+    /<input[^>]+id="import-notes"[^>]+type="file"[^>]+class="visually-hidden-file"[^>]*>\s*<label\s+for="import-notes"[^>]+id="import-notes-label"[^>]+class="import-label"[^>]*>Import JSON<\/label>/,
   );
   assert.doesNotMatch(css, /\.import-label\s+input\s*\{[^}]*display\s*:\s*none/i);
   assert.match(css, /\.visually-hidden-file\s*\{[^}]*position\s*:\s*absolute/i);
   assert.match(css, /\.visually-hidden-file:focus\s*\+\s*\.import-label\s*\{/);
+  assert.match(css, /\.import-label\[aria-disabled="true"\]\s*\{/);
 });
 
 test('readme documents Firefox and Edge loading with a manual smoke checklist', async () => {

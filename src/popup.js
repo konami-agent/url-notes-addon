@@ -26,6 +26,7 @@ export async function initializePopup({
   const status = requiredElement(document, '#status');
   const exportButton = requiredElement(document, '#export-notes');
   const importInput = requiredElement(document, '#import-notes');
+  const importLabel = requiredElement(document, '#import-notes-label');
   const notesSearch = requiredElement(document, '#notes-search');
   const notesList = requiredElement(document, '#notes-list');
   const notesEmpty = requiredElement(document, '#notes-empty');
@@ -80,6 +81,7 @@ export async function initializePopup({
       ignoreQuery,
       exportButton,
       importInput,
+      importLabel,
       notesSearch,
     });
     status.textContent = `Error: ${error.message}`;
@@ -287,7 +289,7 @@ function isValidDomainOverviewKey(domain) {
   }
 }
 
-function disableUnavailablePopupControls({ urlKey, note, domainKey, domainNote, ignoreQuery, exportButton, importInput, notesSearch }) {
+function disableUnavailablePopupControls({ urlKey, note, domainKey, domainNote, ignoreQuery, exportButton, importInput, importLabel, notesSearch }) {
   urlKey.textContent = 'URL notes unavailable for this tab.';
   domainKey.textContent = 'Domain notes unavailable for this URL.';
   note.disabled = true;
@@ -295,6 +297,7 @@ function disableUnavailablePopupControls({ urlKey, note, domainKey, domainNote, 
   ignoreQuery.disabled = true;
   exportButton.disabled = true;
   importInput.disabled = true;
+  importLabel.setAttribute('aria-disabled', 'true');
   notesSearch.disabled = true;
 }
 
