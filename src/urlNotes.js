@@ -241,7 +241,7 @@ function normalizeDomainForImport(rawDomain) {
 
 function isImportableDomainKey(domain) {
   try {
-    return normalizeDomainForImport(domain) === String(domain ?? '').toLowerCase();
+    return normalizeDomainForImport(domain) === String(domain ?? '');
   } catch {
     return false;
   }

@@ -547,6 +547,21 @@ test('domain note store lists saved domain notes sorted by domain key and hides 
   ]);
 });
 
+test('domain note store hides stale non-canonical domain keys from overview', async () => {
+  const storage = new MemoryStorageArea({
+    'urlNotes.domainNotes.127.0.0.1': 'canonical IPv4 note',
+    'urlNotes.domainNotes.example.com': 'canonical DNS note',
+    'urlNotes.domainNotes.Example.COM': 'stale uppercase DNS note',
+    'urlNotes.domainNotes.EXAMPLE.ORG': 'stale uppercase org note',
+  });
+  const domainStore = createDomainNoteStore(storage);
+
+  assert.deepEqual(await domainStore.listNotes(), [
+    { domain: '127.0.0.1', noteText: 'canonical IPv4 note' },
+    { domain: 'example.com', noteText: 'canonical DNS note' },
+  ]);
+});
+
 test('domain note store export skips malformed stale domain keys', async () => {
   const storage = new MemoryStorageArea({
     'urlNotes.domainNotes.example.com': 'valid note',
@@ -570,6 +585,24 @@ test('domain note store export skips stale confusable IPv4-like domain keys', as
     'urlNotes.domainNotes.127.0.0.1': 'valid canonical IPv4 note',
     'urlNotes.domainNotes.127.000.000.001': 'stale leading-zero IPv4-like note',
     'urlNotes.domainNotes.1.2.3': 'stale shortened IPv4-like note',
+  });
+  const domainStore = createDomainNoteStore(storage);
+
+  assert.deepEqual(await domainStore.exportNotes(), {
+    schemaVersion: 1,
+    domainNotes: {
+      '127.0.0.1': 'valid canonical IPv4 note',
+      'example.com': 'valid DNS note',
+    },
+  });
+});
+
+test('domain note store export skips stale non-canonical domain keys', async () => {
+  const storage = new MemoryStorageArea({
+    'urlNotes.domainNotes.127.0.0.1': 'valid canonical IPv4 note',
+    'urlNotes.domainNotes.example.com': 'valid DNS note',
+    'urlNotes.domainNotes.Example.COM': 'stale uppercase DNS note',
+    'urlNotes.domainNotes.EXAMPLE.ORG': 'stale uppercase org note',
   });
   const domainStore = createDomainNoteStore(storage);
 
