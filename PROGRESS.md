@@ -2098,3 +2098,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: pending commit/push, CI observation, and final #95 evidence comment/closure after this log entry.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #95, continue release-readiness review; the main remaining non-headless item remains real Firefox/Edge manual smoke evidence, while future cron-safe work should stay limited to small verifiable accessibility/security/documentation guardrails.
+
+
+### 2026-05-31T23:25:25+09:00 — final board refresh addendum
+
+- Pushed commit `0e9ba22` (`fix: keep JSON import keyboard accessible`) to `origin/main`.
+- GitHub Actions CI push run `26715185788` completed successfully for commit `0e9ba22c9d2855db6a408143ec82554cc693c8b6`; the `validate` job succeeded, including tests, lint, extension validation, zip build, local release artifact build, and artifact upload.
+- Commented on and closed #95 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
+- Final board state: #1–#95 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
