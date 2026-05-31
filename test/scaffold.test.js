@@ -53,6 +53,8 @@ test('readme documents Firefox and Edge loading with a manual smoke checklist', 
   assert.match(readme, /current restore validation/i);
   assert.match(readme, /stored URL-note keys are expected to be canonical normalized keys/i);
   assert.match(readme, /hash fragments, uppercase scheme\/host, or redundant trailing slashes/i);
+  assert.match(readme, /domain-note storage keys are expected to be canonical lowercase DNS-style hosts or canonical IPv4 literals/i);
+  assert.match(readme, /stale non-canonical domain keys such as uppercase hosts/i);
   assert.match(readme, /omitted from export and hidden from the saved-notes overview/i);
   assert.match(readme, /Markdown preview/);
   assert.match(readme, /raw HTML as text/);
