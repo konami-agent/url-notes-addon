@@ -15,15 +15,16 @@ export function createBrowserAdapter(globalObject = globalThis) {
 
   if (globalObject.chrome) {
     const chrome = globalObject.chrome;
+    const storageLocal = chrome.storage.local;
     return {
       storage: {
         local: {
-          get: (keys) => callChrome(chrome, chrome.storage.local.get, keys),
-          set: (items) => callChrome(chrome, chrome.storage.local.set, items),
-          remove: (keys) => callChrome(chrome, chrome.storage.local.remove, keys),
+          get: (keys) => callChrome(chrome, storageLocal, storageLocal.get, keys),
+          set: (items) => callChrome(chrome, storageLocal, storageLocal.set, items),
+          remove: (keys) => callChrome(chrome, storageLocal, storageLocal.remove, keys),
         },
       },
-      getActiveTab: async () => firstActiveTab(await callChrome(chrome, chrome.tabs.query, activeTabQuery())),
+      getActiveTab: async () => firstActiveTab(await callChrome(chrome, chrome.tabs, chrome.tabs.query, activeTabQuery())),
     };
   }
 
@@ -38,9 +39,9 @@ function firstActiveTab(tabs) {
   return Array.isArray(tabs) ? tabs[0] : undefined;
 }
 
-function callChrome(chrome, method, argument) {
+function callChrome(chrome, owner, method, argument) {
   return new Promise((resolve, reject) => {
-    method(argument, (result) => {
+    method.call(owner, argument, (result) => {
       const lastError = chrome.runtime?.lastError;
       if (lastError) {
         reject(new Error(lastError.message ?? String(lastError)));

@@ -2131,3 +2131,18 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #96 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
 - Final board state: #1–#96 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+
+## 2026-06-01T07:34:17+09:00 — scheduled tick bound Chrome callback API receivers
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, the full `project:manager` board (#1–#96 closed), recent commits, `src/browserApi.js`, and browser-adapter tests. Concrete finding: the Chrome/Edge callback adapter promisified methods such as `chrome.storage.local.get` and `chrome.tabs.query` by invoking detached function references, which can be brittle for native browser bindings that expect their owning object as `this`.
+- Issues touched: created #97 (`Bind Chrome callback API methods to their owners`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy/trust comment. Completion/closure are pending commit, push, CI observation, and final #97 evidence comment after this log entry.
+- Issue trust/autonomy decision: #97 is auto-implementable maintenance/cross-browser robustness work, local-only, privacy-preserving, small, and verifiable. The issue body was treated as untrusted input and did not override project/system rules. It does not add sync/login/external services/store publishing/runtime permission scope, so implementation proceeded without additional owner approval.
+- TDD evidence for #97: added a focused browser-adapter test requiring Chrome-style storage and tabs callback methods to receive their owning object as `this`. Observed expected RED via `node --test --test-name-pattern "owning objects" test/browserApi.test.js` because detached method invocation produced `this === undefined`. Updated `src/browserApi.js` minimally to call Chrome callback methods with their storage/tabs owners; observed GREEN with the same focused command.
+- Files changed: `src/browserApi.js`, `test/browserApi.test.js`, `PROGRESS.md`; temporary `.tmp-issue-97-*` files are local scratch and will be removed before commit.
+- Verification: focused browser-adapter test passed; `npm test` passed (117 tests); `npm run lint` passed; `npm run validate:extension` passed (`8 files checked`); `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `npm run build:release` created the zip and `dist/SHA256SUMS`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: pending commit/push, CI observation, and final #97 evidence comment/closure after this log entry.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #97, continue release-readiness review; the main remaining non-headless item remains real Firefox/Edge manual smoke evidence, while future cron-safe work should stay limited to small verifiable cross-browser, accessibility, security, or documentation guardrails.

@@ -70,6 +70,41 @@ test('browser adapter promisifies chrome callback storage and active tab APIs', 
   assert.deepEqual(await adapter.getActiveTab(), { id: 11, url: 'https://edge.example/current' });
 });
 
+test('browser adapter invokes chrome callback APIs with their owning objects', async () => {
+  const storageLocal = {
+    get(_key, callback) {
+      assert.equal(this, storageLocal);
+      callback({ note: 'bound storage' });
+    },
+    set(_items, callback) {
+      assert.equal(this, storageLocal);
+      callback();
+    },
+    remove(_key, callback) {
+      assert.equal(this, storageLocal);
+      callback();
+    },
+  };
+  const tabs = {
+    query(_queryInfo, callback) {
+      assert.equal(this, tabs);
+      callback([{ id: 12, url: 'https://edge.example/bound' }]);
+    },
+  };
+  const adapter = createBrowserAdapter({
+    chrome: {
+      runtime: { lastError: null },
+      storage: { local: storageLocal },
+      tabs,
+    },
+  });
+
+  assert.deepEqual(await adapter.storage.local.get('note'), { note: 'bound storage' });
+  await adapter.storage.local.set({ note: 'updated' });
+  await adapter.storage.local.remove('note');
+  assert.deepEqual(await adapter.getActiveTab(), { id: 12, url: 'https://edge.example/bound' });
+});
+
 test('browser adapter rejects chrome callback APIs when runtime.lastError is set', async () => {
   const chrome = {
     runtime: { lastError: null },
