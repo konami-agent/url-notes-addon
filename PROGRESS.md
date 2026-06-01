@@ -2194,3 +2194,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: pending commit/push, CI observation, and final #99 evidence comment/closure after this log entry.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #99, continue release-readiness review. The main remaining non-headless item remains real Firefox/Edge manual smoke evidence; future cron-safe work should stay limited to small verifiable cross-browser, accessibility, security, packaging, or documentation guardrails.
+
+
+### 2026-06-01T15:46:35+09:00 — final board refresh addendum
+
+- Pushed commit `4183f0b` (`test: reject malformed manifest permission fields`) to `origin/main`.
+- GitHub Actions CI push run `26739577800` completed successfully for commit `4183f0b244ec7a6a10bdba0ab39d44fc8cf4f9fb`; the `validate` job succeeded, including tests, lint, extension validation, zip build, local release artifact build, and artifact upload.
+- Commented on and closed #99 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
+- Final board state: #1–#99 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
