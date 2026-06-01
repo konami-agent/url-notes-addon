@@ -81,6 +81,9 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
 
   const manifest = JSON.parse(await readFile(resolve(root, 'manifest.json'), 'utf8'));
   const packageJson = JSON.parse(await readFile(resolve(root, 'package.json'), 'utf8'));
+  if (packageJson.name !== 'url-notes-addon' || packageJson.private !== true || packageJson.type !== 'module') {
+    throw new Error('package.json metadata must keep name url-notes-addon, private true, and type module');
+  }
   if (packageJson.version !== manifest.version) {
     throw new Error('package.json version must match manifest version');
   }

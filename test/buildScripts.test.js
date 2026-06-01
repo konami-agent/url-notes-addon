@@ -118,6 +118,32 @@ test('validateExtension rejects package and manifest version mismatches', async 
   }
 });
 
+test('validateExtension rejects unexpected package metadata', async () => {
+  const metadataMutations = [
+    ['name', 'private-page-notes'],
+    ['private', false],
+    ['type', 'commonjs'],
+  ];
+
+  for (const [field, value] of metadataMutations) {
+    const projectRoot = await copyProjectFixture();
+
+    try {
+      const packageJsonPath = join(projectRoot, 'package.json');
+      const packageJson = JSON.parse(await readFile(packageJsonPath, 'utf8'));
+      packageJson[field] = value;
+      await writeFile(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`);
+
+      await assert.rejects(
+        validateExtension(projectRoot),
+        /package\.json metadata must keep name url-notes-addon, private true, and type module/u,
+      );
+    } finally {
+      await rm(projectRoot, { recursive: true, force: true });
+    }
+  }
+});
+
 test('validateExtension rejects incomplete manifest identity metadata', async () => {
   const projectRoot = await copyProjectFixture();
 
