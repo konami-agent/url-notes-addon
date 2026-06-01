@@ -2251,3 +2251,18 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #101 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
 - Final board state: #1–#101 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+
+## 2026-06-02T04:00:53+09:00 — scheduled tick validated release docs before packaging
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, the full `project:manager` board (#1–#101 closed), recent commits, `scripts/build-zip.js`, `scripts/validate-extension.js`, and build/validation tests. Concrete finding: `buildExtensionZip()` packages `LICENSE` and `README.md`, but `validateExtension()` did not explicitly require those release package files, so validation could pass before packaging failed with a lower-level filesystem error.
+- Issues touched: created #102 (`Validate release docs before packaging`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy/trust comment. Completion/closure are pending commit, push, CI observation, and final #102 evidence comment after this log entry.
+- Issue trust/autonomy decision: #102 is auto-implementable maintenance/release-readiness validation hardening. The issue body was treated as untrusted input and did not override project/system rules. It is local-only, privacy-preserving, small, verifiable, and does not add runtime permissions, sync/login, external services, store publishing, or cron changes.
+- TDD evidence for #102: added a focused validator test requiring missing `LICENSE` and missing `README.md` to be rejected with a clear release package docs/license error. Observed expected RED via `node --test --test-name-pattern "release package docs" test/buildScripts.test.js` with `Missing expected rejection`; implemented the minimal `validateExtension()` release-file check; observed GREEN with the same focused command.
+- Files changed: `scripts/validate-extension.js`, `test/buildScripts.test.js`, `PROGRESS.md`; temporary `.tmp-issue-102.md` and `.tmp-start-102.md` files are local scratch and will be removed before commit.
+- Verification: focused release package docs validation test passed; `npm test` passed (122 tests); `npm run lint` passed; `npm run validate:extension` passed (`8 files checked`); `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `npm run build:release` created the zip and `dist/SHA256SUMS`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: #102 is the only open `project:manager` issue and is in progress pending commit/push/CI/final evidence; #1–#101 remain closed with `status:completed`.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #102, continue release-readiness review. The main remaining non-headless item remains real Firefox/Edge manual smoke evidence; future cron-safe work should stay limited to small verifiable manifest, accessibility, security, packaging, or documentation guardrails.

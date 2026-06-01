@@ -13,6 +13,7 @@ const requiredFiles = [
   'src/markdownPreview.js',
   'icons/icon.svg',
 ];
+const requiredReleaseFiles = ['LICENSE', 'README.md'];
 
 const packagedCodeRoots = ['manifest.json', 'popup', 'src', 'icons'];
 const packagedCodeExtensions = new Set(['.css', '.html', '.js', '.json', '.svg']);
@@ -71,6 +72,11 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
 
   for (const file of requiredFiles) {
     await access(resolve(root, file), constants.R_OK);
+  }
+  try {
+    await Promise.all(requiredReleaseFiles.map((file) => access(resolve(root, file), constants.R_OK)));
+  } catch {
+    throw new Error('release package must include readable LICENSE and README.md files');
   }
 
   const manifest = JSON.parse(await readFile(resolve(root, 'manifest.json'), 'utf8'));

@@ -81,6 +81,25 @@ test('validateExtension accepts the checked-in extension package', async () => {
   assert.ok(result.checkedFiles.includes('src/popup.js'));
 });
 
+test('validateExtension rejects missing release package docs and license files', async () => {
+  const requiredReleaseFiles = ['LICENSE', 'README.md'];
+
+  for (const file of requiredReleaseFiles) {
+    const projectRoot = await copyProjectFixture();
+
+    try {
+      await rm(join(projectRoot, file));
+
+      await assert.rejects(
+        validateExtension(projectRoot),
+        /release package must include readable LICENSE and README\.md files/u,
+      );
+    } finally {
+      await rm(projectRoot, { recursive: true, force: true });
+    }
+  }
+});
+
 test('validateExtension rejects package and manifest version mismatches', async () => {
   const projectRoot = await copyProjectFixture();
 
