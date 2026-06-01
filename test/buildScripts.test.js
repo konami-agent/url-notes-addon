@@ -227,6 +227,32 @@ test('validateExtension rejects optional host permissions', async () => {
   }
 });
 
+test('validateExtension rejects malformed manifest permission fields', async () => {
+  const malformedPermissionFields = [
+    ['host_permissions', '<all_urls>'],
+    ['optional_permissions', 'tabs'],
+    ['optional_host_permissions', '<all_urls>'],
+  ];
+
+  for (const [field, value] of malformedPermissionFields) {
+    const projectRoot = await copyProjectFixture();
+
+    try {
+      const manifestPath = join(projectRoot, 'manifest.json');
+      const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+      manifest[field] = value;
+      await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+
+      await assert.rejects(
+        validateExtension(projectRoot),
+        /manifest permission fields must be arrays/u,
+      );
+    } finally {
+      await rm(projectRoot, { recursive: true, force: true });
+    }
+  }
+});
+
 test('validateExtension rejects background service workers', async () => {
   const projectRoot = await copyProjectFixture();
 

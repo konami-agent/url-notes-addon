@@ -106,6 +106,15 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
       throw new Error('manifest icons must include readable 48 and 128 icon files');
     }
   }
+  const permissionFields = [
+    'permissions',
+    'host_permissions',
+    'optional_permissions',
+    'optional_host_permissions',
+  ];
+  if (permissionFields.some((field) => manifest[field] !== undefined && !Array.isArray(manifest[field]))) {
+    throw new Error('manifest permission fields must be arrays');
+  }
   if (!manifest.permissions?.includes('storage')) {
     throw new Error('manifest permissions must include storage');
   }
