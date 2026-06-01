@@ -155,6 +155,35 @@ test('validateExtension rejects required manifest icons outside packaged icon as
   }
 });
 
+test('validateExtension requires action default icons to use packaged SVG icon assets', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    const manifestPath = join(projectRoot, 'manifest.json');
+    const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+    delete manifest.action.default_icon;
+    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /manifest action default_icon must include packaged SVG icon assets for 48 and 128/u,
+    );
+
+    manifest.action.default_icon = {
+      48: 'icons/icon.svg',
+      128: 'README.md',
+    };
+    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /manifest action default_icon must include packaged SVG icon assets for 48 and 128/u,
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
 test('validateExtension rejects broad host permissions', async () => {
   const projectRoot = await copyProjectFixture();
 

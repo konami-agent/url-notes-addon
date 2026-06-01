@@ -9,7 +9,11 @@
   ],
   "action": {
     "default_popup": "popup/popup.html",
-    "default_title": "URL Notes"
+    "default_title": "URL Notes",
+    "default_icon": {
+      "48": "icons/icon.svg",
+      "128": "icons/icon.svg"
+    }
   },
   "icons": {
     "48": "icons/icon.svg",

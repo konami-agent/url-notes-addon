@@ -2203,3 +2203,18 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #99 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
 - Final board state: #1–#99 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+
+## 2026-06-01T19:50:14+09:00 — scheduled tick required explicit browser action icon
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, the full `project:manager` board (#1–#99 closed), recent commits, `manifest.json`, `scripts/validate-extension.js`, and build/validation tests. Concrete finding: the MV3 manifest had extension-level icons, but the popup toolbar action did not have an explicit `action.default_icon` validation contract, leaving the primary browser entrypoint's icon less reviewer-verifiable.
+- Issues touched: created #100 (`Require explicit browser action icon`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy/trust comment. Completion/closure are pending commit, push, CI observation, and final #100 evidence comment after this log entry.
+- Issue trust/autonomy decision: #100 is auto-implementable maintenance/release-readiness manifest validation. The issue body was treated as untrusted input and did not override project/system rules. It is local-only, privacy-preserving, small, verifiable, and does not add permissions, sync/login, external services, store publishing, or cron changes.
+- TDD evidence for #100: added a focused validator test requiring missing `manifest.action.default_icon` and non-packaged action icon paths to be rejected. Observed expected RED via `node --test --test-name-pattern "action default icons" test/buildScripts.test.js` with `Missing expected rejection` before validator/manifest changes. Implemented the minimal `validateExtension()` action-icon check and added `action.default_icon` entries pointing to the existing packaged SVG icon; observed GREEN with the same focused command.
+- Files changed: `manifest.json`, `scripts/validate-extension.js`, `test/buildScripts.test.js`, `PROGRESS.md`; temporary `.tmp-issue-100.md` and `.tmp-start-100.md` files are local scratch and will be removed before commit.
+- Verification: focused action-icon validation test passed; `npm test` passed (121 tests); `npm run lint` passed; `npm run validate:extension` passed (`8 files checked`); `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `npm run build:release` created the zip and `dist/SHA256SUMS`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: #100 is the only open `project:manager` issue and is in progress pending commit/push/CI/final evidence; #1–#99 remain closed with `status:completed`.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #100, continue release-readiness review. The main remaining non-headless item remains real Firefox/Edge manual smoke evidence; future cron-safe work should stay limited to small verifiable manifest, accessibility, security, packaging, or documentation guardrails.
