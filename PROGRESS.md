@@ -2218,3 +2218,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: #100 is the only open `project:manager` issue and is in progress pending commit/push/CI/final evidence; #1–#99 remain closed with `status:completed`.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #100, continue release-readiness review. The main remaining non-headless item remains real Firefox/Edge manual smoke evidence; future cron-safe work should stay limited to small verifiable manifest, accessibility, security, packaging, or documentation guardrails.
+
+
+### 2026-06-01T19:51:46+09:00 — final board refresh addendum
+
+- Pushed commit `41d9468` (`test: require explicit action icon`) to `origin/main`.
+- GitHub Actions CI push run `26750399370` completed successfully for commit `41d9468c6201cb6481f61a940e186d5373412177`; the `validate` job succeeded, including tests, lint, extension validation, zip build, local release artifact build, and artifact upload.
+- Commented on and closed #100 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
+- Final board state: #1–#100 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
