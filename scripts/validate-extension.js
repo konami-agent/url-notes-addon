@@ -106,15 +106,15 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
       throw new Error('manifest icons must include readable 48 and 128 icon files');
     }
   }
-  for (const size of ['48', '128']) {
+  for (const size of ['16', '32', '48', '128']) {
     const iconPath = manifest.action?.default_icon?.[size];
     if (typeof iconPath !== 'string' || !/^icons\/[\w.-]+\.svg$/u.test(iconPath)) {
-      throw new Error('manifest action default_icon must include packaged SVG icon assets for 48 and 128');
+      throw new Error('manifest action default_icon must include packaged SVG icon assets for 16, 32, 48, and 128');
     }
     try {
       await access(resolve(root, iconPath), constants.R_OK);
     } catch {
-      throw new Error('manifest action default_icon must include packaged SVG icon assets for 48 and 128');
+      throw new Error('manifest action default_icon must include packaged SVG icon assets for 16, 32, 48, and 128');
     }
   }
   const permissionFields = [

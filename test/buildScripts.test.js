@@ -166,18 +166,32 @@ test('validateExtension requires action default icons to use packaged SVG icon a
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest action default_icon must include packaged SVG icon assets for 48 and 128/u,
+      /manifest action default_icon must include packaged SVG icon assets/u,
     );
 
     manifest.action.default_icon = {
+      32: 'icons/icon.svg',
       48: 'icons/icon.svg',
-      128: 'README.md',
+      128: 'icons/icon.svg',
     };
     await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest action default_icon must include packaged SVG icon assets for 48 and 128/u,
+      /manifest action default_icon must include packaged SVG icon assets/u,
+    );
+
+    manifest.action.default_icon = {
+      16: 'icons/icon.svg',
+      32: 'README.md',
+      48: 'icons/icon.svg',
+      128: 'icons/icon.svg',
+    };
+    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /manifest action default_icon must include packaged SVG icon assets/u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
