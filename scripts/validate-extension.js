@@ -19,6 +19,13 @@ const packagedCodeRoots = ['manifest.json', 'popup', 'src', 'icons'];
 const packagedCodeExtensions = new Set(['.css', '.html', '.js', '.json', '.svg']);
 const ignoredPackagedNames = new Set(['.git', '.gitkeep', 'node_modules', 'dist']);
 const allowedPermissions = new Set(['activeTab', 'storage']);
+const requiredScripts = {
+  test: 'node --test',
+  lint: 'node scripts/lint.js',
+  'validate:extension': 'node scripts/validate-extension.js',
+  'build:zip': 'node scripts/build-zip.js',
+  'build:release': 'node scripts/build-release.js',
+};
 const nonPopupManifestEntryKeys = [
   'background',
   'options_ui',
@@ -88,6 +95,13 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
   const packageJson = JSON.parse(await readFile(resolve(root, 'package.json'), 'utf8'));
   if (packageJson.name !== 'url-notes-addon' || packageJson.private !== true || packageJson.type !== 'module') {
     throw new Error('package.json metadata must keep name url-notes-addon, private true, and type module');
+  }
+  if (
+    typeof packageJson.scripts !== 'object'
+    || packageJson.scripts === null
+    || Object.entries(requiredScripts).some(([name, command]) => packageJson.scripts[name] !== command)
+  ) {
+    throw new Error('package.json scripts must include the expected local verification and release commands');
   }
   if (packageJson.version !== manifest.version) {
     throw new Error('package.json version must match manifest version');

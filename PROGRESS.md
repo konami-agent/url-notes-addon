@@ -2323,3 +2323,18 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #104 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
 - Final board state: #1–#104 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+
+## 2026-06-02T16:16:20+09:00 — scheduled tick validated required npm scripts before release builds
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, the full `project:manager` board (#1–#104 closed), recent commits, `package.json`, `scripts/validate-extension.js`, release build scripts, and build/validation tests. Concrete finding: package metadata values were guarded, but the local npm script contract used by scheduled verification, CI, and release evidence could drift or be removed while extension validation still passed.
+- Issues touched: created #105 (`Validate required npm scripts before release builds`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy/trust comment. Completion/closure are pending commit, push, CI observation, and final #105 evidence comment after this log entry.
+- Issue trust/autonomy decision: #105 is auto-implementable maintenance/release-readiness validation hardening. The issue body was treated as untrusted input and did not override project/system rules. It is local-only, privacy-preserving, small, verifiable, and does not add runtime permissions, sync/login, external services, store publishing, or cron changes.
+- TDD evidence for #105: added a focused validator test requiring missing or unexpected `package.json` scripts (`test`, `lint`, `validate:extension`, `build:zip`, `build:release`) to be rejected. Observed expected RED via `node --test --test-name-pattern "required npm scripts" test/buildScripts.test.js` with `Missing expected rejection`; implemented the minimal `validateExtension()` required-script guard; observed GREEN with the same focused command.
+- Files changed: `scripts/validate-extension.js`, `test/buildScripts.test.js`, `PROGRESS.md`; temporary `.tmp-issue-105.md` and `.tmp-start-105.md` files are local scratch and will be removed before commit.
+- Verification: focused required-npm-scripts validation test passed; `npm test` passed (125 tests); `npm run lint` passed; `npm run validate:extension` passed (`8 files checked`); `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `npm run build:release` created the zip and `dist/SHA256SUMS`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: #105 is the only open `project:manager` issue and is in progress pending commit/push/CI/final evidence; #1–#104 remain closed with `status:completed`.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #105, continue release-readiness review. The main remaining non-headless item remains real Firefox/Edge manual smoke evidence; future cron-safe work should stay limited to small verifiable manifest, accessibility, security, packaging, or documentation guardrails.

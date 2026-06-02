@@ -159,6 +159,38 @@ test('validateExtension rejects unexpected package metadata', async () => {
   }
 });
 
+test('validateExtension rejects missing or unexpected required npm scripts', async () => {
+  const scriptMutations = [
+    ['test', undefined],
+    ['lint', 'eslint .'],
+    ['validate:extension', undefined],
+    ['build:zip', 'zip -r dist/addon.zip .'],
+    ['build:release', undefined],
+  ];
+
+  for (const [scriptName, value] of scriptMutations) {
+    const projectRoot = await copyProjectFixture();
+
+    try {
+      const packageJsonPath = join(projectRoot, 'package.json');
+      const packageJson = JSON.parse(await readFile(packageJsonPath, 'utf8'));
+      if (value === undefined) {
+        delete packageJson.scripts[scriptName];
+      } else {
+        packageJson.scripts[scriptName] = value;
+      }
+      await writeFile(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`);
+
+      await assert.rejects(
+        validateExtension(projectRoot),
+        /package\.json scripts must include the expected local verification and release commands/u,
+      );
+    } finally {
+      await rm(projectRoot, { recursive: true, force: true });
+    }
+  }
+});
+
 test('validateExtension rejects incomplete manifest identity metadata', async () => {
   const projectRoot = await copyProjectFixture();
 
