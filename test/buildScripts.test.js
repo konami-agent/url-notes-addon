@@ -263,6 +263,38 @@ test('validateExtension rejects missing or unexpected required npm scripts', asy
   }
 });
 
+test('validateExtension rejects missing malformed or weakened Node.js engine metadata', async () => {
+  const engineMutations = [
+    undefined,
+    null,
+    {},
+    { node: '>=18' },
+    { node: '20' },
+  ];
+
+  for (const engines of engineMutations) {
+    const projectRoot = await copyProjectFixture();
+
+    try {
+      const packageJsonPath = join(projectRoot, 'package.json');
+      const packageJson = JSON.parse(await readFile(packageJsonPath, 'utf8'));
+      if (engines === undefined) {
+        delete packageJson.engines;
+      } else {
+        packageJson.engines = engines;
+      }
+      await writeFile(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`);
+
+      await assert.rejects(
+        validateExtension(projectRoot),
+        /package\.json engines\.node must require Node\.js >=20/u,
+      );
+    } finally {
+      await rm(projectRoot, { recursive: true, force: true });
+    }
+  }
+});
+
 test('validateExtension rejects incomplete manifest identity metadata', async () => {
   const projectRoot = await copyProjectFixture();
 

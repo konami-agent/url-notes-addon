@@ -120,6 +120,9 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
   ) {
     throw new Error('package.json scripts must include the expected local verification and release commands');
   }
+  if (packageJson.engines?.node !== '>=20') {
+    throw new Error('package.json engines.node must require Node.js >=20');
+  }
   if (packageJson.version !== manifest.version) {
     throw new Error('package.json version must match manifest version');
   }
