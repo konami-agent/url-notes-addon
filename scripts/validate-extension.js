@@ -82,8 +82,10 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
     throw new Error('release package must include a readable manifest.json metadata file');
   }
 
-  for (const file of requiredFiles) {
-    await access(resolve(root, file), constants.R_OK);
+  try {
+    await Promise.all(requiredFiles.map((file) => access(resolve(root, file), constants.R_OK)));
+  } catch {
+    throw new Error('release package must include required extension files');
   }
   try {
     await Promise.all(requiredReleaseFiles.map((file) => access(resolve(root, file), constants.R_OK)));

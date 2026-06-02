@@ -81,6 +81,33 @@ test('validateExtension accepts the checked-in extension package', async () => {
   assert.ok(result.checkedFiles.includes('src/popup.js'));
 });
 
+test('validateExtension rejects missing required extension package files clearly', async () => {
+  const requiredExtensionFiles = [
+    'popup/popup.html',
+    'popup/popup.css',
+    'src/browserApi.js',
+    'src/urlNotes.js',
+    'src/popup.js',
+    'src/markdownPreview.js',
+    'icons/icon.svg',
+  ];
+
+  for (const file of requiredExtensionFiles) {
+    const projectRoot = await copyProjectFixture();
+
+    try {
+      await rm(join(projectRoot, file));
+
+      await assert.rejects(
+        validateExtension(projectRoot),
+        /release package must include required extension files/u,
+      );
+    } finally {
+      await rm(projectRoot, { recursive: true, force: true });
+    }
+  }
+});
+
 test('validateExtension rejects missing release package docs and license files', async () => {
   const requiredReleaseFiles = ['LICENSE', 'README.md'];
 
