@@ -100,6 +100,21 @@ test('validateExtension rejects missing release package docs and license files',
   }
 });
 
+test('validateExtension rejects missing package metadata file', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    await rm(join(projectRoot, 'package.json'));
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /release package must include a readable package\.json metadata file/u,
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
 test('validateExtension rejects package and manifest version mismatches', async () => {
   const projectRoot = await copyProjectFixture();
 
