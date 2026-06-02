@@ -130,6 +130,36 @@ test('validateExtension rejects missing manifest metadata file', async () => {
   }
 });
 
+test('validateExtension rejects malformed package metadata JSON clearly', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    await writeFile(join(projectRoot, 'package.json'), '{ invalid package metadata json\n');
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /release package must include a parseable package\.json metadata file/u,
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
+test('validateExtension rejects malformed manifest metadata JSON clearly', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    await writeFile(join(projectRoot, 'manifest.json'), '{ invalid manifest metadata json\n');
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /release package must include a parseable manifest\.json metadata file/u,
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
 test('validateExtension rejects package and manifest version mismatches', async () => {
   const projectRoot = await copyProjectFixture();
 

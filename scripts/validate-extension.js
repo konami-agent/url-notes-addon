@@ -91,13 +91,23 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
     throw new Error('release package must include readable LICENSE and README.md files');
   }
 
-  const manifest = JSON.parse(await readFile(resolve(root, 'manifest.json'), 'utf8'));
+  let manifest;
+  try {
+    manifest = JSON.parse(await readFile(resolve(root, 'manifest.json'), 'utf8'));
+  } catch {
+    throw new Error('release package must include a parseable manifest.json metadata file');
+  }
   try {
     await access(resolve(root, 'package.json'), constants.R_OK);
   } catch {
     throw new Error('release package must include a readable package.json metadata file');
   }
-  const packageJson = JSON.parse(await readFile(resolve(root, 'package.json'), 'utf8'));
+  let packageJson;
+  try {
+    packageJson = JSON.parse(await readFile(resolve(root, 'package.json'), 'utf8'));
+  } catch {
+    throw new Error('release package must include a parseable package.json metadata file');
+  }
   if (packageJson.name !== 'url-notes-addon' || packageJson.private !== true || packageJson.type !== 'module') {
     throw new Error('package.json metadata must keep name url-notes-addon, private true, and type module');
   }
