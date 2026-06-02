@@ -4,7 +4,6 @@ import { fileURLToPath } from 'node:url';
 import { join, resolve, sep } from 'node:path';
 
 const requiredFiles = [
-  'manifest.json',
   'popup/popup.html',
   'popup/popup.css',
   'src/browserApi.js',
@@ -76,6 +75,12 @@ async function packagedCodeFiles(root) {
 
 export async function validateExtension(projectRoot = new URL('..', import.meta.url)) {
   const root = projectRoot instanceof URL ? fileURLToPath(projectRoot) : projectRoot;
+
+  try {
+    await access(resolve(root, 'manifest.json'), constants.R_OK);
+  } catch {
+    throw new Error('release package must include a readable manifest.json metadata file');
+  }
 
   for (const file of requiredFiles) {
     await access(resolve(root, file), constants.R_OK);
