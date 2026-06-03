@@ -126,6 +126,9 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
   if (packageJson.engines?.node !== '>=20') {
     throw new Error('package.json engines.node must require Node.js >=20');
   }
+  if (!/^\d+\.\d+\.\d+$/u.test(packageJson.version) || !/^\d+\.\d+\.\d+$/u.test(manifest.version)) {
+    throw new Error('release version must use numeric major.minor.patch format');
+  }
   if (packageJson.version !== manifest.version) {
     throw new Error('package.json version must match manifest version');
   }

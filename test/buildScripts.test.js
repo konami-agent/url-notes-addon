@@ -205,6 +205,32 @@ test('validateExtension rejects package and manifest version mismatches', async 
   }
 });
 
+test('validateExtension rejects malformed matching release versions', async () => {
+  const malformedVersions = ['dev', '0.1', '1.2.3-beta'];
+
+  for (const version of malformedVersions) {
+    const projectRoot = await copyProjectFixture();
+
+    try {
+      const packageJsonPath = join(projectRoot, 'package.json');
+      const manifestPath = join(projectRoot, 'manifest.json');
+      const packageJson = JSON.parse(await readFile(packageJsonPath, 'utf8'));
+      const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+      packageJson.version = version;
+      manifest.version = version;
+      await writeFile(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`);
+      await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+
+      await assert.rejects(
+        validateExtension(projectRoot),
+        /release version must use numeric major\.minor\.patch format/u,
+      );
+    } finally {
+      await rm(projectRoot, { recursive: true, force: true });
+    }
+  }
+});
+
 test('validateExtension rejects unexpected package metadata', async () => {
   const metadataMutations = [
     ['name', 'private-page-notes'],
