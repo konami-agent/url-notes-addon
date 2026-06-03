@@ -573,6 +573,24 @@ test('validateExtension rejects malformed manifest permission fields', async () 
   }
 });
 
+test('validateExtension rejects malformed content script manifest entries', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    const manifestPath = join(projectRoot, 'manifest.json');
+    const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+    manifest.content_scripts = { matches: ['<all_urls>'], js: ['src/content.js'] };
+    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /manifest content_scripts must stay absent for popup-only v0\.1/u,
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
 test('validateExtension rejects background service workers', async () => {
   const projectRoot = await copyProjectFixture();
 

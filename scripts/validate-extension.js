@@ -205,8 +205,8 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
   if (Array.isArray(manifest.optional_host_permissions) && manifest.optional_host_permissions.length > 0) {
     throw new Error('manifest optional_host_permissions must stay empty for local-only v0.1');
   }
-  if (Array.isArray(manifest.content_scripts) && manifest.content_scripts.length > 0) {
-    throw new Error('manifest content_scripts must stay empty for popup-only v0.1');
+  if (manifest.content_scripts !== undefined) {
+    throw new Error('manifest content_scripts must stay absent for popup-only v0.1');
   }
   if (manifest.content_security_policy !== undefined) {
     throw new Error('manifest must not define a custom content_security_policy for local-only v0.1');
