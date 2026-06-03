@@ -2,6 +2,7 @@
   "name": "url-notes-addon",
   "version": "0.1.0",
   "description": "Firefox and Edge WebExtension for per-URL notes.",
+  "license": "MIT",
   "type": "module",
   "private": true,
   "scripts": {

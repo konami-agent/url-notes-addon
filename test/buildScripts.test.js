@@ -231,6 +231,34 @@ test('validateExtension rejects unexpected package metadata', async () => {
   }
 });
 
+test('validateExtension rejects missing description or non-MIT license metadata', async () => {
+  const metadataMutations = [
+    (packageJson) => { packageJson.description = ''; },
+    (packageJson) => { delete packageJson.description; },
+    (packageJson) => { packageJson.license = 'Apache-2.0'; },
+    (packageJson) => { delete packageJson.license; },
+  ];
+
+  for (const mutate of metadataMutations) {
+    const projectRoot = await copyProjectFixture();
+
+    try {
+      const packageJsonPath = join(projectRoot, 'package.json');
+      const packageJson = JSON.parse(await readFile(packageJsonPath, 'utf8'));
+      packageJson.license = 'MIT';
+      mutate(packageJson);
+      await writeFile(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`);
+
+      await assert.rejects(
+        validateExtension(projectRoot),
+        /package\.json metadata must include a description and MIT license/u,
+      );
+    } finally {
+      await rm(projectRoot, { recursive: true, force: true });
+    }
+  }
+});
+
 test('validateExtension rejects missing or unexpected required npm scripts', async () => {
   const scriptMutations = [
     ['test', undefined],

@@ -113,6 +113,9 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
   if (packageJson.name !== 'url-notes-addon' || packageJson.private !== true || packageJson.type !== 'module') {
     throw new Error('package.json metadata must keep name url-notes-addon, private true, and type module');
   }
+  if (typeof packageJson.description !== 'string' || packageJson.description.trim() === '' || packageJson.license !== 'MIT') {
+    throw new Error('package.json metadata must include a description and MIT license');
+  }
   if (
     typeof packageJson.scripts !== 'object'
     || packageJson.scripts === null
