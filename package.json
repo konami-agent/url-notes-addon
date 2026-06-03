@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "description": "Firefox and Edge WebExtension for per-URL notes.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/konami-agent/url-notes-addon.git"
+  },
   "type": "module",
   "private": true,
   "scripts": {

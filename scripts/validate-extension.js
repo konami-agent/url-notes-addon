@@ -117,6 +117,12 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
     throw new Error('package.json metadata must include a description and MIT license');
   }
   if (
+    packageJson.repository?.type !== 'git'
+    || packageJson.repository?.url !== 'git+https://github.com/konami-agent/url-notes-addon.git'
+  ) {
+    throw new Error('package.json repository must point to konami-agent/url-notes-addon');
+  }
+  if (
     typeof packageJson.scripts !== 'object'
     || packageJson.scripts === null
     || Object.entries(requiredScripts).some(([name, command]) => packageJson.scripts[name] !== command)

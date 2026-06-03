@@ -285,6 +285,33 @@ test('validateExtension rejects missing description or non-MIT license metadata'
   }
 });
 
+test('validateExtension rejects missing or unexpected repository metadata', async () => {
+  const repositoryMutations = [
+    (packageJson) => { delete packageJson.repository; },
+    (packageJson) => { packageJson.repository = 'https://github.com/konami-agent/url-notes-addon'; },
+    (packageJson) => { packageJson.repository = { type: 'git', url: 'git+https://github.com/example/wrong-repo.git' }; },
+    (packageJson) => { packageJson.repository = { type: 'hg', url: 'git+https://github.com/konami-agent/url-notes-addon.git' }; },
+  ];
+
+  for (const mutate of repositoryMutations) {
+    const projectRoot = await copyProjectFixture();
+
+    try {
+      const packageJsonPath = join(projectRoot, 'package.json');
+      const packageJson = JSON.parse(await readFile(packageJsonPath, 'utf8'));
+      mutate(packageJson);
+      await writeFile(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`);
+
+      await assert.rejects(
+        validateExtension(projectRoot),
+        /package\.json repository must point to konami-agent\/url-notes-addon/u,
+      );
+    } finally {
+      await rm(projectRoot, { recursive: true, force: true });
+    }
+  }
+});
+
 test('validateExtension rejects missing or unexpected required npm scripts', async () => {
   const scriptMutations = [
     ['test', undefined],
