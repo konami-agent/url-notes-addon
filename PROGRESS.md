@@ -2671,3 +2671,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: #119 is the only open `project:manager` issue and is in progress pending commit/push/CI/final evidence; #1–#118 remain closed with `status:completed`.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #119, continue small release-readiness/privacy validation review. The main remaining non-headless item remains real Firefox/Edge manual smoke evidence; future cron-safe work should stay limited to verifiable manifest, accessibility, security, packaging, documentation, or validation guardrails.
+
+
+### 2026-06-05T01:30:42+09:00 — final board refresh addendum
+
+- Pushed commit `523eed8` (`test: reject arbitrary scheme remote urls`) to `origin/main`.
+- GitHub Actions CI push run `26965195675` completed successfully for commit `523eed85eb74f817eb9c38cd8629ec40499303f2`; the `validate` job succeeded, including tests, lint, extension validation, zip build, local release artifact build, and artifact upload.
+- Commented on and closed #119 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
+- Final board state: #1–#119 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
