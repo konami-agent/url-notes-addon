@@ -2602,3 +2602,11 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #116, continue small release-readiness/privacy validation review. The main remaining non-headless item remains real Firefox/Edge manual smoke evidence; future cron-safe work should stay limited to verifiable manifest, accessibility, security, packaging, documentation, or validation guardrails.
 
+
+### 2026-06-04T13:15:00+09:00 — final board refresh addendum
+
+- Pushed commit `fdd9513` (`test: reject ssh remote urls`) to `origin/main`.
+- GitHub Actions CI push run `26930200003` completed successfully for commit `fdd9513c017057a80a27aaabe6d5d22001cb0021`; the `validate` job succeeded, including tests, lint, extension validation, zip build, local release artifact build, and artifact upload.
+- Commented on and closed #116 with `status:completed` after recording the corrected SFTP/SSH scope decision, RED/GREEN evidence, local verification, source commit, and CI evidence.
+- Final board state: #1–#116 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
