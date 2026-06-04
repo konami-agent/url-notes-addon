@@ -247,7 +247,7 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
 }
 
 function hasRemoteUrl(contents) {
-  return /(?:https?|wss?|ftps?|ssh|git):\/\/(?!\$\{|www\.w3\.org\/2000\/svg\b)/iu.test(contents)
+  return /(?:https?|wss?|ftps?|ssh|git|svn):\/\/(?!\$\{|www\.w3\.org\/2000\/svg\b)/iu.test(contents)
     || /(?:^|[^:])\/\/[a-z0-9.-]+\.[a-z]{2,}(?:[/:?#)]|$)/iu.test(contents);
 }
 
