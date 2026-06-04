@@ -2578,3 +2578,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: #115 is the only open `project:manager` issue and is in progress pending commit/push/CI/final evidence; #1–#114 remain closed with `status:completed`.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #115, continue small release-readiness/privacy validation review. The main remaining non-headless item remains real Firefox/Edge manual smoke evidence; future cron-safe work should stay limited to verifiable manifest, accessibility, security, packaging, documentation, or validation guardrails.
+
+
+### 2026-06-04T09:09:17+09:00 — final board refresh addendum
+
+- Pushed commit `213d960` (`test: reject ftps remote urls`) to `origin/main`.
+- GitHub Actions CI push run `26921224071` completed successfully for commit `213d960207536813a72fd7e9883778b4c073d3e2`; the `validate` job succeeded, including tests, lint, extension validation, zip build, local release artifact build, and artifact upload.
+- Commented on and closed #115 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
+- Final board state: #1–#115 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
