@@ -37,6 +37,7 @@ const nonPopupManifestEntryKeys = [
   'externally_connectable',
   'web_accessible_resources',
   'sandbox',
+  'omnibox',
 ];
 
 function hasPackagedCodeExtension(file) {
