@@ -788,6 +788,21 @@ test('validateExtension rejects protocol-relative IPv6 remote URLs in packaged e
   }
 });
 
+test('validateExtension rejects protocol-relative localhost remote URLs in packaged extension files', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    await writeFile(join(projectRoot, 'popup', 'popup.css'), '.remote { background-image: url("//localhost:3000/pixel.png"); }\n');
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /remote URL found in packaged extension file: popup\/popup\.css/u,
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
 test('validateExtension rejects WebSocket remote URLs in packaged extension files', async () => {
   const projectRoot = await copyProjectFixture();
 
