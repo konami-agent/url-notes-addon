@@ -212,6 +212,9 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
   if (manifest.content_security_policy !== undefined) {
     throw new Error('manifest must not define a custom content_security_policy for local-only v0.1');
   }
+  if (manifest.oauth2 !== undefined) {
+    throw new Error('manifest must not define oauth2 for local-only no-login v0.1');
+  }
   for (const key of nonPopupManifestEntryKeys) {
     if (manifest[key] !== undefined) {
       throw new Error('manifest must remain popup-only for v0.1');

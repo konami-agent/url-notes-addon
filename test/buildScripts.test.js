@@ -728,6 +728,27 @@ test('validateExtension rejects sandbox manifest pages', async () => {
   }
 });
 
+test('validateExtension rejects OAuth manifest configuration', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    const manifestPath = join(projectRoot, 'manifest.json');
+    const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+    manifest.oauth2 = {
+      client_id: 'local-only-boundary-test.apps.exampleusercontent.com',
+      scopes: ['openid'],
+    };
+    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /manifest must not define oauth2 for local-only no-login v0\.1/u,
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
 test('validateExtension rejects custom content security policies', async () => {
   const projectRoot = await copyProjectFixture();
 
