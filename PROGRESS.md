@@ -2765,3 +2765,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: #123 is the only open `project:manager` issue and is in progress pending commit/push/CI/final evidence; #1–#122 remain closed with `status:completed`.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #123, continue small release-readiness/privacy validation review. The main remaining non-headless item remains real Firefox/Edge manual smoke evidence; future cron-safe work should stay limited to verifiable manifest, accessibility, security, packaging, documentation, or validation guardrails.
+
+
+### 2026-06-05T17:49:52+09:00 — final board refresh addendum
+
+- Pushed commit `3763a12` (`test: reject protocol-relative single-label urls`) to `origin/main`.
+- GitHub Actions CI push run `27005218990` completed successfully for commit `3763a12875b266bc53cc968697bae1fd70d7b19c`; the `validate` job succeeded, including tests, lint, extension validation, zip build, local release artifact build, and artifact upload.
+- Commented on and closed #123 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
+- Final board state: #1–#123 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
