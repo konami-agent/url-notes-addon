@@ -708,6 +708,26 @@ test('validateExtension rejects web-accessible resources', async () => {
   }
 });
 
+test('validateExtension rejects sandbox manifest pages', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    const manifestPath = join(projectRoot, 'manifest.json');
+    const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+    manifest.sandbox = {
+      pages: ['sandbox/sandbox.html'],
+    };
+    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /manifest must remain popup-only for v0\.1/u,
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
 test('validateExtension rejects custom content security policies', async () => {
   const projectRoot = await copyProjectFixture();
 
