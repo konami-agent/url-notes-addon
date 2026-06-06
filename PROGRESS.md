@@ -2933,3 +2933,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: #130 is the only open `project:manager` issue and is in progress pending commit/push/CI/final evidence; #1–#129 remain closed with `status:completed`.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #130, continue small release-readiness/privacy validation review. A likely next audit is whether other non-hierarchical external URI schemes such as `tel:` or `sms:` should receive the same packaged-file guardrail; keep future work validation-only unless a separate design gate expands runtime scope.
+
+
+### 2026-06-06T22:25:50+09:00 — final board refresh addendum
+
+- Pushed commit `c6a4383` (`test: reject mailto URI literals`) to `origin/main`.
+- GitHub Actions CI check suite `72689384150` / run `27063510282` completed successfully for commit `c6a43832fc08d4429c60abf704b0df9cab2432e7`; the `validate` check run succeeded.
+- Commented on and closed #130 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
+- Final board state: #1–#130 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
