@@ -2957,3 +2957,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: #131 is the only open `project:manager` issue and is in progress pending commit/push/CI/final evidence; #1–#130 remain closed with `status:completed`.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #131, continue small release-readiness/privacy validation review. A likely next audit is whether other non-hierarchical external URI schemes such as `sms:` should receive the same packaged-file guardrail; keep future work validation-only unless a separate design gate expands runtime scope.
+
+
+### 2026-06-07T02:30:07+09:00 — final board refresh addendum
+
+- Pushed commit `5ecd2bb` (`test: reject tel URI literals`) to `origin/main`.
+- GitHub Actions CI push run `27069069534` completed successfully for commit `5ecd2bb2236087034360d037a2f9b1291976bb82`; the `validate` job succeeded, including tests, lint, extension validation, zip build, local release artifact build, and artifact upload.
+- Commented on and closed #131 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
+- Final board state: #1–#131 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
