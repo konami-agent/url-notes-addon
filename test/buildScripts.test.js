@@ -1066,6 +1066,21 @@ test('validateExtension rejects mailto URI literals in packaged extension files'
   }
 });
 
+test('validateExtension rejects tel URI literals in packaged extension files', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    await writeFile(join(projectRoot, 'popup', 'popup.html'), '<!doctype html><a href="tel:+15551234567">Call support</a><script type="module" src="../src/popup.js"></script>\n');
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /remote URL found in packaged extension file: popup\/popup\.html/u,
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
 test('validateExtension rejects remote URLs in packaged SVG icons', async () => {
   const projectRoot = await copyProjectFixture();
 
