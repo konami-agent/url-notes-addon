@@ -38,6 +38,7 @@ const nonPopupManifestEntryKeys = [
   'web_accessible_resources',
   'sandbox',
   'omnibox',
+  'declarative_net_request',
 ];
 
 function hasPackagedCodeExtension(file) {
