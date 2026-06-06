@@ -2861,3 +2861,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: #127 is the only open `project:manager` issue and is in progress pending commit/push/CI/final evidence; #1–#126 remain closed with `status:completed`.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #127, continue small release-readiness/privacy validation review. The main remaining non-headless item remains real Firefox/Edge manual smoke evidence; future cron-safe work should stay limited to verifiable manifest, accessibility, security, packaging, documentation, or validation guardrails.
+
+
+### 2026-06-06T10:10:03+09:00 — final board refresh addendum
+
+- Pushed commit `99077d0` (`test: reject declarative net request manifest`) to `origin/main`.
+- GitHub Actions CI push run `27048300330` completed successfully for commit `99077d0c7d2cd39de39b914db11ce6ed17babcbe`; the `validate` job succeeded, including tests, lint, extension validation, zip build, local release artifact build, and artifact upload.
+- Commented on and closed #127 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
+- Final board state: #1–#127 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
