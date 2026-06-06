@@ -1070,7 +1070,22 @@ test('validateExtension rejects tel URI literals in packaged extension files', a
   const projectRoot = await copyProjectFixture();
 
   try {
-    await writeFile(join(projectRoot, 'popup', 'popup.html'), '<!doctype html><a href="tel:+15551234567">Call support</a><script type="module" src="../src/popup.js"></script>\n');
+    await writeFile(join(projectRoot, 'popup', 'popup.html'), '<!doctype html><a href="tel:+155****4567">Call support</a><script type="module" src="../src/popup.js"></script>\n');
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /remote URL found in packaged extension file: popup\/popup\.html/u,
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
+test('validateExtension rejects sms URI literals in packaged extension files', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    await writeFile(join(projectRoot, 'popup', 'popup.html'), '<!doctype html><a href="sms:+155****4567">Text support</a><script type="module" src="../src/popup.js"></script>\n');
 
     await assert.rejects(
       validateExtension(projectRoot),
