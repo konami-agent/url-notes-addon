@@ -690,6 +690,31 @@ test('validateExtension rejects other non-popup manifest surfaces', async () => 
   }
 });
 
+test('validateExtension rejects legacy action manifest surfaces', async () => {
+  const legacyActionSurfaces = [
+    ['browser_action', { default_popup: 'popup/popup.html' }],
+    ['page_action', { default_popup: 'popup/popup.html' }],
+  ];
+
+  for (const [key, value] of legacyActionSurfaces) {
+    const projectRoot = await copyProjectFixture();
+
+    try {
+      const manifestPath = join(projectRoot, 'manifest.json');
+      const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+      manifest[key] = value;
+      await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+
+      await assert.rejects(
+        validateExtension(projectRoot),
+        /manifest must remain popup-only for v0\.1/u,
+      );
+    } finally {
+      await rm(projectRoot, { recursive: true, force: true });
+    }
+  }
+});
+
 test('validateExtension rejects web-accessible resources', async () => {
   const projectRoot = await copyProjectFixture();
 

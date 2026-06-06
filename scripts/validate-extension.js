@@ -39,6 +39,8 @@ const nonPopupManifestEntryKeys = [
   'sandbox',
   'omnibox',
   'declarative_net_request',
+  'browser_action',
+  'page_action',
 ];
 
 function hasPackagedCodeExtension(file) {
