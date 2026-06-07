@@ -1156,6 +1156,24 @@ test('validateExtension rejects remote URLs in packaged SVG icons', async () => 
   }
 });
 
+test('validateExtension rejects arbitrary non-hierarchical URI text in packaged SVG icons', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    await writeFile(
+      join(projectRoot, 'icons', 'icon.svg'),
+      '<svg xmlns="http://www.w3.org/2000/svg"><text>geo:35.681236,139.767125</text></svg>\n',
+    );
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /remote URL found in packaged extension file: icons\/icon\.svg/u,
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
 test('validateExtension rejects remote URLs in the packaged markdown preview module', async () => {
   const projectRoot = await copyProjectFixture();
 

@@ -236,7 +236,7 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
   const checkedFiles = await packagedCodeFiles(root);
   for (const file of checkedFiles) {
     const contents = await readFile(resolve(root, file), 'utf8');
-    if (hasRemoteUrl(contents)) {
+    if (hasRemoteUrl(contents, file)) {
       throw new Error(`remote URL found in packaged extension file: ${file}`);
     }
     if (file.endsWith('.html') && /<[^>]+\son[a-z][\w:-]*\s*=/iu.test(contents)) {
@@ -257,13 +257,14 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
   };
 }
 
-function hasRemoteUrl(contents) {
+function hasRemoteUrl(contents, file = '') {
   return /[a-z][a-z0-9+.-]*:\/\/(?!\$\{|www\.w3\.org\/2000\/svg\b)/iu.test(contents)
     || /(?:^|[^:])\/\/(?:[a-z0-9.-]+\.[a-z]{2,}|localhost|[a-z][a-z0-9-]*|\d{1,3}(?:\.\d{1,3}){3}|\[[0-9a-f:.]+\])(?:[/:?#)]|$)/iu.test(contents)
     || /\b(?:mailto|tel|sms):[^\s"'<>]+/iu.test(contents)
     || /\b(?:href|src|action|formaction)\s*=\s*(?:"[a-z][a-z0-9+.-]*:(?!\/\/)[^"]*"|'[a-z][a-z0-9+.-]*:(?!\/\/)[^']*'|[a-z][a-z0-9+.-]*:(?!\/\/)[^\s>]+)/iu.test(contents)
     || /\burl\(\s*(?:"[a-z][a-z0-9+.-]*:(?!\/\/)[^"]*"|'[a-z][a-z0-9+.-]*:(?!\/\/)[^']*'|[a-z][a-z0-9+.-]*:(?!\/\/)[^\s)]*)\s*\)/iu.test(contents)
-    || /["'][a-z][a-z0-9+.-]*:(?!\/\/)[^"'\s<>]+["']/iu.test(contents);
+    || /["'][a-z][a-z0-9+.-]*:(?!\/\/)[^"'\s<>]+["']/iu.test(contents)
+    || (file.endsWith('.svg') && />[^<]*\b[a-z][a-z0-9+.-]*:(?!\/\/)[^\s<]+/iu.test(contents));
 }
 
 function hasUnexpectedScriptSource(html) {
