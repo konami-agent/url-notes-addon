@@ -3125,3 +3125,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: #138 is the only open `project:manager` issue and is in progress pending commit/push/CI/final evidence; #1–#137 remain closed with `status:completed`.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #138, continue small release-readiness/privacy validation review. A likely next audit is whether other user-affecting manifest surfaces not covered by the current popup-only list should be rejected without relying on remote URL scanning; keep future work validation-only unless a separate design gate expands runtime scope.
+
+
+### 2026-06-08T07:08:17+09:00 — final board refresh addendum
+
+- Pushed commit `a756d9d` (`test: reject theme manifest surface`) to `origin/main`.
+- GitHub Actions CI push run `27106251524` completed successfully for commit `a756d9d79f31a14e0769bebb6b8dc628044b812c`; the `validate` job succeeded, including tests, lint, extension validation, zip build, local release artifact build, and artifact upload.
+- Commented on and closed #138 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
+- Final board state: #1–#138 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
