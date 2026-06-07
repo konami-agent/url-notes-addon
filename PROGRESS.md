@@ -3053,3 +3053,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: #135 is the only open `project:manager` issue and is in progress pending commit/push/CI/final evidence; #1–#134 remain closed with `status:completed`.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #135, continue small release-readiness/privacy validation review. A likely next audit is whether arbitrary non-hierarchical URI literals in packaged JSON/SVG text contexts need equivalent coverage without false positives; keep future work validation-only unless a separate design gate expands runtime scope.
+
+
+### 2026-06-07T18:51:37+09:00 — final board refresh addendum
+
+- Pushed commit `1befda9` (`test: reject JS nonhierarchical URI literals`) to `origin/main`.
+- GitHub Actions CI push run `27089112703` completed successfully for commit `1befda9a88dfa76a74155c3e66f2b2f8cb3e14b8`; the `validate` job succeeded, including tests, lint, extension validation, zip build, local release artifact build, and artifact upload.
+- Commented on and closed #135 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
+- Final board state: #1–#135 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
