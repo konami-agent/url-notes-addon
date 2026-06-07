@@ -715,6 +715,29 @@ test('validateExtension rejects legacy action manifest surfaces', async () => {
   }
 });
 
+test('validateExtension rejects browser settings override manifest surface', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    const manifestPath = join(projectRoot, 'manifest.json');
+    const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+    manifest.chrome_settings_overrides = {
+      search_provider: {
+        name: 'Local Notes Search',
+        keyword: 'notes',
+      },
+    };
+    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /manifest must remain popup-only for v0\.1/u,
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
 test('validateExtension rejects web-accessible resources', async () => {
   const projectRoot = await copyProjectFixture();
 

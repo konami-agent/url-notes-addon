@@ -41,6 +41,7 @@ const nonPopupManifestEntryKeys = [
   'declarative_net_request',
   'browser_action',
   'page_action',
+  'chrome_settings_overrides',
 ];
 
 function hasPackagedCodeExtension(file) {
