@@ -3077,3 +3077,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: #136 is the only open `project:manager` issue and is in progress pending commit/push/CI/final evidence; #1–#135 remain closed with `status:completed`.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #136, continue small release-readiness/privacy validation review. A likely next audit is whether packaged JSON or other resource contexts have any remaining local-only URI literal gaps without false positives; keep future work validation-only unless a separate design gate expands runtime scope.
+
+
+### 2026-06-07T22:59:05+09:00 — final board refresh addendum
+
+- Pushed commit `57d0018` (`test: reject SVG nonhierarchical URI text`) to `origin/main`.
+- GitHub Actions CI push run `27094584871` completed successfully for commit `57d0018308b567e62ba963b46f52e8b959073651`; the `validate` job succeeded, including tests, lint, extension validation, zip build, local release artifact build, and artifact upload.
+- Commented on and closed #136 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
+- Final board state: #1–#136 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
