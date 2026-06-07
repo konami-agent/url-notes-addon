@@ -3101,3 +3101,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: #137 is the only open `project:manager` issue and is in progress pending commit/push/CI/final evidence; #1–#136 remain closed with `status:completed`.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #137, continue small release-readiness/privacy validation review. A likely next audit is whether other user-affecting manifest surfaces not covered by the current popup-only list should be rejected without relying on remote URL scanning; keep future work validation-only unless a separate design gate expands runtime scope.
+
+
+### 2026-06-08T03:04:04+09:00 — final board refresh addendum
+
+- Pushed commit `57750d2` (`test: reject settings override manifest surface`) to `origin/main`.
+- GitHub Actions CI push run `27100481002` completed successfully for commit `57750d2cd95315a536a519a5a788bffa8400ab2e`; the `validate` job succeeded, including tests, lint, extension validation, zip build, local release artifact build, and artifact upload.
+- Commented on and closed #137 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
+- Final board state: #1–#137 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
