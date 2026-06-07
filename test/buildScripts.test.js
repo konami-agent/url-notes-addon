@@ -1126,6 +1126,21 @@ test('validateExtension rejects arbitrary non-hierarchical URI values in package
   }
 });
 
+test('validateExtension rejects arbitrary non-hierarchical URI literals in packaged JavaScript', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    await writeFile(join(projectRoot, 'src', 'popup.js'), 'const mapLaunchUri = "geo:35.681236,139.767125";\n');
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /remote URL found in packaged extension file: src\/popup\.js/u,
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
 test('validateExtension rejects remote URLs in packaged SVG icons', async () => {
   const projectRoot = await copyProjectFixture();
 
