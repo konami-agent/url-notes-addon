@@ -1111,6 +1111,21 @@ test('validateExtension rejects arbitrary non-hierarchical URI attributes in pac
   }
 });
 
+test('validateExtension rejects arbitrary non-hierarchical URI values in packaged CSS url functions', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    await writeFile(join(projectRoot, 'popup', 'popup.css'), '.map-link { background-image: url("geo:35.681236,139.767125"); }\n');
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /remote URL found in packaged extension file: popup\/popup\.css/u,
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
 test('validateExtension rejects remote URLs in packaged SVG icons', async () => {
   const projectRoot = await copyProjectFixture();
 

@@ -261,7 +261,8 @@ function hasRemoteUrl(contents) {
   return /[a-z][a-z0-9+.-]*:\/\/(?!\$\{|www\.w3\.org\/2000\/svg\b)/iu.test(contents)
     || /(?:^|[^:])\/\/(?:[a-z0-9.-]+\.[a-z]{2,}|localhost|[a-z][a-z0-9-]*|\d{1,3}(?:\.\d{1,3}){3}|\[[0-9a-f:.]+\])(?:[/:?#)]|$)/iu.test(contents)
     || /\b(?:mailto|tel|sms):[^\s"'<>]+/iu.test(contents)
-    || /\b(?:href|src|action|formaction)\s*=\s*(?:"[a-z][a-z0-9+.-]*:(?!\/\/)[^"]*"|'[a-z][a-z0-9+.-]*:(?!\/\/)[^']*'|[a-z][a-z0-9+.-]*:(?!\/\/)[^\s>]+)/iu.test(contents);
+    || /\b(?:href|src|action|formaction)\s*=\s*(?:"[a-z][a-z0-9+.-]*:(?!\/\/)[^"]*"|'[a-z][a-z0-9+.-]*:(?!\/\/)[^']*'|[a-z][a-z0-9+.-]*:(?!\/\/)[^\s>]+)/iu.test(contents)
+    || /\burl\(\s*(?:"[a-z][a-z0-9+.-]*:(?!\/\/)[^"]*"|'[a-z][a-z0-9+.-]*:(?!\/\/)[^']*'|[a-z][a-z0-9+.-]*:(?!\/\/)[^\s)]*)\s*\)/iu.test(contents);
 }
 
 function hasUnexpectedScriptSource(html) {
