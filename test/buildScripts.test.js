@@ -1096,6 +1096,21 @@ test('validateExtension rejects sms URI literals in packaged extension files', a
   }
 });
 
+test('validateExtension rejects arbitrary non-hierarchical URI attributes in packaged HTML', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    await writeFile(join(projectRoot, 'popup', 'popup.html'), '<!doctype html><a href="geo:35.681236,139.767125">Open map</a><script type="module" src="../src/popup.js"></script>\n');
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /remote URL found in packaged extension file: popup\/popup\.html/u,
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
 test('validateExtension rejects remote URLs in packaged SVG icons', async () => {
   const projectRoot = await copyProjectFixture();
 
