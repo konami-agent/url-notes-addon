@@ -781,6 +781,30 @@ test('validateExtension rejects manifest managed storage configuration', async (
   }
 });
 
+test('validateExtension rejects protocol handler manifest surface', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    const manifestPath = join(projectRoot, 'manifest.json');
+    const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+    manifest.protocol_handlers = [
+      {
+        protocol: 'web+urlnote',
+        name: 'URL Notes protocol handler',
+        uriTemplate: 'popup/popup.html?handler=%s',
+      },
+    ];
+    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /manifest must remain popup-only for v0\.1/u,
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
 test('validateExtension rejects web-accessible resources', async () => {
   const projectRoot = await copyProjectFixture();
 
