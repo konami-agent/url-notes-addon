@@ -823,6 +823,26 @@ test('validateExtension rejects default locale localization contract', async () 
   }
 });
 
+test('validateExtension rejects user scripts manifest surface', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    const manifestPath = join(projectRoot, 'manifest.json');
+    const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+    manifest.user_scripts = {
+      api_script: 'src/popup.js',
+    };
+    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /manifest must remain popup-only for v0\.1/u,
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
 test('validateExtension rejects web-accessible resources', async () => {
   const projectRoot = await copyProjectFixture();
 

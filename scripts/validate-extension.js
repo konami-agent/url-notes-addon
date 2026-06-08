@@ -44,6 +44,7 @@ const nonPopupManifestEntryKeys = [
   'chrome_settings_overrides',
   'theme',
   'protocol_handlers',
+  'user_scripts',
 ];
 
 function hasPackagedCodeExtension(file) {
