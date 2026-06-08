@@ -3173,3 +3173,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: #140 is the only open `project:manager` issue and is in progress pending commit/push/CI/final evidence; #1–#139 remain closed with `status:completed`.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #140, continue small release-readiness/privacy validation review. A likely next audit is whether any remaining manifest fields can expand browser behavior or externally triggered entrypoints without a remote URL literal; keep future work validation-only unless a separate design gate expands runtime scope.
+
+
+### 2026-06-08T15:21:29+09:00 — final board refresh addendum
+
+- Pushed commit `9d5c06a` (`test: reject protocol handler manifest surface`) to `origin/main`.
+- GitHub Actions CI push run `27119723144` completed successfully for commit `9d5c06aa4058e9bcc90a3b58d88950ac9cc4cbba`; the `validate` job succeeded, including tests, lint, extension validation, zip build, local release artifact build, and artifact upload.
+- Commented on and closed #140 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
+- Final board state: #1–#140 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
