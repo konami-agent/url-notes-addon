@@ -3221,3 +3221,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: #142 is the only open `project:manager` issue and is in progress pending commit/push/CI/final evidence; #1–#141 remain closed with `status:completed`.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #142, continue small release-readiness/privacy validation review. A likely next audit is whether other manifest fields add browser/user-script-like execution surfaces or unpackaged resource contracts beyond the v0.1 package boundary; keep future work validation-only unless a separate design gate expands runtime scope.
+
+
+### 2026-06-08T23:33:18+09:00 — final board refresh addendum
+
+- Pushed commit `d1df972` (`test: reject user scripts manifest surface`) to `origin/main`.
+- GitHub Actions CI push run `27144892781` completed successfully for commit `d1df9729826d4078fecef7693da4868675a54e9f`; the `validate` job succeeded, including tests, lint, extension validation, zip build, local release artifact build, and artifact upload.
+- Commented on and closed #142 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
+- Final board state: #1–#142 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
