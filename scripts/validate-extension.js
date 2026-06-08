@@ -228,6 +228,9 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
   if (manifest.storage !== undefined) {
     throw new Error('manifest must not define storage configuration for local-only v0.1');
   }
+  if (manifest.default_locale !== undefined) {
+    throw new Error('manifest must not define default_locale without packaged localization support');
+  }
   for (const key of nonPopupManifestEntryKeys) {
     if (manifest[key] !== undefined) {
       throw new Error('manifest must remain popup-only for v0.1');
