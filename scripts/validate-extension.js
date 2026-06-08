@@ -224,6 +224,9 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
   if (manifest.incognito !== undefined) {
     throw new Error('manifest must not define incognito for local-only privacy boundary v0.1');
   }
+  if (manifest.storage !== undefined) {
+    throw new Error('manifest must not define storage configuration for local-only v0.1');
+  }
   for (const key of nonPopupManifestEntryKeys) {
     if (manifest[key] !== undefined) {
       throw new Error('manifest must remain popup-only for v0.1');
