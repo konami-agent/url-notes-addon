@@ -3149,3 +3149,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: #139 is the only open `project:manager` issue and is in progress pending commit/push/CI/final evidence; #1–#138 remain closed with `status:completed`.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #139, continue small release-readiness/privacy validation review. A likely next audit is whether any remaining manifest fields can expand browser behavior or external configuration without a remote URL literal; keep future work validation-only unless a separate design gate expands runtime scope.
+
+
+### 2026-06-08T11:14:14+09:00 — final board refresh addendum
+
+- Pushed commit `ecbfd5c` (`test: reject managed storage manifest config`) to `origin/main`.
+- GitHub Actions CI push run `27112219716` completed successfully for commit `ecbfd5c951ffa96162230d4331890a46d61aeffd`; the `validate` job succeeded, including tests, lint, extension validation, zip build, local release artifact build, and artifact upload.
+- Commented on and closed #139 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
+- Final board state: #1–#139 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
