@@ -3245,3 +3245,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: #143 is the only open `project:manager` issue and is in progress pending commit/push/CI/final evidence; #1–#142 remain closed with `status:completed`.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #143, continue small release-readiness/cross-browser manifest validation review. A likely next audit is whether other browser-specific or externally managed manifest metadata can affect release identity or update behavior without changing runtime code.
+
+
+### 2026-06-09T03:38:41+09:00 — final board refresh addendum
+
+- Pushed commit `46e492a` (`test: reject browser-specific manifest settings`) to `origin/main`.
+- GitHub Actions CI push run `27158987132` completed successfully for commit `46e492a9d3a466a1edeecd4618090ba5cfb608ef`; the `validate` job succeeded, including tests, lint, extension validation, zip build, local release artifact build, and artifact upload.
+- Commented on and closed #143 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
+- Final board state: #1–#143 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
