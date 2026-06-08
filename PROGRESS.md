@@ -3269,3 +3269,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: #144 is the only open `project:manager` issue and is in progress pending commit/push/CI/final evidence; #1–#143 remain closed with `status:completed`.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #144, continue small release-readiness/cross-browser manifest validation review. A likely next audit is whether other browser-specific or externally managed manifest metadata can affect release identity, update behavior, or packaged resource contracts without changing runtime code.
+
+
+### 2026-06-09T07:43:59+09:00 — final board refresh addendum
+
+- Pushed commit `e2c0ad7` (`test: reject manifest key identity metadata`) to `origin/main`.
+- GitHub Actions CI push run `27171661271` completed successfully for commit `e2c0ad71648b51dfb28ae1517ffa8bbd07cfae7a`; the `validate` job succeeded, including tests, lint, extension validation, zip build, local release artifact build, and artifact upload.
+- Commented on and closed #144 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
+- Final board state: #1–#144 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
