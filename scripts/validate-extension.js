@@ -235,6 +235,9 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
   if (manifest.browser_specific_settings !== undefined) {
     throw new Error('manifest must not define browser_specific_settings for cross-browser v0.1');
   }
+  if (manifest.key !== undefined) {
+    throw new Error('manifest must not define key identity metadata for cross-browser v0.1');
+  }
   for (const key of nonPopupManifestEntryKeys) {
     if (manifest[key] !== undefined) {
       throw new Error('manifest must remain popup-only for v0.1');
