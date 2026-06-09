@@ -3341,3 +3341,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: #147 is the only open `project:manager` issue and is in progress pending commit/push/CI/final evidence; #1–#146 remain closed with `status:completed`.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #147, continue small release-readiness/cross-browser manifest validation review. A likely next audit is whether other manifest metadata can affect browser UI, update/release identity, or externally managed behavior without changing runtime code.
+
+
+### 2026-06-10T00:18:48+09:00 — final board refresh addendum
+
+- Pushed commit `1e317a7` (`test: reject manifest version_name metadata`) to `origin/main`.
+- GitHub Actions CI push run `27215613880` completed successfully for commit `1e317a72ccd35e378782ab07b601ad1d8f76dfea`; the `validate` job succeeded, including tests, lint, extension validation, zip build, local release artifact build, and artifact upload.
+- Commented on and closed #147 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
+- Final board state: #1–#147 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
