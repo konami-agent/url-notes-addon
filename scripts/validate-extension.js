@@ -241,6 +241,9 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
   if (manifest.update_url !== undefined) {
     throw new Error('manifest must not define update_url for cross-browser v0.1');
   }
+  if (manifest.minimum_chrome_version !== undefined) {
+    throw new Error('manifest must not define minimum_chrome_version for cross-browser v0.1');
+  }
   for (const key of nonPopupManifestEntryKeys) {
     if (manifest[key] !== undefined) {
       throw new Error('manifest must remain popup-only for v0.1');

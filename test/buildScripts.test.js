@@ -901,6 +901,24 @@ test('validateExtension rejects manifest update URL metadata', async () => {
   }
 });
 
+test('validateExtension rejects Chromium minimum version manifest metadata', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    const manifestPath = join(projectRoot, 'manifest.json');
+    const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+    manifest.minimum_chrome_version = '120';
+    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /manifest must not define minimum_chrome_version for cross-browser v0\.1/u,
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
 test('validateExtension rejects web-accessible resources', async () => {
   const projectRoot = await copyProjectFixture();
 
