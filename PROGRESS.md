@@ -3317,3 +3317,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - End-of-tick issue refresh: #146 is the only open `project:manager` issue and is in progress pending commit/push/CI/final evidence; #1–#145 remain closed with `status:completed`.
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #146, continue small release-readiness/cross-browser manifest validation review. A likely next audit is whether other browser-specific compatibility metadata or externally managed manifest fields can affect portable release behavior without changing runtime code.
+
+
+### 2026-06-09T20:00:53+09:00 — final board refresh addendum
+
+- Pushed commit `f4e8910` (`test: reject chromium minimum version metadata`) to `origin/main`.
+- GitHub Actions CI push run `27201575955` completed successfully for commit `f4e8910cd4968bd9e9d6d9203503a88ef99e28ea`; the `validate` job succeeded, including tests, lint, extension validation, zip build, local release artifact build, and artifact upload.
+- Commented on and closed #146 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
+- Final board state: #1–#146 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
