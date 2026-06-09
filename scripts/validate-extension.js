@@ -250,6 +250,9 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
   if (manifest.short_name !== undefined) {
     throw new Error('manifest must not define short_name for cross-browser v0.1 user-facing naming');
   }
+  if (manifest.homepage_url !== undefined) {
+    throw new Error('manifest must not define homepage_url for cross-browser v0.1 release metadata');
+  }
   for (const key of nonPopupManifestEntryKeys) {
     if (manifest[key] !== undefined) {
       throw new Error('manifest must remain popup-only for v0.1');
