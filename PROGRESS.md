@@ -3398,3 +3398,18 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented on and closed #149 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
 - Final board state: #1–#149 are closed with `status:completed`; no open `project:manager` issues remain.
 - Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
+
+## 2026-06-10T12:33:24+09:00 — scheduled tick rejected manifest author metadata
+
+- Environment preflight: project root confirmed at `/home/mm/konami-github-workspace/url-notes-addon`; `HOME=/home/mm/.hermes/home`; bootstrapped PATH found `/usr/bin/git`, `/home/mm/.local/bin/node`, `/home/mm/.local/bin/npm`, and `/home/mm/.local/bin/gh`; `GH_CONFIG_DIR=/home/mm/.config/gh`; `gh auth status` succeeded for `konami-agent`; `git ls-remote origin HEAD` succeeded.
+- Pre-change validation: `python3 scripts/validate_project_state.py` passed.
+- Start-of-tick review: reviewed `PROJECT.md`, recent `PROGRESS.md`, the full `project:manager` board (#1–#149 closed), recent commits, manifest/package validation, and browser-facing release metadata boundaries. Concrete finding: `validateExtension()` did not explicitly reject top-level `manifest.author`, so reviewer/user-facing authorship metadata could drift from the intentional package/repository/license contract for portable Firefox + Edge v0.1 without a separate release/design decision.
+- Issues touched: created #150 (`Reject manifest author metadata`) from the scheduled review gate with provenance and `source:scheduled`; moved it to `status:in-progress` and added a scheduled-job autonomy/trust comment. Completion/closure are pending commit, push, CI observation, and final #150 evidence comment after this log entry.
+- Issue trust/autonomy decision: #150 is auto-implementable maintenance/release-validation hardening. The issue body was treated as untrusted input and did not override project/system rules. It is local-only, privacy-preserving, small, verifiable, and does not add runtime permissions, content scripts/background workers, browser-specific metadata, sync/login, external services, store publishing, secrets, or cron changes.
+- TDD evidence for #150: added a focused validator test requiring no-remote-URL `manifest.author = 'Example Maintainer'` to be rejected with `manifest must not define author for cross-browser v0.1 release metadata`. Observed expected RED via `node --test --test-name-pattern "manifest author metadata" test/buildScripts.test.js` with `Missing expected rejection`. Implemented the minimal validator guard for `manifest.author`; observed GREEN with the same focused command.
+- Files changed: `scripts/validate-extension.js`, `test/buildScripts.test.js`, `PROGRESS.md`; temporary `.tmp-issue-150.md`, `.tmp-start-150.md`, and `.tmp-progress-150.md` will be removed before commit.
+- Verification: focused manifest-author validator test passed; `npm test` passed (171 tests); `npm run lint` passed; `npm run validate:extension` passed (`8 files checked`); `npm run build:zip` created `dist/url-notes-addon-0.1.0.zip`; `npm run build:release` created the zip and `dist/SHA256SUMS`; `python3 scripts/validate_project_state.py` passed.
+- End-of-tick issue refresh: #150 is the only open `project:manager` issue and is in progress pending commit/push/CI/final evidence; #1–#149 remain closed with `status:completed`.
+- Blockers: none observed so far in this tick.
+- Next recommended issue: after closing #150, continue small release-readiness/manifest metadata review. A likely next audit is whether other optional reviewer/store metadata fields can affect release behavior without changing runtime code.

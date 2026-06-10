@@ -973,6 +973,24 @@ test('validateExtension rejects manifest homepage_url metadata', async () => {
   }
 });
 
+test('validateExtension rejects manifest author metadata', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    const manifestPath = join(projectRoot, 'manifest.json');
+    const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+    manifest.author = 'Example Maintainer';
+    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /manifest must not define author for cross-browser v0\.1 release metadata/u,
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
 test('validateExtension rejects web-accessible resources', async () => {
   const projectRoot = await copyProjectFixture();
 

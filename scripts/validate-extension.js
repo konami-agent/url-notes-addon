@@ -253,6 +253,9 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
   if (manifest.homepage_url !== undefined) {
     throw new Error('manifest must not define homepage_url for cross-browser v0.1 release metadata');
   }
+  if (manifest.author !== undefined) {
+    throw new Error('manifest must not define author for cross-browser v0.1 release metadata');
+  }
   for (const key of nonPopupManifestEntryKeys) {
     if (manifest[key] !== undefined) {
       throw new Error('manifest must remain popup-only for v0.1');
