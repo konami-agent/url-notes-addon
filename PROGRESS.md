@@ -3473,3 +3473,11 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Blockers: no source or board-management blocker for this tick; only the non-blocking `gh issue list --json` GraphQL auth quirk noted above.
 - Next recommended issue: wait for a new `project:manager` issue, or for a future review gate to record a genuinely concrete, scoped risk as `status:pending` before implementation.
 
+
+### 2026-06-11T00:48:20+09:00 — final board-only CI addendum
+
+- Pushed commit `84f58bd` (`docs: record board-only scheduled tick`) to `origin/main`.
+- GitHub Actions CI push run `27288100124` completed successfully for commit `84f58bd18598d162d618a8e59bcaa753e06b6e34`; the `validate` job succeeded, including tests, lint, extension validation, zip build, local release artifact build, and artifact upload.
+- Final validation: `python3 scripts/validate_project_state.py` passed after the board-only progress log; working tree was clean before this addendum.
+- Final board state remained unchanged: no open `project:manager` issues.
+
