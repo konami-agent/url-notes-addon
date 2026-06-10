@@ -256,6 +256,9 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
   if (manifest.author !== undefined) {
     throw new Error('manifest must not define author for cross-browser v0.1 release metadata');
   }
+  if (manifest.developer !== undefined) {
+    throw new Error('manifest must not define developer for cross-browser v0.1 release metadata');
+  }
   for (const key of nonPopupManifestEntryKeys) {
     if (manifest[key] !== undefined) {
       throw new Error('manifest must remain popup-only for v0.1');
