@@ -3437,3 +3437,12 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Blockers: none observed so far in this tick.
 - Next recommended issue: after closing #151, continue small release-readiness/manifest metadata review. A likely next audit is whether additional optional manifest reviewer/store metadata or cross-browser compatibility fields can affect release behavior without changing runtime code.
 
+
+### 2026-06-10T16:40:38+09:00 — final board refresh addendum
+
+- Pushed commit `714bcce` (`test: reject manifest developer metadata`) to `origin/main`.
+- GitHub Actions CI push run `27260984498` completed successfully for commit `714bcce634a80459e222f1eb2e4dfd3c8ecea4b8`; the `validate` job succeeded, including tests, lint, extension validation, zip build, local release artifact build, and artifact upload.
+- Commented on and closed #151 with `status:completed` after recording RED/GREEN, local verification, source commit, and CI evidence.
+- Final board state: #1–#151 are closed with `status:completed`; no open `project:manager` issues remain.
+- Final validation: `python3 scripts/validate_project_state.py` passed after issue closure; no blockers observed.
+
