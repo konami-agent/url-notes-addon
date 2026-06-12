@@ -3762,5 +3762,6 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 
 - Pushed commit `c801a1d` (`docs: record board-only scheduled tick`) to `origin/main`.
 - GitHub Actions CI push run `27441828945` completed successfully for commit `c801a1d74a3eafb6d459ce0a891c5c25be641dea`; the `validate` job succeeded, including tests, lint, extension validation, zip build, local release artifact build, and artifact upload.
-- Final validation: `python3 scripts/validate_project_state.py` will be rerun after this addendum commit; no source/package changes were made.
+- Addendum CI: GitHub Actions CI push run `27441865286` completed successfully for commit `19f41de0adc027bc8ee7c477b4341c92306b5c35`; the `validate` job succeeded, including tests, lint, extension validation, zip build, local release artifact build, and artifact upload.
+- Final validation: `python3 scripts/validate_project_state.py` passed after this addendum; no source/package changes were made.
 - Final board state remained unchanged: no open `project:manager` issues.
