@@ -142,3 +142,53 @@ test('browser adapter rejects chrome callback APIs without mutating read-only ru
 
   await assert.rejects(() => adapter.storage.local.get('note'), /read-only storage failed/);
 });
+
+
+test('browser adapter injects the floating note content script with browser.scripting', async () => {
+  const calls = [];
+  const adapter = createBrowserAdapter({
+    browser: {
+      storage: { local: {} },
+      tabs: { query: async () => [{ id: 21, url: 'https://example.com/current' }] },
+      scripting: {
+        executeScript: async (details) => {
+          calls.push(details);
+          return [{ frameId: 0 }];
+        },
+      },
+    },
+  });
+
+  await adapter.openFloatingNote({ id: 21, url: 'https://example.com/current' });
+
+  assert.deepEqual(calls, [{
+    target: { tabId: 21 },
+    files: ['src/floatingNoteContent.js'],
+  }]);
+});
+
+test('browser adapter injects the floating note content script with chrome.scripting callback APIs', async () => {
+  const calls = [];
+  const scripting = {
+    executeScript(details, callback) {
+      assert.equal(this, scripting);
+      calls.push(details);
+      callback([{ frameId: 0 }]);
+    },
+  };
+  const adapter = createBrowserAdapter({
+    chrome: {
+      runtime: { lastError: null },
+      storage: { local: { get(_key, callback) { callback({}); }, set(_items, callback) { callback(); }, remove(_key, callback) { callback(); } } },
+      tabs: { query(_queryInfo, callback) { callback([{ id: 22, url: 'https://edge.example/current' }]); } },
+      scripting,
+    },
+  });
+
+  await adapter.openFloatingNote({ id: 22, url: 'https://edge.example/current' });
+
+  assert.deepEqual(calls, [{
+    target: { tabId: 22 },
+    files: ['src/floatingNoteContent.js'],
+  }]);
+});

@@ -27,6 +27,7 @@ export async function initializePopup({
   const exportButton = requiredElement(document, '#export-notes');
   const importInput = requiredElement(document, '#import-notes');
   const importLabel = requiredElement(document, '#import-notes-label');
+  const openFloatingNoteButton = requiredElement(document, '#open-floating-note');
   const notesSearch = requiredElement(document, '#notes-search');
   const notesList = requiredElement(document, '#notes-list');
   const notesEmpty = requiredElement(document, '#notes-empty');
@@ -38,6 +39,7 @@ export async function initializePopup({
   let keyOptions = { ignoreQuery: false };
   let store;
   let domainStore;
+  let activeTab;
   let activeUrl;
   let activeDomainAvailable = false;
   let saveTimer;
@@ -62,7 +64,7 @@ export async function initializePopup({
   }
 
   try {
-    const activeTab = await adapter.getActiveTab();
+    activeTab = await adapter.getActiveTab();
     if (!activeTab?.url) throw new Error('Active tab has no URL.');
 
     const settings = await adapter.storage.local.get(IGNORE_QUERY_SETTING_KEY);
@@ -82,6 +84,7 @@ export async function initializePopup({
       exportButton,
       importInput,
       importLabel,
+      openFloatingNoteButton,
       notesSearch,
     });
     status.textContent = `Error: ${error.message}`;
@@ -172,6 +175,22 @@ export async function initializePopup({
   });
 
   notesSearch.addEventListener('input', renderNotes);
+
+  openFloatingNoteButton.addEventListener('click', async () => {
+    try {
+      if (typeof adapter.openFloatingNote !== 'function') {
+        throw new Error('Floating note injection is unavailable in this browser.');
+      }
+      openFloatingNoteButton.disabled = true;
+      status.textContent = 'Opening floating note…';
+      await adapter.openFloatingNote(activeTab);
+      status.textContent = 'Opened floating note.';
+    } catch (error) {
+      status.textContent = `Error: ${error.message}`;
+    } finally {
+      openFloatingNoteButton.disabled = false;
+    }
+  });
 
   ignoreQuery.addEventListener('change', async () => {
     try {
@@ -289,13 +308,14 @@ function isValidDomainOverviewKey(domain) {
   }
 }
 
-function disableUnavailablePopupControls({ urlKey, note, domainKey, domainNote, ignoreQuery, exportButton, importInput, importLabel, notesSearch }) {
+function disableUnavailablePopupControls({ urlKey, note, domainKey, domainNote, ignoreQuery, exportButton, importInput, importLabel, openFloatingNoteButton, notesSearch }) {
   urlKey.textContent = 'URL notes unavailable for this tab.';
   domainKey.textContent = 'Domain notes unavailable for this URL.';
   note.disabled = true;
   domainNote.disabled = true;
   ignoreQuery.disabled = true;
   exportButton.disabled = true;
+  openFloatingNoteButton.disabled = true;
   importInput.disabled = true;
   importLabel.setAttribute('aria-disabled', 'true');
   notesSearch.disabled = true;

@@ -28,7 +28,9 @@ Do not paste secrets, access tokens, private credentials, browser profile paths,
 | 1 | Open a normal web page and click the URL Notes toolbar button. |  |  |
 | 2 | Confirm the popup shows the current tab URL and the normalized note key. |  |  |
 | 3 | Type a URL note, wait for saved status, close/reopen the popup on the same URL, and confirm the note reloads. |  |  |
-| 4 | Type a Domain note, wait for saved status, then open another page on the same host and confirm the domain note reloads separate from the URL note. |  |  |
+| 4 | Click Open floating note and confirm a contained page panel appears with the same URL note. |  |  |
+| 5 | Edit the floating note, confirm the popup reloads the same note for that normalized URL, then press Escape or click Close and confirm the panel is removed. |  |  |
+| 6 | Type a Domain note, wait for saved status, then open another page on the same host and confirm the domain note reloads separate from the URL note. |  |  |
 | 5 | Open a different normalized URL and confirm it has a different URL note. |  |  |
 | 6 | Confirm the saved-notes list shows URL notes and domain notes, then search by URL/domain text and by note text. |  |  |
 | 7 | Toggle Ignore query strings for note keys, confirm the displayed key drops/restores the query string, and confirm the warning says existing notes are not migrated. |  |  |

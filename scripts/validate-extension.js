@@ -9,6 +9,7 @@ const requiredFiles = [
   'src/browserApi.js',
   'src/urlNotes.js',
   'src/popup.js',
+  'src/floatingNoteContent.js',
   'src/markdownPreview.js',
   'icons/icon.svg',
 ];
@@ -17,7 +18,7 @@ const requiredReleaseFiles = ['LICENSE', 'README.md'];
 const packagedCodeRoots = ['manifest.json', 'popup', 'src', 'icons'];
 const packagedCodeExtensions = new Set(['.css', '.html', '.js', '.json', '.svg']);
 const ignoredPackagedNames = new Set(['.git', '.gitkeep', 'node_modules', 'dist']);
-const allowedPermissions = new Set(['activeTab', 'storage']);
+const allowedPermissions = new Set(['activeTab', 'scripting', 'storage']);
 const requiredScripts = {
   test: 'node --test',
   lint: 'node scripts/lint.js',
@@ -200,68 +201,71 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
   }
   const permissions = Array.isArray(manifest.permissions) ? manifest.permissions : [];
   if (permissions.some((permission) => !allowedPermissions.has(permission))) {
-    throw new Error('manifest permissions must stay limited to storage and activeTab');
+    throw new Error('manifest permissions must stay limited to storage, activeTab, and scripting');
   }
   if (!permissions.includes('activeTab')) {
     throw new Error('manifest permissions must include activeTab');
   }
+  if (!permissions.includes('scripting')) {
+    throw new Error('manifest permissions must include scripting for v0.2 active-tab floating notes');
+  }
   if (Array.isArray(manifest.host_permissions) && manifest.host_permissions.length > 0) {
-    throw new Error('manifest host_permissions must stay empty for local-only v0.1');
+    throw new Error('manifest host_permissions must stay empty for local-only v0.2');
   }
   if (Array.isArray(manifest.optional_permissions) && manifest.optional_permissions.length > 0) {
-    throw new Error('manifest optional_permissions must stay empty for local-only v0.1');
+    throw new Error('manifest optional_permissions must stay empty for local-only v0.2');
   }
   if (Array.isArray(manifest.optional_host_permissions) && manifest.optional_host_permissions.length > 0) {
-    throw new Error('manifest optional_host_permissions must stay empty for local-only v0.1');
+    throw new Error('manifest optional_host_permissions must stay empty for local-only v0.2');
   }
   if (manifest.content_scripts !== undefined) {
-    throw new Error('manifest content_scripts must stay absent for popup-only v0.1');
+    throw new Error('manifest content_scripts must stay absent for activeTab-injected v0.2');
   }
   if (manifest.content_security_policy !== undefined) {
-    throw new Error('manifest must not define a custom content_security_policy for local-only v0.1');
+    throw new Error('manifest must not define a custom content_security_policy for local-only v0.2');
   }
   if (manifest.oauth2 !== undefined) {
-    throw new Error('manifest must not define oauth2 for local-only no-login v0.1');
+    throw new Error('manifest must not define oauth2 for local-only no-login v0.2');
   }
   if (manifest.incognito !== undefined) {
-    throw new Error('manifest must not define incognito for local-only privacy boundary v0.1');
+    throw new Error('manifest must not define incognito for local-only privacy boundary v0.2');
   }
   if (manifest.storage !== undefined) {
-    throw new Error('manifest must not define storage configuration for local-only v0.1');
+    throw new Error('manifest must not define storage configuration for local-only v0.2');
   }
   if (manifest.default_locale !== undefined) {
     throw new Error('manifest must not define default_locale without packaged localization support');
   }
   if (manifest.browser_specific_settings !== undefined) {
-    throw new Error('manifest must not define browser_specific_settings for cross-browser v0.1');
+    throw new Error('manifest must not define browser_specific_settings for cross-browser v0.2');
   }
   if (manifest.key !== undefined) {
-    throw new Error('manifest must not define key identity metadata for cross-browser v0.1');
+    throw new Error('manifest must not define key identity metadata for cross-browser v0.2');
   }
   if (manifest.update_url !== undefined) {
-    throw new Error('manifest must not define update_url for cross-browser v0.1');
+    throw new Error('manifest must not define update_url for cross-browser v0.2');
   }
   if (manifest.minimum_chrome_version !== undefined) {
-    throw new Error('manifest must not define minimum_chrome_version for cross-browser v0.1');
+    throw new Error('manifest must not define minimum_chrome_version for cross-browser v0.2');
   }
   if (manifest.version_name !== undefined) {
-    throw new Error('manifest must not define version_name for cross-browser v0.1 release versioning');
+    throw new Error('manifest must not define version_name for cross-browser v0.2 release versioning');
   }
   if (manifest.short_name !== undefined) {
-    throw new Error('manifest must not define short_name for cross-browser v0.1 user-facing naming');
+    throw new Error('manifest must not define short_name for cross-browser v0.2 user-facing naming');
   }
   if (manifest.homepage_url !== undefined) {
-    throw new Error('manifest must not define homepage_url for cross-browser v0.1 release metadata');
+    throw new Error('manifest must not define homepage_url for cross-browser v0.2 release metadata');
   }
   if (manifest.author !== undefined) {
-    throw new Error('manifest must not define author for cross-browser v0.1 release metadata');
+    throw new Error('manifest must not define author for cross-browser v0.2 release metadata');
   }
   if (manifest.developer !== undefined) {
-    throw new Error('manifest must not define developer for cross-browser v0.1 release metadata');
+    throw new Error('manifest must not define developer for cross-browser v0.2 release metadata');
   }
   for (const key of nonPopupManifestEntryKeys) {
     if (manifest[key] !== undefined) {
-      throw new Error('manifest must remain popup-only for v0.1');
+      throw new Error('manifest must remain popup-only for v0.2');
     }
   }
 

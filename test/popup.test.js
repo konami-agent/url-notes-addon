@@ -53,6 +53,7 @@ function createPopupDocument() {
     '#export-notes': new FakeElement(),
     '#import-notes': new FakeElement(),
     '#import-notes-label': new FakeElement(),
+    '#open-floating-note': new FakeElement(),
     '#notes-search': new FakeElement(),
     '#notes-list': new FakeElement(),
     '#notes-empty': new FakeElement(),
@@ -100,7 +101,7 @@ function createAdapter(url, initialStorage = {}) {
   const activeUrl = arguments.length === 0 ? 'https://example.com/page' : url;
   const storageData = { ...initialStorage };
   return {
-    getActiveTab: async () => ({ url: activeUrl }),
+    getActiveTab: async () => ({ id: 99, url: activeUrl }),
     storage: {
       local: {
         data: storageData,
@@ -535,6 +536,40 @@ test('popup keeps visible import label enabled on supported active tabs', async 
 
   assert.equal(document.elements['#import-notes'].disabled, false);
   assert.equal(document.elements['#import-notes-label'].attributes.get('aria-disabled'), undefined);
+});
+
+test('popup opens the floating note on a supported active tab after explicit user action', async () => {
+  const document = createPopupDocument();
+  const adapter = createAdapter('https://example.com/page');
+  const openedTabs = [];
+  adapter.openFloatingNote = async (tab) => { openedTabs.push(tab); };
+
+  await initializePopup({ document, adapter, debounceMs: 250 });
+  await document.elements['#open-floating-note'].dispatch('click');
+
+  assert.deepEqual(openedTabs, [{ id: 99, url: 'https://example.com/page' }]);
+  assert.equal(document.elements['#status'].textContent, 'Opened floating note.');
+});
+
+test('popup disables the floating note action on unsupported active tabs', async () => {
+  const document = createPopupDocument();
+  const adapter = createAdapter('file:///tmp/private.txt');
+  adapter.openFloatingNote = async () => { throw new Error('floating note should not open for unsupported tabs'); };
+
+  await initializePopup({ document, adapter, debounceMs: 250 });
+
+  assert.equal(document.elements['#open-floating-note'].disabled, true);
+});
+
+test('popup disables the floating note action on credential-bearing active tabs', async () => {
+  const document = createPopupDocument();
+  const adapter = createAdapter('https://user@example.com/private');
+  adapter.openFloatingNote = async () => { throw new Error('floating note should not open for credential-bearing tabs'); };
+
+  await initializePopup({ document, adapter, debounceMs: 250 });
+
+  assert.equal(document.elements['#open-floating-note'].disabled, true);
+  assert.match(document.elements['#status'].textContent, /credential-bearing URLs/);
 });
 
 test('popup renders local markdown previews for URL and domain notes without unsafe links', async () => {

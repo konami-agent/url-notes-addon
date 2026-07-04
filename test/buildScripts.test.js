@@ -65,6 +65,7 @@ async function copyProjectFixture() {
     cp(new URL('../src/browserApi.js', import.meta.url), join(projectRoot, 'src', 'browserApi.js')),
     cp(new URL('../src/urlNotes.js', import.meta.url), join(projectRoot, 'src', 'urlNotes.js')),
     cp(new URL('../src/popup.js', import.meta.url), join(projectRoot, 'src', 'popup.js')),
+    cp(new URL('../src/floatingNoteContent.js', import.meta.url), join(projectRoot, 'src', 'floatingNoteContent.js')),
     cp(new URL('../src/markdownPreview.js', import.meta.url), join(projectRoot, 'src', 'markdownPreview.js')),
     cp(new URL('../icons/icon.svg', import.meta.url), join(projectRoot, 'icons', 'icon.svg')),
     cp(new URL('../LICENSE', import.meta.url), join(projectRoot, 'LICENSE')),
@@ -88,6 +89,7 @@ test('validateExtension rejects missing required extension package files clearly
     'src/browserApi.js',
     'src/urlNotes.js',
     'src/popup.js',
+    'src/floatingNoteContent.js',
     'src/markdownPreview.js',
     'icons/icon.svg',
   ];
@@ -193,7 +195,7 @@ test('validateExtension rejects package and manifest version mismatches', async 
   try {
     const packageJsonPath = join(projectRoot, 'package.json');
     const packageJson = JSON.parse(await readFile(packageJsonPath, 'utf8'));
-    packageJson.version = '0.2.0';
+    packageJson.version = '0.2.1';
     await writeFile(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`);
 
     await assert.rejects(
@@ -499,12 +501,12 @@ test('validateExtension rejects unexpected manifest permissions', async () => {
   try {
     const manifestPath = join(projectRoot, 'manifest.json');
     const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
-    manifest.permissions = ['storage', 'activeTab', 'tabs'];
+    manifest.permissions = ['storage', 'activeTab', 'scripting', 'tabs'];
     await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest permissions must stay limited to storage and activeTab/u,
+      /manifest permissions must stay limited to storage, activeTab, and scripting/u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
@@ -522,7 +524,7 @@ test('validateExtension rejects optional manifest permissions', async () => {
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest optional_permissions must stay empty for local-only v0\.1/u,
+      /manifest optional_permissions must stay empty for local-only v0\.2/u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
@@ -540,7 +542,7 @@ test('validateExtension rejects optional host permissions', async () => {
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest optional_host_permissions must stay empty for local-only v0\.1/u,
+      /manifest optional_host_permissions must stay empty for local-only v0\.2/u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
@@ -584,7 +586,7 @@ test('validateExtension rejects malformed content script manifest entries', asyn
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest content_scripts must stay absent for popup-only v0\.1/u,
+      /manifest content_scripts must stay absent for activeTab-injected v0\.2/u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
@@ -602,7 +604,7 @@ test('validateExtension rejects background service workers', async () => {
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest must remain popup-only for v0\.1/u,
+      /manifest must remain popup-only for v0\.2/u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
@@ -620,7 +622,7 @@ test('validateExtension rejects options pages', async () => {
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest must remain popup-only for v0\.1/u,
+      /manifest must remain popup-only for v0\.2/u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
@@ -638,7 +640,7 @@ test('validateExtension rejects sidebar actions', async () => {
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest must remain popup-only for v0\.1/u,
+      /manifest must remain popup-only for v0\.2/u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
@@ -656,7 +658,7 @@ test('validateExtension rejects side panels', async () => {
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest must remain popup-only for v0\.1/u,
+      /manifest must remain popup-only for v0\.2/u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
@@ -682,7 +684,7 @@ test('validateExtension rejects other non-popup manifest surfaces', async () => 
 
       await assert.rejects(
         validateExtension(projectRoot),
-        /manifest must remain popup-only for v0\.1/u,
+        /manifest must remain popup-only for v0\.2/u,
       );
     } finally {
       await rm(projectRoot, { recursive: true, force: true });
@@ -707,7 +709,7 @@ test('validateExtension rejects legacy action manifest surfaces', async () => {
 
       await assert.rejects(
         validateExtension(projectRoot),
-        /manifest must remain popup-only for v0\.1/u,
+        /manifest must remain popup-only for v0\.2/u,
       );
     } finally {
       await rm(projectRoot, { recursive: true, force: true });
@@ -731,7 +733,7 @@ test('validateExtension rejects browser settings override manifest surface', asy
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest must remain popup-only for v0\.1/u,
+      /manifest must remain popup-only for v0\.2/u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
@@ -754,7 +756,7 @@ test('validateExtension rejects theme manifest surface', async () => {
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest must remain popup-only for v0\.1/u,
+      /manifest must remain popup-only for v0\.2/u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
@@ -774,7 +776,7 @@ test('validateExtension rejects manifest managed storage configuration', async (
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest must not define storage configuration for local-only v0\.1/u,
+      /manifest must not define storage configuration for local-only v0\.2/u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
@@ -798,7 +800,7 @@ test('validateExtension rejects protocol handler manifest surface', async () => 
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest must remain popup-only for v0\.1/u,
+      /manifest must remain popup-only for v0\.2/u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
@@ -836,7 +838,7 @@ test('validateExtension rejects user scripts manifest surface', async () => {
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest must remain popup-only for v0\.1/u,
+      /manifest must remain popup-only for v0\.2/u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
@@ -858,7 +860,7 @@ test('validateExtension rejects browser-specific manifest settings', async () =>
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest must not define browser_specific_settings for cross-browser v0\.1/u,
+      /manifest must not define browser_specific_settings for cross-browser v0\.2/u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
@@ -876,7 +878,7 @@ test('validateExtension rejects manifest key identity metadata', async () => {
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest must not define key identity metadata for cross-browser v0\.1/u,
+      /manifest must not define key identity metadata for cross-browser v0\.2/u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
@@ -894,7 +896,7 @@ test('validateExtension rejects manifest update URL metadata', async () => {
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest must not define update_url for cross-browser v0\.1/u,
+      /manifest must not define update_url for cross-browser v0\.2/u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
@@ -912,7 +914,7 @@ test('validateExtension rejects Chromium minimum version manifest metadata', asy
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest must not define minimum_chrome_version for cross-browser v0\.1/u,
+      /manifest must not define minimum_chrome_version for cross-browser v0\.2/u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
@@ -930,7 +932,7 @@ test('validateExtension rejects manifest version_name display metadata', async (
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest must not define version_name for cross-browser v0\.1 release versioning/u,
+      /manifest must not define version_name for cross-browser v0\.2 release versioning/u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
@@ -948,7 +950,7 @@ test('validateExtension rejects manifest short_name display metadata', async () 
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest must not define short_name for cross-browser v0\.1 user-facing naming/u,
+      /manifest must not define short_name for cross-browser v0\.2 user-facing naming/u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
@@ -966,7 +968,7 @@ test('validateExtension rejects manifest homepage_url metadata', async () => {
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest must not define homepage_url for cross-browser v0\.1 release metadata/u,
+      /manifest must not define homepage_url for cross-browser v0\.2 release metadata/u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
@@ -984,7 +986,7 @@ test('validateExtension rejects manifest author metadata', async () => {
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest must not define author for cross-browser v0\.1 release metadata/u,
+      /manifest must not define author for cross-browser v0\.2 release metadata/u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
@@ -1002,7 +1004,7 @@ test('validateExtension rejects manifest developer metadata', async () => {
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest must not define developer for cross-browser v0\.1 release metadata/u,
+      /manifest must not define developer for cross-browser v0\.2 release metadata/u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
@@ -1020,7 +1022,7 @@ test('validateExtension rejects web-accessible resources', async () => {
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest must remain popup-only for v0\.1/u,
+      /manifest must remain popup-only for v0\.2/u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
@@ -1040,7 +1042,7 @@ test('validateExtension rejects sandbox manifest pages', async () => {
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest must remain popup-only for v0\.1/u,
+      /manifest must remain popup-only for v0\.2/u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
@@ -1061,7 +1063,7 @@ test('validateExtension rejects OAuth manifest configuration', async () => {
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest must not define oauth2 for local-only no-login v0\.1/u,
+      /manifest must not define oauth2 for local-only no-login v0\.2/u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
@@ -1079,7 +1081,7 @@ test('validateExtension rejects omnibox manifest surface', async () => {
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest must remain popup-only for v0\.1/u,
+      /manifest must remain popup-only for v0\.2/u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
@@ -1105,7 +1107,7 @@ test('validateExtension rejects declarativeNetRequest manifest configuration', a
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest must remain popup-only for v0\.1/u,
+      /manifest must remain popup-only for v0\.2/u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
@@ -1123,7 +1125,7 @@ test('validateExtension rejects explicit incognito manifest configuration', asyn
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest must not define incognito for local-only privacy boundary v0\.1/u,
+      /manifest must not define incognito for local-only privacy boundary v0\.2/u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
@@ -1143,7 +1145,7 @@ test('validateExtension rejects custom content security policies', async () => {
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest must not define a custom content_security_policy for local-only v0\.1/u,
+      /manifest must not define a custom content_security_policy for local-only v0\.2/u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
@@ -1573,7 +1575,7 @@ test('buildExtensionZip refuses to create an archive when extension validation f
   try {
     const manifestPath = join(projectRoot, 'manifest.json');
     const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
-    manifest.version = '0.2.0';
+    manifest.version = '0.2.1';
     await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
 
     await assert.rejects(
@@ -1581,7 +1583,7 @@ test('buildExtensionZip refuses to create an archive when extension validation f
       /package\.json version must match manifest version/u,
     );
     await assert.rejects(
-      access(join(outputDir, 'url-notes-addon-0.1.0.zip'), constants.F_OK),
+      access(join(outputDir, 'url-notes-addon-0.2.0.zip'), constants.F_OK),
       { code: 'ENOENT' },
     );
   } finally {
@@ -1602,7 +1604,7 @@ test('buildExtensionZip refuses unsupported files under packaged roots', async (
       /unsupported packaged file type: src\/debug\.log/u,
     );
     await assert.rejects(
-      access(join(outputDir, 'url-notes-addon-0.1.0.zip'), constants.F_OK),
+      access(join(outputDir, 'url-notes-addon-0.2.0.zip'), constants.F_OK),
       { code: 'ENOENT' },
     );
   } finally {
@@ -1611,7 +1613,7 @@ test('buildExtensionZip refuses unsupported files under packaged roots', async (
   }
 });
 
-test('buildExtensionZip creates a distributable archive with the exact v0.1 package entries', async () => {
+test('buildExtensionZip creates a distributable archive with the exact v0.2 package entries', async () => {
   const outputDir = await mkdtemp(join(tmpdir(), 'url-notes-addon-'));
 
   try {
@@ -1631,12 +1633,13 @@ test('buildExtensionZip creates a distributable archive with the exact v0.1 pack
       'popup/popup.css',
       'popup/popup.html',
       'src/browserApi.js',
+      'src/floatingNoteContent.js',
       'src/markdownPreview.js',
       'src/popup.js',
       'src/urlNotes.js',
     ];
 
-    assert.equal(result.fileName, 'url-notes-addon-0.1.0.zip');
+    assert.equal(result.fileName, 'url-notes-addon-0.2.0.zip');
     assert.deepEqual(result.entries, expectedEntries);
     assert.deepEqual(entries, expectedEntries);
     assert.deepEqual(
@@ -1662,9 +1665,9 @@ test('buildReleaseArtifacts creates a zip and SHA256SUMS for local release revie
     const checksumFile = await readFile(result.checksumPath, 'utf8');
     const digest = createHash('sha256').update(archive).digest('hex');
 
-    assert.equal(result.zipFileName, 'url-notes-addon-0.1.0.zip');
+    assert.equal(result.zipFileName, 'url-notes-addon-0.2.0.zip');
     assert.equal(result.checksumFileName, 'SHA256SUMS');
-    assert.equal(checksumFile, `${digest}  url-notes-addon-0.1.0.zip\n`);
+    assert.equal(checksumFile, `${digest}  url-notes-addon-0.2.0.zip\n`);
   } finally {
     await rm(outputDir, { recursive: true, force: true });
   }

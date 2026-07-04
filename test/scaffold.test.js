@@ -9,7 +9,10 @@ test('manifest is a valid MV3 WebExtension manifest', async () => {
   assert.equal(manifest.action.default_popup, 'popup/popup.html');
   assert.ok(manifest.permissions.includes('storage'));
   assert.ok(manifest.permissions.includes('activeTab'));
-  assert.ok(!manifest.permissions.includes('tabs'), 'popup-only active tab access must not request broad tabs permission');
+  assert.ok(manifest.permissions.includes('scripting'));
+  assert.ok(!manifest.permissions.includes('tabs'), 'active tab access must not request broad tabs permission');
+  assert.equal(manifest.content_scripts, undefined);
+  assert.equal(manifest.host_permissions, undefined);
 });
 
 test('popup html loads the single source module script', async () => {
@@ -124,7 +127,7 @@ test('release workflow builds and publishes downloadable extension zip assets', 
   assert.match(workflow, /dist\/\*\.zip dist\/SHA256SUMS/);
   assert.match(readme, /npm run build:release/);
   assert.match(readme, /GitHub Release/i);
-  assert.match(readme, /url-notes-addon-0\.1\.0\.zip/);
+  assert.match(readme, /url-notes-addon-0\.2\.0\.zip/);
   assert.match(readme, /SHA-256 checksum/i);
 });
 
@@ -148,6 +151,8 @@ test('manual smoke evidence template records browser release verification withou
     /Firefox/i,
     /Microsoft Edge/i,
     /unsupported tab/i,
+    /floating note/i,
+    /Escape/i,
     /Export JSON/i,
     /Import JSON/i,
     /http:\/\/\[::1\]\//i,
@@ -159,7 +164,7 @@ test('manual smoke evidence template records browser release verification withou
   }
 });
 
-test('v0.1 review reports summarize delivered behavior limitations and next-phase options', async () => {
+test('v0.2 review reports summarize delivered behavior limitations and next-phase options', async () => {
   const review = await readFile(new URL('../reports/v0.1-review.md', import.meta.url), 'utf8');
   const options = await readFile(new URL('../reports/next-phase-options.md', import.meta.url), 'utf8');
 
@@ -178,9 +183,10 @@ test('v0.1 review reports summarize delivered behavior limitations and next-phas
   assert.doesNotMatch(review, /Domain-level notes are not supported/i);
 
   assert.match(options, /Implemented since original proposal/i);
-  assert.match(options, /Remaining proposal/i);
+  assert.match(options, /Implemented in v0\.2/i);
   assert.match(options, /floating note/i);
   assert.match(options, /permission\/security review/i);
+  assert.match(options, /implemented in v0\.2/i);
 
   for (const deliveredFutureHeading of [
     /^## Option A — Search and note overview$/m,
