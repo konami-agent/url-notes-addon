@@ -5497,3 +5497,11 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Files changed: `README.md`, `icons/icon.svg`, `icons/icon-16.png`, `icons/icon-32.png`, `icons/icon-48.png`, `icons/icon-128.png`, `manifest.json`, `package.json`, `reports/manual-smoke-evidence-template.md`, `scripts/lint.js`, `scripts/validate-extension.js`, `test/buildScripts.test.js`, `test/scaffold.test.js`, plus this `PROGRESS.md` entry.
 - Blockers: none locally. GitHub Actions CI and issue closure are pending until this implementation log is committed and pushed.
 - Next step: commit and push the v0.2.1 icon polish, wait for exact-SHA CI, comment evidence on #153, move it to `status:completed`, close it, append a final CI/issue-closure addendum, commit/push that addendum, and verify the final addendum CI.
+
+### 2026-07-05T20:13:41+09:00 — final v0.2.1 CI and issue-closure addendum
+
+- Pushed commit `e87c767` (`feat: add v0.2.1 icon assets`) to `origin/main`.
+- GitHub Actions CI push run `28738850550` completed successfully for exact commit `e87c76724975826fbde4eedf98ad556a016c65e6`; the `CI` workflow succeeded, including tests, lint, extension validation, zip build, local release artifact build, and artifact upload.
+- Commented implementation evidence on #153, changed its label from `status:in-progress` to `status:completed`, and closed it as completed.
+- Final local validation: `python3 scripts/validate_project_state.py` passed after issue closure.
+- Final board state: explicit open `project:manager` query returned `0`; #153 is closed with labels `project:manager`, `type:task`, `priority:P0`, and `status:completed`.
