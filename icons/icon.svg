@@ -1,5 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="URL Notes icon">
-  <rect width="128" height="128" rx="24" fill="#2563eb"/>
-  <path d="M34 28h60v72H34z" fill="#f8fafc"/>
-  <path d="M46 46h36M46 62h36M46 78h24" stroke="#2563eb" stroke-width="8" stroke-linecap="round"/>
+  <defs>
+    <linearGradient id="background" x1="18" y1="12" x2="110" y2="116" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#38bdf8"/>
+      <stop offset="0.55" stop-color="#2563eb"/>
+      <stop offset="1" stop-color="#1e1b4b"/>
+    </linearGradient>
+    <linearGradient id="paper" x1="42" y1="24" x2="92" y2="104" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#dbeafe"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="26" fill="url(#background)"/>
+  <path d="M38 18h42l22 22v70H38z" fill="url(#paper)"/>
+  <path d="M80 18v22h22" fill="#bfdbfe"/>
+  <path d="M50 52h39M50 68h33M50 84h25" stroke="#1d4ed8" stroke-width="7" stroke-linecap="round"/>
+  <path d="M28 93c0-10 8-18 18-18h10v15H46a3 3 0 0 0 0 6h20a3 3 0 0 0 0-6h-7V75h7c10 0 18 8 18 18s-8 18-18 18H46c-10 0-18-8-18-18Z" fill="#f97316"/>
+  <path d="M52 93h24" stroke="#fff7ed" stroke-width="8" stroke-linecap="round"/>
 </svg>

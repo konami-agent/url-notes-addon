@@ -68,6 +68,10 @@ async function copyProjectFixture() {
     cp(new URL('../src/floatingNoteContent.js', import.meta.url), join(projectRoot, 'src', 'floatingNoteContent.js')),
     cp(new URL('../src/markdownPreview.js', import.meta.url), join(projectRoot, 'src', 'markdownPreview.js')),
     cp(new URL('../icons/icon.svg', import.meta.url), join(projectRoot, 'icons', 'icon.svg')),
+    cp(new URL('../icons/icon-16.png', import.meta.url), join(projectRoot, 'icons', 'icon-16.png')),
+    cp(new URL('../icons/icon-32.png', import.meta.url), join(projectRoot, 'icons', 'icon-32.png')),
+    cp(new URL('../icons/icon-48.png', import.meta.url), join(projectRoot, 'icons', 'icon-48.png')),
+    cp(new URL('../icons/icon-128.png', import.meta.url), join(projectRoot, 'icons', 'icon-128.png')),
     cp(new URL('../LICENSE', import.meta.url), join(projectRoot, 'LICENSE')),
     cp(new URL('../README.md', import.meta.url), join(projectRoot, 'README.md')),
   ]);
@@ -195,7 +199,7 @@ test('validateExtension rejects package and manifest version mismatches', async 
   try {
     const packageJsonPath = join(projectRoot, 'package.json');
     const packageJson = JSON.parse(await readFile(packageJsonPath, 'utf8'));
-    packageJson.version = '0.2.1';
+    packageJson.version = '0.2.2';
     await writeFile(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`);
 
     await assert.rejects(
@@ -402,14 +406,11 @@ test('validateExtension rejects missing required manifest icon files', async () 
   const projectRoot = await copyProjectFixture();
 
   try {
-    const manifestPath = join(projectRoot, 'manifest.json');
-    const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
-    manifest.icons['128'] = 'icons/missing.svg';
-    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+    await rm(join(projectRoot, 'icons', 'icon-128.png'));
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest icons must include readable 48 and 128 icon files/u,
+      /manifest icon assets must be readable PNG files/u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
@@ -427,14 +428,14 @@ test('validateExtension rejects required manifest icons outside packaged icon as
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest icons must point to packaged SVG icon assets under icons\//u,
+      /manifest icon assets must use size-specific PNG files under icons\//u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
   }
 });
 
-test('validateExtension requires action default icons to use packaged SVG icon assets', async () => {
+test('validateExtension requires action default icons to use size-specific PNG assets', async () => {
   const projectRoot = await copyProjectFixture();
 
   try {
@@ -445,10 +446,50 @@ test('validateExtension requires action default icons to use packaged SVG icon a
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest action default_icon must include packaged SVG icon assets/u,
+      /manifest icon assets must use size-specific PNG files under icons\//u,
     );
 
     manifest.action.default_icon = {
+      32: 'icons/icon-32.png',
+      48: 'icons/icon-48.png',
+      128: 'icons/icon-128.png',
+    };
+    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /manifest icon assets must use size-specific PNG files under icons\//u,
+    );
+
+    manifest.action.default_icon = {
+      16: 'icons/icon-16.png',
+      32: 'README.md',
+      48: 'icons/icon-48.png',
+      128: 'icons/icon-128.png',
+    };
+    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /manifest icon assets must use size-specific PNG files under icons\//u,
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
+test('validateExtension rejects shared SVG placeholder manifest icon paths', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    const manifestPath = join(projectRoot, 'manifest.json');
+    const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+    manifest.icons = {
+      48: 'icons/icon.svg',
+      128: 'icons/icon.svg',
+    };
+    manifest.action.default_icon = {
+      16: 'icons/icon.svg',
       32: 'icons/icon.svg',
       48: 'icons/icon.svg',
       128: 'icons/icon.svg',
@@ -457,20 +498,40 @@ test('validateExtension requires action default icons to use packaged SVG icon a
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest action default_icon must include packaged SVG icon assets/u,
+      /manifest icon assets must use size-specific PNG files under icons\//u,
     );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
 
-    manifest.action.default_icon = {
-      16: 'icons/icon.svg',
-      32: 'README.md',
-      48: 'icons/icon.svg',
-      128: 'icons/icon.svg',
+test('validateExtension rejects non-PNG content in size-specific icon assets', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    const manifestPath = join(projectRoot, 'manifest.json');
+    const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+    manifest.icons = {
+      48: 'icons/icon-48.png',
+      128: 'icons/icon-128.png',
     };
-    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+    manifest.action.default_icon = {
+      16: 'icons/icon-16.png',
+      32: 'icons/icon-32.png',
+      48: 'icons/icon-48.png',
+      128: 'icons/icon-128.png',
+    };
+    await Promise.all([
+      writeFile(join(projectRoot, 'icons', 'icon-16.png'), 'not a png\n'),
+      writeFile(join(projectRoot, 'icons', 'icon-32.png'), 'not a png\n'),
+      writeFile(join(projectRoot, 'icons', 'icon-48.png'), 'not a png\n'),
+      writeFile(join(projectRoot, 'icons', 'icon-128.png'), 'not a png\n'),
+      writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`),
+    ]);
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest action default_icon must include packaged SVG icon assets/u,
+      /manifest icon assets must be readable PNG files/u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
@@ -1575,7 +1636,7 @@ test('buildExtensionZip refuses to create an archive when extension validation f
   try {
     const manifestPath = join(projectRoot, 'manifest.json');
     const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
-    manifest.version = '0.2.1';
+    manifest.version = '0.2.2';
     await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
 
     await assert.rejects(
@@ -1583,7 +1644,7 @@ test('buildExtensionZip refuses to create an archive when extension validation f
       /package\.json version must match manifest version/u,
     );
     await assert.rejects(
-      access(join(outputDir, 'url-notes-addon-0.2.0.zip'), constants.F_OK),
+      access(join(outputDir, 'url-notes-addon-0.2.1.zip'), constants.F_OK),
       { code: 'ENOENT' },
     );
   } finally {
@@ -1604,7 +1665,7 @@ test('buildExtensionZip refuses unsupported files under packaged roots', async (
       /unsupported packaged file type: src\/debug\.log/u,
     );
     await assert.rejects(
-      access(join(outputDir, 'url-notes-addon-0.2.0.zip'), constants.F_OK),
+      access(join(outputDir, 'url-notes-addon-0.2.1.zip'), constants.F_OK),
       { code: 'ENOENT' },
     );
   } finally {
@@ -1613,7 +1674,7 @@ test('buildExtensionZip refuses unsupported files under packaged roots', async (
   }
 });
 
-test('buildExtensionZip creates a distributable archive with the exact v0.2 package entries', async () => {
+test('buildExtensionZip creates a distributable archive with the exact v0.2.1 package entries', async () => {
   const outputDir = await mkdtemp(join(tmpdir(), 'url-notes-addon-'));
 
   try {
@@ -1628,6 +1689,10 @@ test('buildExtensionZip creates a distributable archive with the exact v0.2 pack
     const expectedEntries = [
       'LICENSE',
       'README.md',
+      'icons/icon-128.png',
+      'icons/icon-16.png',
+      'icons/icon-32.png',
+      'icons/icon-48.png',
       'icons/icon.svg',
       'manifest.json',
       'popup/popup.css',
@@ -1639,7 +1704,7 @@ test('buildExtensionZip creates a distributable archive with the exact v0.2 pack
       'src/urlNotes.js',
     ];
 
-    assert.equal(result.fileName, 'url-notes-addon-0.2.0.zip');
+    assert.equal(result.fileName, 'url-notes-addon-0.2.1.zip');
     assert.deepEqual(result.entries, expectedEntries);
     assert.deepEqual(entries, expectedEntries);
     assert.deepEqual(
@@ -1665,9 +1730,9 @@ test('buildReleaseArtifacts creates a zip and SHA256SUMS for local release revie
     const checksumFile = await readFile(result.checksumPath, 'utf8');
     const digest = createHash('sha256').update(archive).digest('hex');
 
-    assert.equal(result.zipFileName, 'url-notes-addon-0.2.0.zip');
+    assert.equal(result.zipFileName, 'url-notes-addon-0.2.1.zip');
     assert.equal(result.checksumFileName, 'SHA256SUMS');
-    assert.equal(checksumFile, `${digest}  url-notes-addon-0.2.0.zip\n`);
+    assert.equal(checksumFile, `${digest}  url-notes-addon-0.2.1.zip\n`);
   } finally {
     await rm(outputDir, { recursive: true, force: true });
   }

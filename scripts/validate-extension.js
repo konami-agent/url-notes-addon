@@ -1,7 +1,11 @@
 import { access, readFile, readdir } from 'node:fs/promises';
 import { constants } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { join, resolve, sep } from 'node:path';
+import { extname, join, resolve, sep } from 'node:path';
+
+const actionIconSizes = ['16', '32', '48', '128'];
+const releaseIconSizes = ['48', '128'];
+const pngSignature = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
 
 const requiredFiles = [
   'popup/popup.html',
@@ -17,6 +21,7 @@ const requiredReleaseFiles = ['LICENSE', 'README.md'];
 
 const packagedCodeRoots = ['manifest.json', 'popup', 'src', 'icons'];
 const packagedCodeExtensions = new Set(['.css', '.html', '.js', '.json', '.svg']);
+const allowedPackagedFileExtensions = new Set([...packagedCodeExtensions, '.png']);
 const ignoredPackagedNames = new Set(['.git', '.gitkeep', 'node_modules', 'dist']);
 const allowedPermissions = new Set(['activeTab', 'scripting', 'storage']);
 const requiredScripts = {
@@ -68,6 +73,8 @@ async function collectPackagedCodeFiles(root, entry) {
       files.push(...await collectPackagedCodeFiles(root, child));
     } else if (dirent.isFile() && hasPackagedCodeExtension(child)) {
       files.push(child.split(sep).join('/'));
+    } else if (dirent.isFile() && allowedPackagedFileExtensions.has(extname(child).toLowerCase())) {
+      continue;
     } else if (dirent.isFile()) {
       throw new Error(`unsupported packaged file type: ${child.split(sep).join('/')}`);
     }
@@ -162,30 +169,21 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
   if (manifest.action?.default_popup !== 'popup/popup.html') {
     throw new Error('manifest action.default_popup must be popup/popup.html');
   }
-  for (const size of ['48', '128']) {
+  for (const size of releaseIconSizes) {
     const iconPath = manifest.icons?.[size];
-    if (typeof iconPath !== 'string' || iconPath.trim() === '') {
-      throw new Error('manifest icons must include readable 48 and 128 icon files');
+    const expectedPath = `icons/icon-${size}.png`;
+    if (iconPath !== expectedPath) {
+      throw new Error('manifest icon assets must use size-specific PNG files under icons/');
     }
-    if (!/^icons\/[\w.-]+\.svg$/u.test(iconPath)) {
-      throw new Error('manifest icons must point to packaged SVG icon assets under icons/');
-    }
-    try {
-      await access(resolve(root, iconPath), constants.R_OK);
-    } catch {
-      throw new Error('manifest icons must include readable 48 and 128 icon files');
-    }
+    await assertReadablePngIcon(root, iconPath);
   }
-  for (const size of ['16', '32', '48', '128']) {
+  for (const size of actionIconSizes) {
     const iconPath = manifest.action?.default_icon?.[size];
-    if (typeof iconPath !== 'string' || !/^icons\/[\w.-]+\.svg$/u.test(iconPath)) {
-      throw new Error('manifest action default_icon must include packaged SVG icon assets for 16, 32, 48, and 128');
+    const expectedPath = `icons/icon-${size}.png`;
+    if (iconPath !== expectedPath) {
+      throw new Error('manifest icon assets must use size-specific PNG files under icons/');
     }
-    try {
-      await access(resolve(root, iconPath), constants.R_OK);
-    } catch {
-      throw new Error('manifest action default_icon must include packaged SVG icon assets for 16, 32, 48, and 128');
-    }
+    await assertReadablePngIcon(root, iconPath);
   }
   const permissionFields = [
     'permissions',
@@ -296,6 +294,21 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
     defaultPopup: manifest.action.default_popup,
     checkedFiles,
   };
+}
+
+function isPng(buffer) {
+  return buffer.length >= 80 && buffer.subarray(0, pngSignature.length).equals(pngSignature);
+}
+
+async function assertReadablePngIcon(root, iconPath) {
+  try {
+    const icon = await readFile(resolve(root, iconPath));
+    if (!isPng(icon)) {
+      throw new Error('invalid png');
+    }
+  } catch {
+    throw new Error('manifest icon assets must be readable PNG files');
+  }
 }
 
 function hasRemoteUrl(contents, file = '') {

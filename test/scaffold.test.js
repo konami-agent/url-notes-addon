@@ -84,6 +84,8 @@ test('readme documents Firefox and Edge loading with a manual smoke checklist', 
   assert.match(readme, /omitted from export and hidden from the saved-notes overview/i);
   assert.match(readme, /Markdown preview/);
   assert.match(readme, /raw HTML as text/);
+  assert.match(readme, /multi-size toolbar and release icon assets/i);
+  assert.match(readme, /recognizable URL Notes icon/i);
   assert.match(readme, /normal http:\/\/ and https:\/\/ pages/i);
   assert.match(readme, /about:, data:, file:, extension, and other non-web tabs/i);
   assert.match(readme, /credential-bearing web URLs/i);
@@ -127,7 +129,7 @@ test('release workflow builds and publishes downloadable extension zip assets', 
   assert.match(workflow, /dist\/\*\.zip dist\/SHA256SUMS/);
   assert.match(readme, /npm run build:release/);
   assert.match(readme, /GitHub Release/i);
-  assert.match(readme, /url-notes-addon-0\.2\.0\.zip/);
+  assert.match(readme, /url-notes-addon-0\.2\.1\.zip/);
   assert.match(readme, /SHA-256 checksum/i);
 });
 
@@ -152,6 +154,8 @@ test('manual smoke evidence template records browser release verification withou
     /Microsoft Edge/i,
     /unsupported tab/i,
     /floating note/i,
+    /toolbar icon/i,
+    /recognizable/i,
     /Escape/i,
     /Export JSON/i,
     /Import JSON/i,

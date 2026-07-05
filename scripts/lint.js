@@ -16,6 +16,10 @@ const requiredPaths = [
   '.github/workflows/ci.yml',
   '.github/workflows/release.yml',
   'icons/icon.svg',
+  'icons/icon-16.png',
+  'icons/icon-32.png',
+  'icons/icon-48.png',
+  'icons/icon-128.png',
   'README.md',
   'LICENSE',
 ];
