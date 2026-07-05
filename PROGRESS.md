@@ -5473,3 +5473,14 @@ Verification pending until `scripts/validate_project_state.py` is written and ex
 - Commented implementation evidence on #152, changed its label from `status:in-progress` to `status:completed`, and closed it as completed.
 - Final local validation: `python3 scripts/validate_project_state.py` passed after issue closure.
 - Final board state: explicit open `project:manager` query returned `0`; #152 is closed with labels `project:manager`, `type:task`, `priority:P0`, and `status:completed`.
+
+
+## 2026-07-05T14:43:15+09:00 — v0.2.1 owner mandate, icon issue, and v1.2 validation cron
+
+- Owner mandate: the owner explicitly delegated `url-notes-addon` v0.2.1 development to 小波(konami) as a Konami Self-Improvement v1.2 validation test.
+- Scope boundary: v0.2.1 work is allowed for local-only polish/stabilization, tests, docs, packaging, validation, commits/pushes, issue evidence, and CI verification inside `konami-agent/url-notes-addon`; it does not authorize remote sync/login/telemetry/external services, store publishing, broad host permissions, static content scripts, new background execution surfaces, subagents, or recursive cron changes.
+- GitHub board: created #153 (`[v0.2.1] Add polished multi-size extension icon assets`) with labels `project:manager`, `type:task`, `priority:P0`, and `status:ready` after the owner pointed out that the current add-on effectively lacks a finished icon despite manifest icon fields.
+- Cron validation routine: created Hermes cron job `url-notes-addon-v0.2.1-v12-validation` (`de4bc2c93f6e`) on schedule `every 300m` / every 5 hours, `deliver=local`, model `openai-codex:gpt-5.5`, workdir `/home/mm/konami-github-workspace/url-notes-addon`, toolsets `terminal,file,skills`.
+- Cron authority: the job may process ready `project:manager` v0.2.1 issues with strict TDD and full local/CI evidence, starting with #153, but must not create/update/remove cron jobs or use subagents. Cron output is local-only in this CLI environment.
+- Baseline before this record: source HEAD was `8d80fe5` (`8d80fe587c453e2ce5bda2815698a83abb33cb62`); no source behavior was changed by this entry.
+- Next recommended action: let the five-hour validation cron wake and implement #153, or run it manually if an immediate v1.2 validation tick is desired.
