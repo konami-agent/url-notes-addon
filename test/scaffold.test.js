@@ -151,6 +151,7 @@ test('release workflow creates a signed Firefox self-distribution XPI without ex
   assert.match(workflow, /url-notes-addon-\$\{tag#v\}-firefox-signed\.xpi/);
   assert.match(workflow, /sha256sum dist\/\*\.zip dist\/\*\.xpi > dist\/SHA256SUMS/);
   assert.match(workflow, /gh release create/);
+  assert.match(workflow, /gh release edit "\$tag" --title "\$tag" --notes-file release-notes\.md/);
   assert.match(workflow, /dist\/\*\.zip dist\/\*\.xpi dist\/SHA256SUMS/);
   assert.doesNotMatch(workflow, /(?:--api-key|--api-secret)\s+\$\{\{ secrets\./);
   assert.match(readme, /npm run build:release/);
