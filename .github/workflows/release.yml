@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Release tag to publish, for example v0.1.0'
+        description: 'Release tag to publish and sign, for example v0.1.0'
         required: true
         type: string
 
@@ -17,12 +17,15 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Check out repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref }}
 
       - name: Set up Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
         with:
           node-version: 22
 
@@ -65,8 +68,52 @@ jobs:
       - name: Build distributable zip
         run: npm run build:zip
 
+      - name: Assert AMO signing credentials
+        env:
+          WEB_EXT_API_KEY: ${{ secrets.FIREFOX_AMO_API_KEY }}
+          WEB_EXT_API_SECRET: ${{ secrets.FIREFOX_AMO_API_SECRET }}
+        shell: bash
+        run: |
+          test -n "$WEB_EXT_API_KEY"
+          test -n "$WEB_EXT_API_SECRET"
+
+      - name: Sign Firefox self-distribution XPI
+        env:
+          WEB_EXT_API_KEY: ${{ secrets.FIREFOX_AMO_API_KEY }}
+          WEB_EXT_API_SECRET: ${{ secrets.FIREFOX_AMO_API_SECRET }}
+        shell: bash
+        run: |
+          package_name="$(node -p "require('./package.json').name")"
+          package_version="$(node -p "require('./package.json').version")"
+          package_path="dist/${package_name}-${package_version}.zip"
+          test -f "$package_path"
+
+          stage_dir="$(mktemp -d "${RUNNER_TEMP}/url-notes-firefox-sign-source.XXXXXX")"
+          artifact_dir="$(mktemp -d "${RUNNER_TEMP}/url-notes-firefox-sign-artifacts.XXXXXX")"
+          trap 'rm -rf "$stage_dir" "$artifact_dir"' EXIT
+
+          unzip -q "$package_path" -d "$stage_dir"
+
+          npx --yes web-ext@10.5.0 lint \
+            --source-dir "$stage_dir" \
+            --self-hosted
+
+          npx --yes web-ext@10.5.0 sign \
+            --source-dir "$stage_dir" \
+            --artifacts-dir "$artifact_dir" \
+            --channel unlisted \
+            --no-input \
+            --timeout 900000 \
+            --approval-timeout 900000
+
+          mapfile -t signed_xpis < <(find "$artifact_dir" -maxdepth 1 -type f -name '*.xpi' -print)
+          test "${#signed_xpis[@]}" -eq 1
+
+          tag="${{ steps.release_tag.outputs.tag }}"
+          cp "${signed_xpis[0]}" "dist/url-notes-addon-${tag#v}-firefox-signed.xpi"
+
       - name: Write release checksum
-        run: sha256sum dist/*.zip > dist/SHA256SUMS
+        run: sha256sum dist/*.zip dist/*.xpi > dist/SHA256SUMS
 
       - name: Write release notes
         shell: bash
@@ -75,9 +122,9 @@ jobs:
           cat > release-notes.md <<EOF
           # URL Notes Add-on ${tag}
 
-          Download the extension zip from the assets below and load it as an unpacked/temporary WebExtension during development or review.
+          The signed Firefox XPI below is for self-distribution. Download it, then use Firefox's **Install Add-on From File** flow. The release ZIP remains available for unpacked/temporary development or review loading.
 
-          This release asset is built automatically from the tagged source by GitHub Actions after running tests, lint, extension validation, and packaging. Compare the downloaded zip with the SHA-256 checksum asset before manual review.
+          These assets are built from the tagged source by GitHub Actions after tests, lint, extension validation, packaging, Firefox web-ext validation, and Mozilla AMO unlisted signing. Compare every downloaded asset with SHA256SUMS before installation or manual review.
           EOF
 
       - name: Publish GitHub Release
@@ -87,7 +134,7 @@ jobs:
         run: |
           tag="${{ steps.release_tag.outputs.tag }}"
           if gh release view "$tag" >/dev/null 2>&1; then
-            gh release upload "$tag" dist/*.zip dist/SHA256SUMS --clobber
+            gh release upload "$tag" dist/*.zip dist/*.xpi dist/SHA256SUMS --clobber
           else
-            gh release create "$tag" dist/*.zip dist/SHA256SUMS --title "$tag" --notes-file release-notes.md
+            gh release create "$tag" dist/*.zip dist/*.xpi dist/SHA256SUMS --title "$tag" --notes-file release-notes.md
           fi

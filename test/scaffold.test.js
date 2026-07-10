@@ -109,19 +109,19 @@ test('readme documents Firefox and Edge loading with a manual smoke checklist', 
   assert.match(readme, /required.*none/i);
 });
 
-test('ci workflow verifies local release artifacts and migrated action versions', async () => {
+test('ci workflow verifies local release artifacts with immutable GitHub Actions', async () => {
   const workflow = await readFile(new URL('../.github/workflows/ci.yml', import.meta.url), 'utf8');
 
   assert.match(workflow, /workflow_dispatch:/);
-  assert.match(workflow, /uses: actions\/checkout@v6/);
-  assert.match(workflow, /uses: actions\/setup-node@v6/);
-  assert.match(workflow, /uses: actions\/upload-artifact@v7/);
+  assert.match(workflow, /uses: actions\/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10/);
+  assert.match(workflow, /uses: actions\/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e/);
+  assert.match(workflow, /uses: actions\/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a/);
   assert.match(workflow, /npm run build:release/);
   assert.match(workflow, /dist\/\*\.zip\n\s+dist\/SHA256SUMS/);
-  assert.doesNotMatch(workflow, /uses: actions\/(?:checkout|setup-node|upload-artifact)@v4/);
+  assert.doesNotMatch(workflow, /uses: actions\/(?:checkout|setup-node|upload-artifact)@v\d+/);
 });
 
-test('release workflow builds and publishes downloadable extension zip assets', async () => {
+test('release workflow creates a signed Firefox self-distribution XPI without exposing AMO credentials', async () => {
   const workflow = await readFile(new URL('../.github/workflows/release.yml', import.meta.url), 'utf8');
   const readme = await readFile(new URL('../README.md', import.meta.url), 'utf8');
 
@@ -129,6 +129,10 @@ test('release workflow builds and publishes downloadable extension zip assets', 
   assert.match(workflow, /on:\n(?:.|\n)*push:\n(?:.|\n)*tags:\n(?:.|\n)*'v\*'/);
   assert.match(workflow, /workflow_dispatch:/);
   assert.match(workflow, /permissions:\n(?:.|\n)*contents: write/);
+  assert.match(workflow, /timeout-minutes: 30/);
+  assert.match(workflow, /uses: actions\/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10/);
+  assert.match(workflow, /uses: actions\/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e/);
+  assert.match(workflow, /ref: \$\{\{ github\.event_name == 'workflow_dispatch' && inputs\.tag \|\| github\.ref \}\}/);
   assert.match(workflow, /npm test/);
   assert.match(workflow, /npm run lint/);
   assert.match(workflow, /npm run validate:extension/);
@@ -136,9 +140,19 @@ test('release workflow builds and publishes downloadable extension zip assets', 
   assert.match(workflow, /Verify release tag matches package version/);
   assert.match(workflow, /expected_tag="v\$\(node -p "require\('\.\/package\.json'\)\.version"\)"/);
   assert.match(workflow, /Release tag must match package\.json version/);
-  assert.match(workflow, /sha256sum dist\/\*\.zip > dist\/SHA256SUMS/);
+  assert.match(workflow, /Assert AMO signing credentials/);
+  assert.match(workflow, /WEB_EXT_API_KEY: \$\{\{ secrets\.FIREFOX_AMO_API_KEY \}\}/);
+  assert.match(workflow, /WEB_EXT_API_SECRET: \$\{\{ secrets\.FIREFOX_AMO_API_SECRET \}\}/);
+  assert.match(workflow, /npx --yes web-ext@10\.5\.0 lint/);
+  assert.match(workflow, /npx --yes web-ext@10\.5\.0 sign/);
+  assert.match(workflow, /--channel unlisted/);
+  assert.match(workflow, /--no-input/);
+  assert.match(workflow, /--approval-timeout 900000/);
+  assert.match(workflow, /url-notes-addon-\$\{tag#v\}-firefox-signed\.xpi/);
+  assert.match(workflow, /sha256sum dist\/\*\.zip dist\/\*\.xpi > dist\/SHA256SUMS/);
   assert.match(workflow, /gh release create/);
-  assert.match(workflow, /dist\/\*\.zip dist\/SHA256SUMS/);
+  assert.match(workflow, /dist\/\*\.zip dist\/\*\.xpi dist\/SHA256SUMS/);
+  assert.doesNotMatch(workflow, /(?:--api-key|--api-secret)\s+\$\{\{ secrets\./);
   assert.match(readme, /npm run build:release/);
   assert.match(readme, /GitHub Release/i);
   assert.match(readme, /url-notes-addon-0\.2\.1\.zip/);
