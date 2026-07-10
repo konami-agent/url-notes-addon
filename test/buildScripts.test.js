@@ -906,7 +906,25 @@ test('validateExtension rejects user scripts manifest surface', async () => {
   }
 });
 
-test('validateExtension rejects browser-specific manifest settings', async () => {
+test('validateExtension rejects missing Firefox MV3 browser-specific settings', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    const manifestPath = join(projectRoot, 'manifest.json');
+    const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+    delete manifest.browser_specific_settings;
+    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /manifest must include browser_specific_settings\.gecko\.id for Firefox MV3 loading/u,
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
+test('validateExtension rejects unexpected Firefox MV3 browser-specific settings', async () => {
   const projectRoot = await copyProjectFixture();
 
   try {
@@ -915,13 +933,36 @@ test('validateExtension rejects browser-specific manifest settings', async () =>
     manifest.browser_specific_settings = {
       gecko: {
         id: 'url-notes-addon@example.invalid',
+        data_collection_permissions: { required: ['none'] },
       },
     };
     await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
 
     await assert.rejects(
       validateExtension(projectRoot),
-      /manifest must not define browser_specific_settings for cross-browser v0\.2/u,
+      /manifest browser_specific_settings\.gecko\.id must be url-notes-addon@konami-agent\.local/u,
+    );
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
+test('validateExtension requires Firefox no-data-collection declaration', async () => {
+  const projectRoot = await copyProjectFixture();
+
+  try {
+    const manifestPath = join(projectRoot, 'manifest.json');
+    const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+    manifest.browser_specific_settings = {
+      gecko: {
+        id: 'url-notes-addon@konami-agent.local',
+      },
+    };
+    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+
+    await assert.rejects(
+      validateExtension(projectRoot),
+      /manifest must declare Firefox data_collection_permissions\.required as none/u,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });

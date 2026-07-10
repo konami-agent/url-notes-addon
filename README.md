@@ -73,6 +73,8 @@ Firefox:
 3. Click “Load Temporary Add-on”.
 4. Select this repository's `manifest.json`.
 
+Firefox MV3 requires a stable Gecko add-on ID, so the manifest declares `browser_specific_settings.gecko.id` as `url-notes-addon@konami-agent.local`. Because URL Notes does not transmit notes or other data outside the add-on or local browser, the Firefox `data_collection_permissions` declaration is `required: none`.
+
 Microsoft Edge:
 
 1. Open `edge://extensions`.

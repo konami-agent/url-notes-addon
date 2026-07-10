@@ -13,6 +13,14 @@ test('manifest is a valid MV3 WebExtension manifest', async () => {
   assert.ok(!manifest.permissions.includes('tabs'), 'active tab access must not request broad tabs permission');
   assert.equal(manifest.content_scripts, undefined);
   assert.equal(manifest.host_permissions, undefined);
+  assert.deepEqual(manifest.browser_specific_settings, {
+    gecko: {
+      id: 'url-notes-addon@konami-agent.local',
+      data_collection_permissions: {
+        required: ['none'],
+      },
+    },
+  });
 });
 
 test('popup html loads the single source module script', async () => {
@@ -95,6 +103,10 @@ test('readme documents Firefox and Edge loading with a manual smoke checklist', 
   assert.match(readme, /DNS-style host reminders/i);
   assert.match(readme, /http:\/\/\[::1\]\//i);
   assert.match(readme, /URL note is available but the domain note is unavailable/i);
+  assert.match(readme, /Firefox MV3 requires a stable Gecko add-on ID/i);
+  assert.match(readme, /url-notes-addon@konami-agent\.local/i);
+  assert.match(readme, /data_collection_permissions/i);
+  assert.match(readme, /required.*none/i);
 });
 
 test('ci workflow verifies local release artifacts and migrated action versions', async () => {

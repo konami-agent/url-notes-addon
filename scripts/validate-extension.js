@@ -24,6 +24,7 @@ const packagedCodeExtensions = new Set(['.css', '.html', '.js', '.json', '.svg']
 const allowedPackagedFileExtensions = new Set([...packagedCodeExtensions, '.png']);
 const ignoredPackagedNames = new Set(['.git', '.gitkeep', 'node_modules', 'dist']);
 const allowedPermissions = new Set(['activeTab', 'scripting', 'storage']);
+const expectedFirefoxGeckoId = 'url-notes-addon@konami-agent.local';
 const requiredScripts = {
   test: 'node --test',
   lint: 'node scripts/lint.js',
@@ -234,9 +235,7 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
   if (manifest.default_locale !== undefined) {
     throw new Error('manifest must not define default_locale without packaged localization support');
   }
-  if (manifest.browser_specific_settings !== undefined) {
-    throw new Error('manifest must not define browser_specific_settings for cross-browser v0.2');
-  }
+  validateFirefoxBrowserSpecificSettings(manifest);
   if (manifest.key !== undefined) {
     throw new Error('manifest must not define key identity metadata for cross-browser v0.2');
   }
@@ -294,6 +293,41 @@ export async function validateExtension(projectRoot = new URL('..', import.meta.
     defaultPopup: manifest.action.default_popup,
     checkedFiles,
   };
+}
+
+function validateFirefoxBrowserSpecificSettings(manifest) {
+  const settings = manifest.browser_specific_settings;
+  if (settings === undefined || typeof settings !== 'object' || settings === null || Array.isArray(settings)) {
+    throw new Error('manifest must include browser_specific_settings.gecko.id for Firefox MV3 loading');
+  }
+  const settingsKeys = Object.keys(settings);
+  if (settingsKeys.length !== 1 || settingsKeys[0] !== 'gecko') {
+    throw new Error('manifest browser_specific_settings must contain only gecko settings for Firefox MV3 loading');
+  }
+
+  const gecko = settings.gecko;
+  if (typeof gecko !== 'object' || gecko === null || Array.isArray(gecko)) {
+    throw new Error('manifest must include browser_specific_settings.gecko.id for Firefox MV3 loading');
+  }
+  if (gecko.id !== expectedFirefoxGeckoId) {
+    throw new Error(`manifest browser_specific_settings.gecko.id must be ${expectedFirefoxGeckoId}`);
+  }
+
+  const dataPermissions = gecko.data_collection_permissions;
+  if (typeof dataPermissions !== 'object' || dataPermissions === null || Array.isArray(dataPermissions)) {
+    throw new Error('manifest must declare Firefox data_collection_permissions.required as none');
+  }
+  const dataPermissionKeys = Object.keys(dataPermissions);
+  if (dataPermissionKeys.length !== 1 || dataPermissionKeys[0] !== 'required') {
+    throw new Error('manifest must declare Firefox data_collection_permissions.required as none');
+  }
+  if (!Array.isArray(dataPermissions.required) || dataPermissions.required.length !== 1 || dataPermissions.required[0] !== 'none') {
+    throw new Error('manifest must declare Firefox data_collection_permissions.required as none');
+  }
+  const geckoKeys = Object.keys(gecko).sort();
+  if (geckoKeys.join(',') !== 'data_collection_permissions,id') {
+    throw new Error('manifest browser_specific_settings.gecko must contain only id and data_collection_permissions');
+  }
 }
 
 function isPng(buffer) {
